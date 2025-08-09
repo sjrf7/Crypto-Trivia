@@ -51,19 +51,19 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
   };
 
   return (
-    <Card className="w-full h-full shadow-2xl">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <Wand2 className="h-6 w-6 text-primary drop-shadow-glow-primary" />
-          <CardTitle className="font-headline text-2xl">AI Trivia Setup</CardTitle>
-        </div>
-        <CardDescription>
-          Customize your trivia game.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
+        <Card className="w-full h-full shadow-2xl flex flex-col">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Wand2 className="h-6 w-6 text-primary drop-shadow-glow-primary" />
+              <CardTitle className="font-headline text-2xl">AI Trivia Setup</CardTitle>
+            </div>
+            <CardDescription>
+              Customize your trivia game.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6 flex-grow">
             <FormField
               control={form.control}
               name="topic"
@@ -123,12 +123,14 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={loading}>
+          </CardContent>
+          <div className="p-6 pt-0">
+             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Generating Questions...' : 'Start Game'}
             </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          </div>
+        </Card>
+      </form>
+    </Form>
   );
 }
