@@ -51,8 +51,7 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
   }
 
   return (
-    <div className="flex justify-center items-center h-full">
-      <Card className="w-full max-w-md shadow-2xl">
+      <Card className="w-full max-w-md shadow-2xl m-auto">
         <CardHeader className="text-center">
           <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
               <Wand2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
@@ -131,6 +130,5 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
           </Form>
         </CardContent>
       </Card>
-    </div>
   );
 }
