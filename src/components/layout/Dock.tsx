@@ -22,7 +22,7 @@ const FarcasterIcon = () => (
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 mx-auto"
+      className="h-6 w-6 mx-auto relative left-[10px]"
     >
       <path
         d="M13.25 4.5H10.75L9 6.25V10.75L10.75 12.5H13.25L15 10.75V6.25L13.25 4.5Z"
