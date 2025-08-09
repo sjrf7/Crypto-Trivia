@@ -22,6 +22,8 @@ import { Input } from '../ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useProfile } from '@farcaster/auth-kit';
 import { Label } from '../ui/label';
+import { motion } from 'framer-motion';
+import { AnimatedScore } from './AnimatedScore';
 
 interface SummaryScreenProps {
   score: number;
@@ -54,24 +56,43 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
     }
 
   return (
-    <div className="flex justify-center items-center h-full">
+    <motion.div 
+        className="flex justify-center items-center h-full"
+        key="summary"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
       <Card className="w-full max-w-md text-center shadow-2xl">
         <CardHeader>
-          <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
+          <motion.div 
+            className="mx-auto bg-primary/10 p-4 rounded-full mb-4"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1, rotate: 360 }}
+            transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
+          >
              <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
-          </div>
+          </motion.div>
           <CardTitle className="font-headline text-4xl">Game Over!</CardTitle>
           <CardDescription>Here's how you did.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="text-6xl font-bold text-primary">{score}</div>
+            <div className="text-6xl font-bold text-primary">
+                <AnimatedScore score={score} />
+            </div>
             <p className="text-muted-foreground">Final Score</p>
             <p className="text-lg">
                 You answered <span className="font-bold text-accent">{questionsAnswered}</span> questions.
             </p>
         </CardContent>
         <CardFooter className="flex-col gap-4">
-            <div className="flex justify-center gap-4">
+            <motion.div 
+                className="flex justify-center gap-4"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+            >
                 <Button onClick={onRestart} variant="outline">
                     <RotateCw className="mr-2 h-4 w-4" />
                     Play Again
@@ -82,56 +103,63 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                         Leaderboard
                     </Link>
                 </Button>
-            </div>
-            <AlertDialog onOpenChange={(open) => {
-                // Generate link when dialog opens
-                if (open) generateChallenge();
-            }}>
-              <AlertDialogTrigger asChild>
-                <Button variant="secondary" className="w-full">
-                    <Share2 className="mr-2 h-4 w-4" />
-                    Challenge a Friend
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Share Your Challenge</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="wager">Wager (ETH on Base Sepolia)</Label>
-                        <Input 
-                            id="wager"
-                            type="number"
-                            placeholder="e.g., 0.01"
-                            value={wager}
-                            onChange={(e) => {
-                                setWager(e.target.value);
-                                // Regenerate link on wager change
-                                setTimeout(generateChallenge, 100);
-                            }}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                         <Label>Challenge Link</Label>
-                        <div className="flex items-center space-x-2">
-                            <Input value={challengeUrl} readOnly />
-                            <Button onClick={copyToClipboard} size="icon">
-                                <ClipboardCheck className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Close</AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            </motion.div>
+            <motion.div 
+                className="w-full"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+            >
+              <AlertDialog onOpenChange={(open) => {
+                  // Generate link when dialog opens
+                  if (open) generateChallenge();
+              }}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="secondary" className="w-full">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Challenge a Friend
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Share Your Challenge</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                          <Label htmlFor="wager">Wager (ETH on Base Sepolia)</Label>
+                          <Input 
+                              id="wager"
+                              type="number"
+                              placeholder="e.g., 0.01"
+                              value={wager}
+                              onChange={(e) => {
+                                  setWager(e.target.value);
+                                  // Regenerate link on wager change
+                                  setTimeout(generateChallenge, 100);
+                              }}
+                          />
+                      </div>
+                      <div className="space-y-2">
+                          <Label>Challenge Link</Label>
+                          <div className="flex items-center space-x-2">
+                              <Input value={challengeUrl} readOnly />
+                              <Button onClick={copyToClipboard} size="icon">
+                                  <ClipboardCheck className="h-4 w-4" />
+                              </Button>
+                          </div>
+                      </div>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Close</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </motion.div>
         </CardFooter>
       </Card>
-    </div>
+    </motion.div>
   );
 }

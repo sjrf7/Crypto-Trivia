@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { TriviaQuestion } from '@/lib/types';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
@@ -20,6 +21,18 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
 }
+
+const screenVariants = {
+  initial: { opacity: 0, scale: 0.95 },
+  in: { opacity: 1, scale: 1 },
+  out: { opacity: 0, scale: 0.95 },
+};
+
+const screenTransition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 30,
+};
 
 export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
@@ -67,16 +80,47 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
   }
 
   const renderWelcomeScreen = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center">
-        <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
-        <Wand2 className="h-12 w-12 text-primary drop-shadow-glow-primary" />
-        </div>
-        <h2 className="text-3xl font-headline mb-2">Crypto Trivia Showdown</h2>
-        <p className="text-muted-foreground max-w-md mb-6">
-        Test your crypto knowledge with our classic trivia questions.
-        </p>
-        <Button onClick={handleStartClassic} size="lg">Start Game</Button>
-    </div>
+    <motion.div 
+      className="flex flex-col items-center justify-center h-full text-center"
+      key="welcome"
+      variants={screenVariants}
+      initial="initial"
+      animate="in"
+      exit="out"
+      transition={screenTransition}
+    >
+        <motion.div 
+          className="mx-auto bg-primary/10 p-4 rounded-full mb-4"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1, rotate: 360 }}
+          transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
+        >
+          <Wand2 className="h-12 w-12 text-primary drop-shadow-glow-primary" />
+        </motion.div>
+        <motion.h2 
+          className="text-3xl font-headline mb-2"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          Crypto Trivia Showdown
+        </motion.h2>
+        <motion.p 
+          className="text-muted-foreground max-w-md mb-6"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          Test your crypto knowledge with our classic trivia questions.
+        </motion.p>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Button onClick={handleStartClassic} size="lg">Start Game</Button>
+        </motion.div>
+    </motion.div>
   );
 
   const renderGameContent = () => {
@@ -101,7 +145,9 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
   return (
     <Card className="h-full">
       <CardContent className="h-full flex flex-col justify-center">
-        {renderGameContent()}
+        <AnimatePresence mode="wait">
+          {renderGameContent()}
+        </AnimatePresence>
       </CardContent>
     </Card>
   );

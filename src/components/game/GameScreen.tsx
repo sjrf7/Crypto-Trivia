@@ -6,7 +6,7 @@ import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
 import { Timer, Trophy, CheckCircle, Swords } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 
 const GAME_TIME_SECONDS = 60;
@@ -102,28 +102,54 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <motion.div 
+        className="flex flex-col gap-8 w-full"
+        key="playing"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
         {isChallenge && (
-            <div className="text-center bg-card p-3 rounded-lg border-2 border-primary">
+            <motion.div 
+                className="text-center bg-card p-3 rounded-lg border-2 border-primary"
+                initial={{y: -20, opacity: 0}}
+                animate={{y: 0, opacity: 1}}
+            >
                 <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>Challenge Mode</h3>
                 <p className="text-muted-foreground">Beat a score of <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
-            </div>
+            </motion.div>
         )}
       <div className="grid grid-cols-3 gap-4 text-center">
-        <div className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg">
+        <motion.div 
+            className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg"
+            initial={{y: -20, opacity: 0}}
+            animate={{y: 0, opacity: 1}}
+            transition={{delay: 0.1}}
+        >
           <Trophy className="h-6 w-6 text-primary drop-shadow-glow-primary" />
           <span className="text-xl font-bold">
             <AnimatedScore score={score} />
           </span>
-        </div>
-        <div className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg">
+        </motion.div>
+        <motion.div 
+            className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg"
+            initial={{y: -20, opacity: 0}}
+            animate={{y: 0, opacity: 1}}
+            transition={{delay: 0.2}}
+        >
            <CheckCircle className="h-6 w-6 text-accent drop-shadow-glow-accent" />
            <span className="text-xl font-bold">{currentQuestionIndex} / {shuffledQuestions.length}</span>
-        </div>
-        <div className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg">
+        </motion.div>
+        <motion.div 
+            className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg"
+            initial={{y: -20, opacity: 0}}
+            animate={{y: 0, opacity: 1}}
+            transition={{delay: 0.3}}
+        >
           <Timer className="h-6 w-6 text-destructive" />
           <span className="text-xl font-bold">{timeLeft}s</span>
-        </div>
+        </motion.div>
       </div>
       
       <div>
@@ -143,6 +169,6 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           isTimeBoostUsed={isTimeBoostUsed}
         />
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

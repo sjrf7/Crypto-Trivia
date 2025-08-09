@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -47,7 +48,7 @@ export function QuestionCard({
   
   const getButtonClass = (option: string) => {
     if (!isAnswered) return 'bg-secondary hover:bg-secondary/80';
-    if (option === question.answer) return 'bg-accent text-accent-foreground hover:bg-accent/90';
+    if (option === question.answer) return 'bg-accent text-accent-foreground hover:bg-accent/90 animate-pulse';
     if (option === selectedOption) return 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
     return 'bg-secondary opacity-50';
   };
@@ -58,7 +59,7 @@ export function QuestionCard({
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, type: 'spring', stiffness: 200, damping: 20 }}
     >
       <Card className="w-full max-w-2xl mx-auto border-primary shadow-lg shadow-primary/10">
         <CardHeader>
@@ -70,15 +71,20 @@ export function QuestionCard({
             {question.options.map((option, index) => {
                 if(option === '') return <div key={index} />; // Render empty div for hidden options
                 return (
-                    <Button
+                    <motion.div
                         key={index}
-                        onClick={() => handleOptionClick(option)}
-                        disabled={isAnswered}
-                        className={cn('h-auto py-4 text-base whitespace-normal justify-start', getButtonClass(option))}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
                     >
-                        <span className="mr-4 font-bold text-accent">{String.fromCharCode(65 + index)}</span>
-                        <span>{option}</span>
-                    </Button>
+                        <Button
+                            onClick={() => handleOptionClick(option)}
+                            disabled={isAnswered}
+                            className={cn('h-auto w-full py-4 text-base whitespace-normal justify-start', getButtonClass(option))}
+                        >
+                            <span className="mr-4 font-bold text-accent">{String.fromCharCode(65 + index)}</span>
+                            <span>{option}</span>
+                        </Button>
+                    </motion.div>
                 )
             })}
           </div>

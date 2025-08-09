@@ -8,12 +8,26 @@ import { LeaderboardEntry } from '@/lib/types';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 type SortKey = 'rank' | 'totalScore' | 'gamesPlayed';
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[];
 }
+
+const rowVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.3,
+      ease: 'easeOut',
+    },
+  }),
+};
 
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('rank');
@@ -79,8 +93,15 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedData.map((entry) => (
-            <TableRow key={entry.player.id}>
+          {sortedData.map((entry, i) => (
+            <motion.tr
+              key={entry.player.id}
+              custom={i}
+              initial="hidden"
+              animate="visible"
+              variants={rowVariants}
+              className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+            >
               <TableCell className="font-medium text-lg">{entry.rank}</TableCell>
               <TableCell>
                 <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-4 group">
@@ -94,7 +115,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               <TableCell className="font-bold text-primary">{entry.player.stats.totalScore.toLocaleString()}</TableCell>
               <TableCell>{entry.player.stats.gamesPlayed}</TableCell>
               <TableCell className="text-accent">{entry.player.stats.accuracy}</TableCell>
-            </TableRow>
+            </motion.tr>
           ))}
         </TableBody>
       </Table>
