@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Gamepad2, Trophy, User } from 'lucide-react';
+import { Gamepad2, Trophy, User, Award } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -52,11 +52,12 @@ export function Dock() {
   const navLinks = [
     { href: '/', label: 'Play', icon: Gamepad2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+    { href: '/achievements', label: 'Achievements', icon: Award },
   ];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-20 border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
-      <nav className="container grid grid-cols-3 items-center justify-items-center h-full text-center">
+      <nav className="container grid grid-cols-4 items-center justify-items-center h-full text-center">
           {navLinks.map((link) => (
              <Link
                 key={link.href}

@@ -1,7 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Player } from '@/lib/types';
 import { Award, Target, Gamepad2, Percent, Star } from 'lucide-react';
+import { ACHIEVEMENTS } from '@/lib/mock-data';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 interface ProfileCardProps {
   player: Player;
@@ -16,6 +18,8 @@ const StatItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label
 )
 
 export function ProfileCard({ player }: ProfileCardProps) {
+  const unlockedAchievements = ACHIEVEMENTS.filter(ach => player.achievements.includes(ach.id));
+  
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader className="text-center">
@@ -35,6 +39,28 @@ export function ProfileCard({ player }: ProfileCardProps) {
             <StatItem icon={Percent} label="Accuracy" value={player.stats.accuracy} />
         </div>
       </CardContent>
+      {unlockedAchievements.length > 0 && (
+        <CardFooter className="flex-col items-start gap-4 pt-6">
+            <h3 className="font-headline text-2xl">Achievements</h3>
+            <div className="flex flex-wrap gap-4">
+            <TooltipProvider>
+                {unlockedAchievements.map((ach) => (
+                    <Tooltip key={ach.id}>
+                        <TooltipTrigger>
+                            <div className="flex items-center justify-center bg-secondary p-4 rounded-lg h-20 w-20">
+                                <ach.icon className="h-10 w-10 text-accent drop-shadow-glow-accent" />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p className="font-bold">{ach.name}</p>
+                            <p>{ach.description}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                ))}
+            </TooltipProvider>
+            </div>
+        </CardFooter>
+      )}
     </Card>
   );
 }

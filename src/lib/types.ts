@@ -5,6 +5,13 @@ export interface TriviaQuestion {
   options: string[];
 }
 
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ElementType;
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -17,6 +24,7 @@ export interface Player {
     accuracy: string;
     topRank: number | null;
   };
+  achievements: string[]; // Array of achievement IDs
 }
 
 export interface LeaderboardEntry {

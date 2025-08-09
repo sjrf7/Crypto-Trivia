@@ -1,4 +1,45 @@
-import type { Player, LeaderboardEntry, TriviaQuestion } from './types';
+import type { Player, LeaderboardEntry, TriviaQuestion, Achievement } from './types';
+import { Award, BookOpen, BrainCircuit, FirstAid, Medal, Rocket, Sparkles, Star, TrendingUp } from 'lucide-react';
+
+export const ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 'first-game',
+    name: 'First Game',
+    description: 'Played your first game of trivia.',
+    icon: Sparkles,
+  },
+  {
+    id: 'novice-quizzer',
+    name: 'Novice Quizzer',
+    description: 'Answered 50 questions correctly.',
+    icon: BookOpen,
+  },
+  {
+    id: 'crypto-enthusiast',
+    name: 'Crypto Enthusiast',
+    description: 'Scored over 5,000 total points.',
+    icon: TrendingUp,
+  },
+  {
+    id: 'brainiac',
+    name: 'Brainiac',
+    description: 'Achieve 90% accuracy in a game.',
+    icon: BrainCircuit,
+  },
+  {
+    id: 'top-player',
+    name: 'Top Player',
+    description: 'Reached the #1 spot on the leaderboard.',
+    icon: Award,
+  },
+  {
+    id: 'hot-streak',
+    name: 'Hot Streak',
+    description: 'Answered 10 questions correctly in a row.',
+    icon: Rocket,
+  },
+];
+
 
 export const PLAYERS: Player[] = [
   {
@@ -13,6 +54,7 @@ export const PLAYERS: Player[] = [
       accuracy: '92.00%',
       topRank: 1,
     },
+    achievements: ['first-game', 'novice-quizzer', 'crypto-enthusiast', 'brainiac', 'top-player']
   },
   {
     id: 'satoshi',
@@ -26,6 +68,7 @@ export const PLAYERS: Player[] = [
       accuracy: '95.00%',
       topRank: 2,
     },
+    achievements: ['first-game', 'novice-quizzer', 'crypto-enthusiast', 'brainiac']
   },
   {
     id: 'cz',
@@ -39,6 +82,7 @@ export const PLAYERS: Player[] = [
       accuracy: '87.00%',
       topRank: 3,
     },
+    achievements: ['first-game', 'novice-quizzer', 'crypto-enthusiast']
   },
   {
     id: 'dwr',
@@ -52,6 +96,7 @@ export const PLAYERS: Player[] = [
       accuracy: '88.89%',
       topRank: 4,
     },
+    achievements: ['first-game', 'novice-quizzer']
   },
   {
     id: 'cobie',
@@ -65,6 +110,7 @@ export const PLAYERS: Player[] = [
       accuracy: '78.00%',
       topRank: 5,
     },
+    achievements: ['first-game']
   },
 ];
 
