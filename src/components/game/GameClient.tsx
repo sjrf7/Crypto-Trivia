@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { TriviaQuestion } from '@/lib/types';
-import { generateCryptoTrivia, GenerateCryptoTriviaOutput } from '@/ai/flows/generate-crypto-trivia';
 import { useToast } from '@/hooks/use-toast';
 
 import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
-import { GameSetup } from './GameSetup';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Wand2 } from 'lucide-react';
+import { TRIVIA_QUESTIONS } from '@/lib/mock-data';
 
 type GameStatus = 'setup' | 'playing' | 'summary';
 
@@ -18,30 +18,10 @@ export function GameClient() {
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
-  const handleStart = async (topic: string, numQuestions: number, difficulty: string) => {
-    setLoading(true);
-    setGameStatus('setup'); // Stay on setup view while loading
-    try {
-      const response: GenerateCryptoTriviaOutput = await generateCryptoTrivia({ topic, numQuestions, difficulty });
-      if (response.questions && response.questions.length > 0) {
-        setQuestions(response.questions);
-        setGameStatus('playing');
-      } else {
-        throw new Error('No questions were generated.');
-      }
-    } catch (error) {
-      console.error('Failed to generate trivia questions:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not generate trivia questions. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleStart = () => {
+    setQuestions(TRIVIA_QUESTIONS);
+    setGameStatus('playing');
   };
 
   const handleGameEnd = (score: number, numAnswered: number) => {
@@ -70,26 +50,20 @@ export function GameClient() {
               <Wand2 className="h-12 w-12 text-primary drop-shadow-glow-primary" />
             </div>
             <h2 className="text-3xl font-headline mb-2">Crypto Trivia Showdown</h2>
-            <p className="text-muted-foreground max-w-md">
-              Configure your game on the left panel and click &quot;Start Game&quot; to begin.
+            <p className="text-muted-foreground max-w-md mb-6">
+              Test your crypto knowledge with our classic trivia questions.
             </p>
+            <Button onClick={handleStart} size="lg">Start Game</Button>
           </div>
         );
     }
   };
 
   return (
-    <div className="grid md:grid-cols-3 gap-8 h-full">
-      <div className="md:col-span-1">
-        <GameSetup onStart={handleStart} loading={loading} />
-      </div>
-      <div className="md:col-span-2">
-        <Card className="h-full">
-          <CardContent className="h-full flex flex-col justify-center">
-            {renderGameContent()}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <Card className="h-full">
+      <CardContent className="h-full flex flex-col justify-center">
+        {renderGameContent()}
+      </CardContent>
+    </Card>
   );
 }
