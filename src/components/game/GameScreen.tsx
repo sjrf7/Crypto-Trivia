@@ -19,6 +19,17 @@ export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
+  const [is5050Used, setIs5050Used] = useState(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
+
+  useEffect(() => {
+    // Shuffle questions and options once at the beginning of the game
+    const shuffled = questions.map(q => ({
+        ...q,
+        options: [...q.options].sort(() => Math.random() - 0.5)
+    })).sort(() => Math.random() - 0.5);
+    setShuffledQuestions(shuffled);
+  }, [questions]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -40,14 +51,37 @@ export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
       setScore((prevScore) => prevScore + 100);
     }
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
-      onGameEnd(score + (isCorrect ? 100 : 0), questions.length);
+      onGameEnd(score + (isCorrect ? 100 : 0), shuffledQuestions.length);
     }
   };
+  
+  const handleUse5050 = () => {
+    if (is5050Used) return;
 
-  const progress = ((currentQuestionIndex) / questions.length) * 100;
+    const currentQuestion = shuffledQuestions[currentQuestionIndex];
+    const correctAnswer = currentQuestion.answer;
+    const incorrectOptions = currentQuestion.options.filter(opt => opt !== correctAnswer);
+    const optionsToKeep = [correctAnswer, incorrectOptions[0]];
+    
+    const newQuestions = [...shuffledQuestions];
+    newQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        options: currentQuestion.options.map(opt => optionsToKeep.includes(opt) ? opt : ''),
+        hiddenOptions: currentQuestion.options.filter(opt => !optionsToKeep.includes(opt))
+    };
+    
+    setShuffledQuestions(newQuestions);
+    setIs5050Used(true);
+  };
+
+  const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+  
+  if (shuffledQuestions.length === 0) {
+    return <div>Loading questions...</div>
+  }
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -60,7 +94,7 @@ export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
         </div>
         <div className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg">
            <CheckCircle className="h-6 w-6 text-accent drop-shadow-glow-accent" />
-           <span className="text-xl font-bold">{currentQuestionIndex} / {questions.length}</span>
+           <span className="text-xl font-bold">{currentQuestionIndex} / {shuffledQuestions.length}</span>
         </div>
         <div className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg">
           <Timer className="h-6 w-6 text-destructive" />
@@ -75,10 +109,12 @@ export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
       <AnimatePresence mode="wait">
         <QuestionCard
           key={currentQuestionIndex}
-          question={questions[currentQuestionIndex]}
+          question={shuffledQuestions[currentQuestionIndex]}
           onAnswer={handleAnswer}
           questionNumber={currentQuestionIndex + 1}
-          totalQuestions={questions.length}
+          totalQuestions={shuffledQuestions.length}
+          onUse5050={handleUse5050}
+          is5050Used={is5050Used}
         />
       </AnimatePresence>
     </div>

@@ -2,19 +2,22 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { TriviaQuestion } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { Star } from 'lucide-react';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
   onAnswer: (isCorrect: boolean) => void;
   questionNumber: number;
   totalQuestions: number;
+  onUse5050: () => void;
+  is5050Used: boolean;
 }
 
-export function QuestionCard({ question, onAnswer, questionNumber, totalQuestions }: QuestionCardProps) {
+export function QuestionCard({ question, onAnswer, questionNumber, totalQuestions, onUse5050, is5050Used }: QuestionCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
@@ -53,19 +56,28 @@ export function QuestionCard({ question, onAnswer, questionNumber, totalQuestion
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {question.options.map((option, index) => (
-              <Button
-                key={index}
-                onClick={() => handleOptionClick(option)}
-                disabled={isAnswered}
-                className={cn('h-auto py-4 text-base whitespace-normal justify-start', getButtonClass(option))}
-              >
-                <span className="mr-4 font-bold text-accent">{String.fromCharCode(65 + index)}</span>
-                <span>{option}</span>
-              </Button>
-            ))}
+            {question.options.map((option, index) => {
+                if(option === '') return <div key={index} />; // Render empty div for hidden options
+                return (
+                    <Button
+                        key={index}
+                        onClick={() => handleOptionClick(option)}
+                        disabled={isAnswered}
+                        className={cn('h-auto py-4 text-base whitespace-normal justify-start', getButtonClass(option))}
+                    >
+                        <span className="mr-4 font-bold text-accent">{String.fromCharCode(65 + index)}</span>
+                        <span>{option}</span>
+                    </Button>
+                )
+            })}
           </div>
         </CardContent>
+        <CardFooter className="justify-center">
+            <Button onClick={onUse5050} disabled={is5050Used || isAnswered} variant="outline">
+                <Star className="mr-2 h-4 w-4" />
+                50/50
+            </Button>
+        </CardFooter>
       </Card>
     </motion.div>
   );

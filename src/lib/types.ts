@@ -3,6 +3,8 @@ export interface TriviaQuestion {
   question: string;
   answer: string;
   options: string[];
+  // Allow for other properties like the ones we'll add for powerups
+  [key: string]: any;
 }
 
 export interface Achievement {
