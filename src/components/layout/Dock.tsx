@@ -61,24 +61,23 @@ export function Dock() {
              <Link
                 key={link.href}
                 href={link.href}
+                title={link.label}
                 className={cn(
-                    "flex flex-col items-center justify-center h-full gap-1 w-full rounded-lg",
+                    "flex flex-col items-center justify-center h-full w-full rounded-lg",
                     pathname === link.href ? 'text-primary' : 'text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground'
                 )}
               >
-                <link.icon className="h-6 w-6" />
-                <span className="text-xs">{link.label}</span>
+                <link.icon className="h-8 w-8" />
               </Link>
           ))}
           {isAuthenticated ? (
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex flex-col items-center justify-center h-full gap-1 w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
-                    <Avatar className="h-6 w-6">
+                <button title="Profile" className="flex flex-col items-center justify-center h-full w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
+                    <Avatar className="h-8 w-8">
                         <AvatarImage src={userProfile?.pfpUrl} alt={userProfile?.displayName ?? ''} data-ai-hint="profile picture" />
                         <AvatarFallback>{userProfile?.displayName?.substring(0, 2)}</AvatarFallback>
                     </Avatar>
-                    <span className="text-xs">Profile</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="mb-2 w-48" side="top">
@@ -96,9 +95,8 @@ export function Dock() {
             </DropdownMenu>
           ) : (
             <SignInButton>
-                <button className="flex flex-col items-center justify-center h-full gap-1 w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
+                <button title="Sign In" className="flex flex-col items-center justify-center h-full w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
                     <FarcasterIcon />
-                    <span className="text-xs">Sign In</span>
                 </button>
             </SignInButton>
           )}
