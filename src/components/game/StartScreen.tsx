@@ -46,13 +46,13 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
     },
   });
 
-  function onSubmit(values: FormValues) {
+  const onSubmit = (values: FormValues) => {
     onStart(values.topic, parseInt(values.numQuestions, 10), values.difficulty);
-  }
+  };
 
   return (
     <div className="flex justify-center items-center flex-grow">
-        <Card className="w-full max-w-md shadow-2xl">
+      <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
             <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
                 <Wand2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
@@ -130,7 +130,7 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
             </form>
             </Form>
         </CardContent>
-        </Card>
+      </Card>
     </div>
   );
 }
