@@ -1,12 +1,30 @@
+
+'use client';
+
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ACHIEVEMENTS } from '@/lib/mock-data';
-import { Award, CheckCircle } from 'lucide-react';
+import { Award, CheckCircle, Loader, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 // This is a placeholder for actual user data.
-// In a real app, you would fetch the authenticated user's unlocked achievements.
-const unlockedAchievementIds = ['first-game', 'novice-quizzer'];
+// In a real app, you would fetch this from a user profile or onchain data.
+const unlockedAchievementIds = ['first-game', 'novice-quizzer', 'crypto-enthusiast'];
 
 export default function AchievementsPage() {
+  const [minting, setMinting] = useState<string | null>(null);
+  const [minted, setMinted] = useState<string[]>([]);
+
+  const handleMint = (achievementId: string) => {
+    setMinting(achievementId);
+    // Simulate a blockchain transaction
+    setTimeout(() => {
+      setMinting(null);
+      setMinted((prev) => [...prev, achievementId]);
+    }, 2500);
+  };
+
   return (
     <div>
       <Card>
@@ -15,7 +33,7 @@ export default function AchievementsPage() {
             <Award className="h-8 w-8 text-primary drop-shadow-glow-primary" />
             <div>
               <CardTitle className="font-headline text-3xl">Achievements</CardTitle>
-              <CardDescription>Complete challenges to unlock rewards.</CardDescription>
+              <CardDescription>Mint your unlocked achievements as onchain Soul-Bound Tokens (SBTs) on Base.</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -23,14 +41,17 @@ export default function AchievementsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {ACHIEVEMENTS.map((achievement) => {
               const isUnlocked = unlockedAchievementIds.includes(achievement.id);
+              const isMinted = minted.includes(achievement.id);
+              const isMinting = minting === achievement.id;
+
               return (
                 <Card 
                   key={achievement.id}
-                  className={`relative overflow-hidden transition-all duration-300 ${!isUnlocked ? 'opacity-50' : 'border-primary shadow-primary/20'}`}
+                  className={`relative overflow-hidden transition-all duration-300 flex flex-col ${!isUnlocked ? 'opacity-50' : 'border-primary shadow-primary/20'}`}
                 >
                   {isUnlocked && (
-                    <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
-                      <CheckCircle className="h-4 w-4" />
+                    <div className={`absolute top-2 right-2 rounded-full p-1 ${isMinted ? 'bg-blue-500' : 'bg-green-500'} text-white`}>
+                      {isMinted ? <ShieldCheck className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
                     </div>
                   )}
                   <CardHeader className="items-center text-center">
@@ -39,8 +60,24 @@ export default function AchievementsPage() {
                     </div>
                     <CardTitle className="text-xl font-headline">{achievement.name}</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-center text-sm text-muted-foreground">
+                  <CardContent className="text-center text-sm text-muted-foreground flex-grow">
                     {achievement.description}
+                  </CardContent>
+                  <CardContent className="mt-auto">
+                    {isUnlocked && (
+                      isMinted ? (
+                        <Button variant="outline" className="w-full" asChild>
+                           <Link href="https://sepolia.basescan.org/" target="_blank">
+                            View on BaseScan
+                          </Link>
+                        </Button>
+                      ) : (
+                        <Button className="w-full" onClick={() => handleMint(achievement.id)} disabled={isMinting}>
+                          {isMinting ? <Loader className="animate-spin mr-2" /> : null}
+                          {isMinting ? 'Minting...' : 'Mint NFT'}
+                        </Button>
+                      )
+                    )}
                   </CardContent>
                 </Card>
               );
