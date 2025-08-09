@@ -6,8 +6,7 @@ import type { ReactNode } from 'react';
 
 const farcasterAuthConfig = {
   rpcUrl: 'https://mainnet.optimism.io',
-  domain: 'farcaster-trivia.vercel.app',
-  siweUri: 'https://farcaster-trivia.vercel.app/login',
+  api_url: '/api/auth'
 };
 
 export function Providers({ children }: { children: ReactNode }) {
