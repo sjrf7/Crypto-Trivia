@@ -32,7 +32,7 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <main className="flex-grow container mx-auto px-4 py-8 pb-24">
+          <main className="flex-grow container mx-auto px-4 py-8 pb-24 relative">
             {children}
           </main>
           <Dock />

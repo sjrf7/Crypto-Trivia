@@ -1,84 +1,107 @@
 
 'use client';
 
-import { useState } from 'react';
-import { GameClient } from '@/components/game/GameClient';
-import { GameSetup } from '@/components/game/GameSetup';
-import { TriviaQuestion } from '@/lib/types';
-import { generateCryptoTrivia } from '@/ai/flows/generate-crypto-trivia';
-import { useToast } from '@/hooks/use-toast';
-import { Loader } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { Award, BrainCircuit, Gamepad2, Trophy, Wand2 } from 'lucide-react';
+import Link from 'next/link';
 
-export default function Home() {
-  const [aiQuestions, setAiQuestions] = useState<TriviaQuestion[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [gameKey, setGameKey] = useState(0); // Add a key to force re-mount
-  const { toast } = useToast();
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
-  const handleStartAIGame = async (
-    topic: string,
-    numQuestions: number,
-    difficulty: string
-  ) => {
-    setLoading(true);
-    setAiQuestions(null);
-    try {
-      const result = await generateCryptoTrivia({
-        topic,
-        numQuestions,
-        difficulty,
-      });
-      if (result.questions && result.questions.length > 0) {
-        // Add originalIndex to each question for challenge mode link generation
-        const questionsWithIndex = result.questions.map((q, i) => ({ ...q, originalIndex: i }));
-        setAiQuestions(questionsWithIndex);
-        setGameKey(prev => prev + 1); // Increment key to re-mount GameClient
-      } else {
-        toast({
-          title: 'Tema Inválido',
-          description: 'Por favor, introduce un tema relacionado con crypto, blockchain o web3.',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      console.error('Failed to generate AI trivia:', error);
-      toast({
-        title: 'Error',
-        description: 'Hubo un problema al generar las preguntas. Por favor, intenta de nuevo.',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 },
+};
 
-  const handleGameEnd = () => {
-    setAiQuestions(null);
-    setGameKey(prev => prev + 1); // Reset for a new game
-  }
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-      <div className="lg:col-span-3">
-        <GameClient 
-          key={gameKey} // Use key to force re-render
-          challengeQuestions={aiQuestions || undefined} 
-          onRestart={handleGameEnd}
-        />
-      </div>
-      <div className="lg:col-span-2">
-        {loading ? (
-           <Card className="h-full flex items-center justify-center">
-             <div className="text-center">
-               <Loader className="h-12 w-12 animate-spin mx-auto mb-4" />
-               <p className="text-muted-foreground">Generando tu trivia...</p>
-             </div>
-           </Card>
-        ) : (
-          aiQuestions === null && <GameSetup onStart={handleStartAIGame} loading={loading} />
-        )}
-      </div>
+const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+  <motion.div
+    className="bg-card p-6 rounded-lg border flex flex-col items-center text-center"
+    variants={itemVariants}
+    whileHover={{ scale: 1.05, y: -5 }}
+    transition={{ type: 'spring', stiffness: 300 }}
+  >
+    <div className="bg-primary/10 p-4 rounded-full mb-4">
+      <Icon className="h-8 w-8 text-primary drop-shadow-glow-primary" />
     </div>
+    <h3 className="text-xl font-headline mb-2">{title}</h3>
+    <p className="text-sm text-muted-foreground">{description}</p>
+  </motion.div>
+);
+
+export default function WelcomePage() {
+  return (
+    <motion.div
+      className="container mx-auto px-4 py-8 text-center"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div
+        className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-fit"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1, rotate: 360 }}
+        transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
+      >
+        <Trophy className="h-16 w-16 text-primary drop-shadow-glow-primary" />
+      </motion.div>
+
+      <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold mb-4">
+        Crypto Trivia Showdown
+      </motion.h1>
+
+      <motion.p variants={itemVariants} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+        Pon a prueba tus conocimientos sobre criptomonedas, compite contra otros, y genera tus propias trivias con el poder de la IA.
+      </motion.p>
+
+      <motion.div variants={itemVariants} className="mb-12">
+        <Button asChild size="lg" className="text-lg font-bold">
+          <Link href="/play">
+            <Gamepad2 className="mr-2 h-6 w-6" />
+            Entrar al Juego
+          </Link>
+        </Button>
+      </motion.div>
+
+      <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <FeatureCard
+          icon={Wand2}
+          title="Trivia con IA"
+          description="Genera cuestionarios únicos sobre cualquier tema de cripto, blockchain o web3 al instante."
+        />
+        <FeatureCard
+          icon={BrainCircuit}
+          title="Modo Clásico"
+          description="Enfréntate a nuestras preguntas clásicas y demuestra que eres un experto."
+        />
+        <FeatureCard
+          icon={Trophy}
+          title="Tablas de Clasificación"
+          description="Compite por el primer puesto y mira cómo te posicionas frente a los mejores."
+        />
+        <FeatureCard
+          icon={Award}
+          title="Logros y Recompensas"
+          description="Desbloquea logros por tus hitos y muéstralos en tu perfil."
+        />
+         <FeatureCard
+          icon={Award}
+          title="Perfil de Farcaster"
+          description="Inicia sesión con Farcaster para guardar tu progreso y personalizar tu perfil."
+        />
+         <FeatureCard
+          icon={Award}
+          title="Desafíos"
+          description="Reta a tus amigos a superar tu puntuación con las mismas preguntas."
+        />
+      </motion.div>
+    </motion.div>
   );
 }

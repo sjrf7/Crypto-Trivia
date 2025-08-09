@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 const navLinks = [
-  { href: '/', label: 'Play', icon: 'gamepad' },
+  { href: '/play', label: 'Play', icon: 'gamepad' },
   { href: '/leaderboard', label: 'Leaderboard', icon: 'trophy' },
   { href: '/achievements', label: 'Achievements', icon: 'award' },
   { href: '/profile/me', label: 'Profile', icon: 'user' },
@@ -65,6 +65,10 @@ export function Dock() {
   const pathname = usePathname();
   const [hovered, setHovered] = useState<string | null>(null);
 
+  if (pathname === '/') {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 h-20 border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
       <nav className="container grid grid-cols-4 items-center justify-items-center h-full text-center">
@@ -80,7 +84,7 @@ export function Dock() {
                 <motion.div
                   className={cn(
                       "flex flex-col items-center justify-center h-full w-full rounded-lg transition-colors p-2",
-                      pathname === link.href ? 'text-primary' : 'text-foreground/60'
+                      pathname.startsWith(link.href) && link.href !== '/play' || pathname === link.href ? 'text-primary' : 'text-foreground/60'
                   )}
                   whileTap={{ scale: 0.9, y: 0 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
