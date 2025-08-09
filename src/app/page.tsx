@@ -36,8 +36,8 @@ export default function Home() {
         setGameKey(prev => prev + 1); // Increment key to re-mount GameClient
       } else {
         toast({
-          title: 'Error',
-          description: 'La IA no pudo generar preguntas. Por favor, intenta de nuevo.',
+          title: 'Tema Inválido',
+          description: 'Por favor, introduce un tema relacionado con crypto, blockchain o web3.',
           variant: 'destructive',
         });
       }

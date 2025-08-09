@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow for generating crypto trivia questions.
@@ -44,7 +45,10 @@ const triviaPrompt = ai.definePrompt({
   input: { schema: GenerateCryptoTriviaInputSchema },
   output: { schema: GenerateCryptoTriviaOutputSchema },
   prompt: `
-    You are an expert in cryptocurrency and blockchain technology.
+    You are an expert in cryptocurrency, blockchain, and web3 technology. Your task is to generate trivia questions.
+    It is very important that you ONLY generate questions about topics related to cryptocurrency, blockchain, or web3.
+    If the user provides a topic that is NOT related to these subjects, you MUST return an empty "questions" array.
+
     Generate a list of {{numQuestions}} trivia questions about {{topic}}.
     For each question, also include the topic '{{topic}}' in the response.
     The questions should be of {{difficulty}} difficulty.
