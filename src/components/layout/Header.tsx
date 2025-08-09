@@ -18,10 +18,13 @@ export function Header() {
   const pathname = usePathname();
   const {
     profile: {
-      data: { pfpUrl, displayName },
+      data,
       isAuthenticated,
     },
   } = useProfile();
+
+  const pfpUrl = data?.pfpUrl;
+  const displayName = data?.displayName;
 
   const navLinks = [
     { href: '/', label: 'Play', icon: Gamepad2 },
