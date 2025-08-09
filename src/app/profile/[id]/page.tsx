@@ -3,10 +3,12 @@
 
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-import { notFound, redirect, useParams } from 'next/navigation';
-import { useProfile } from '@farcaster/auth-kit';
+import { notFound, useParams } from 'next/navigation';
+import { useProfile, SignInButton } from '@farcaster/auth-kit';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -54,9 +56,6 @@ export default function ProfilePage() {
                 achievements: [],
             });
         }
-      } else if (!isAuthLoading) {
-        // If user tries to access /profile/me but is not authenticated, redirect them to home.
-        redirect('/');
       }
     } else {
       // For viewing other profiles, find them in mock data
@@ -69,7 +68,33 @@ export default function ProfilePage() {
     }
   }, [id, userProfile, isAuthenticated, isAuthLoading]);
 
-  if (isAuthLoading || !player) {
+  if (isAuthLoading) {
+    return (
+        <div className="container mx-auto flex justify-center items-center h-full">
+            <p>Loading profile...</p>
+        </div>
+    );
+  }
+
+  // If viewing 'me' and not authenticated, show sign-in prompt
+  if (id === 'me' && !isAuthenticated) {
+    return (
+        <Card className="w-full max-w-md mx-auto text-center">
+            <CardHeader>
+                <CardTitle className="font-headline text-3xl">View Your Profile</CardTitle>
+                <CardDescription>Sign in with Farcaster to view your game stats and achievements.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <SignInButton />
+            </CardContent>
+        </Card>
+    )
+  }
+
+  if (!player) {
+    // This can happen for a moment while the player state is being set, 
+    // or if a non-'me' profile is not found.
+    // The notFound() call inside useEffect will handle invalid non-'me' profiles.
     return (
         <div className="container mx-auto flex justify-center items-center h-full">
             <p>Loading profile...</p>
