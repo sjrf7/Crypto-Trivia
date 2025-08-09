@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { TriviaQuestion } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { Star, Clock, TrendingUp } from 'lucide-react';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
@@ -15,9 +15,24 @@ interface QuestionCardProps {
   totalQuestions: number;
   onUse5050: () => void;
   is5050Used: boolean;
+  onUseTimeBoost: () => void;
+  isTimeBoostUsed: boolean;
+  onUseDoublePoints: () => void;
+  isDoublePointsActive: boolean;
 }
 
-export function QuestionCard({ question, onAnswer, questionNumber, totalQuestions, onUse5050, is5050Used }: QuestionCardProps) {
+export function QuestionCard({ 
+    question, 
+    onAnswer, 
+    questionNumber, 
+    totalQuestions, 
+    onUse5050, 
+    is5050Used,
+    onUseTimeBoost,
+    isTimeBoostUsed,
+    onUseDoublePoints,
+    isDoublePointsActive
+}: QuestionCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
@@ -40,6 +55,10 @@ export function QuestionCard({ question, onAnswer, questionNumber, totalQuestion
     if (option === selectedOption) return 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
     return 'bg-secondary opacity-50';
   };
+
+  const handleUseDoublePoints = () => {
+      onUseDoublePoints();
+  }
 
   return (
     <motion.div
@@ -72,10 +91,18 @@ export function QuestionCard({ question, onAnswer, questionNumber, totalQuestion
             })}
           </div>
         </CardContent>
-        <CardFooter className="justify-center">
+        <CardFooter className="justify-center gap-4">
             <Button onClick={onUse5050} disabled={is5050Used || isAnswered} variant="outline">
                 <Star className="mr-2 h-4 w-4" />
                 50/50
+            </Button>
+            <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline">
+                <Clock className="mr-2 h-4 w-4" />
+                +15s
+            </Button>
+            <Button onClick={handleUseDoublePoints} disabled={isDoublePointsActive || isAnswered} variant="outline" className={cn(isDoublePointsActive && 'border-accent text-accent')}>
+                <TrendingUp className="mr-2 h-4 w-4" />
+                2x Puntos
             </Button>
         </CardFooter>
       </Card>

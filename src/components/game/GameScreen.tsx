@@ -22,20 +22,21 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
-  const [is5050Used, setIs5050Used] = useState(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
+  
+  // Power-up states
+  const [is5050Used, setIs5050Used] = useState(false);
+  const [isTimeBoostUsed, setIsTimeBoostUsed] = useState(false);
+  const [isDoublePointsActive, setIsDoublePointsActive] = useState(false);
 
   useEffect(() => {
     if (isChallenge) {
-        // In challenges, questions are already in a specific order.
-        // We just shuffle the options for each question.
-         const shuffledOpts = questions.map(q => ({
+        const shuffledOpts = questions.map(q => ({
             ...q,
             options: [...q.options].sort(() => Math.random() - 0.5)
         }));
         setShuffledQuestions(shuffledOpts);
     } else {
-        // Shuffle questions and options once at the beginning of the game
         const shuffled = questions.map(q => ({
             ...q,
             options: [...q.options].sort(() => Math.random() - 0.5)
@@ -61,34 +62,46 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
-      setScore((prevScore) => prevScore + 100);
+      const points = isDoublePointsActive ? 200 : 100;
+      setScore((prevScore) => prevScore + points);
     }
+    
+    setIsDoublePointsActive(false); // Reset double points after each answer
 
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
-      onGameEnd(score + (isCorrect ? 100 : 0), shuffledQuestions.length);
+      const finalScore = score + (isCorrect ? (isDoublePointsActive ? 200 : 100) : 0);
+      onGameEnd(finalScore, shuffledQuestions.length);
     }
   };
   
   const handleUse5050 = () => {
     if (is5050Used) return;
-
     const currentQuestion = shuffledQuestions[currentQuestionIndex];
     const correctAnswer = currentQuestion.answer;
     const incorrectOptions = currentQuestion.options.filter(opt => opt !== correctAnswer);
     const optionsToKeep = [correctAnswer, incorrectOptions[0]];
-    
     const newQuestions = [...shuffledQuestions];
     newQuestions[currentQuestionIndex] = {
         ...currentQuestion,
         options: currentQuestion.options.map(opt => optionsToKeep.includes(opt) ? opt : ''),
         hiddenOptions: currentQuestion.options.filter(opt => !optionsToKeep.includes(opt))
     };
-    
     setShuffledQuestions(newQuestions);
     setIs5050Used(true);
   };
+  
+  const handleUseTimeBoost = () => {
+      if(isTimeBoostUsed) return;
+      setTimeLeft(prev => prev + 15);
+      setIsTimeBoostUsed(true);
+  }
+  
+  const handleUseDoublePoints = () => {
+      if(isDoublePointsActive) return;
+      setIsDoublePointsActive(true);
+  }
 
   const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
   
@@ -134,6 +147,10 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           totalQuestions={shuffledQuestions.length}
           onUse5050={handleUse5050}
           is5050Used={is5050Used}
+          onUseTimeBoost={handleUseTimeBoost}
+          isTimeBoostUsed={isTimeBoostUsed}
+          onUseDoublePoints={handleUseDoublePoints}
+          isDoublePointsActive={isDoublePointsActive}
         />
       </AnimatePresence>
     </div>
