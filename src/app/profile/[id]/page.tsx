@@ -75,7 +75,7 @@ export default function ProfilePage() {
         notFound();
       }
     }
-  }, [id, userProfile, isAuthenticated, isAuthLoading]);
+  }, [id, userProfile, isAuthenticated, isAuthLoading, router]);
 
   if (isAuthLoading) {
     return (
@@ -96,7 +96,7 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
                 <Button onClick={() => signIn()} disabled={isSigningIn}>
-                    {isSigningIn ? <Loader className="animate-spin" /> : null}
+                    {isSigningIn ? <Loader className="animate-spin mr-2" /> : null}
                     Sign In with Farcaster
                 </Button>
             </CardContent>
