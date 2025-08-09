@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Award, BrainCircuit, Gamepad2, Trophy, Wand2 } from 'lucide-react';
+import { Award, BrainCircuit, Gamepad2, Trophy, Wand2, User, Swords } from 'lucide-react';
 import Link from 'next/link';
 
 const containerVariants = {
@@ -92,12 +92,12 @@ export default function WelcomePage() {
           description="Desbloquea logros por tus hitos y muéstralos en tu perfil."
         />
          <FeatureCard
-          icon={Award}
+          icon={User}
           title="Perfil de Farcaster"
           description="Inicia sesión con Farcaster para guardar tu progreso y personalizar tu perfil."
         />
          <FeatureCard
-          icon={Award}
+          icon={Swords}
           title="Desafíos"
           description="Reta a tus amigos a superar tu puntuación con las mismas preguntas."
         />
