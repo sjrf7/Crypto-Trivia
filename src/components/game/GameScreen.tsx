@@ -55,6 +55,14 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     return () => clearInterval(timer);
   }, [onGameEnd, score, currentQuestionIndex]);
 
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    } else {
+      onGameEnd(score, currentQuestionIndex);
+    }
+  };
+
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
       const points = 100;
@@ -69,6 +77,10 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     }
   };
   
+  const handleSkipQuestion = () => {
+    handleNextQuestion();
+  };
+
   const handleUse5050 = () => {
     if (is5050Used) return;
     const currentQuestion = shuffledQuestions[currentQuestionIndex];
@@ -157,6 +169,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           key={currentQuestionIndex}
           question={shuffledQuestions[currentQuestionIndex]}
           onAnswer={handleAnswer}
+          onSkipQuestion={handleSkipQuestion}
           questionNumber={currentQuestionIndex + 1}
           totalQuestions={shuffledQuestions.length}
           onUse5050={handleUse5050}

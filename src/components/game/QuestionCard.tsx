@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { TriviaQuestion } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Star, Clock } from 'lucide-react';
+import { Star, Clock, SkipForward } from 'lucide-react';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
   onAnswer: (isCorrect: boolean) => void;
+  onSkipQuestion: () => void;
   questionNumber: number;
   totalQuestions: number;
   onUse5050: () => void;
@@ -22,7 +23,8 @@ interface QuestionCardProps {
 
 export function QuestionCard({ 
     question, 
-    onAnswer, 
+    onAnswer,
+    onSkipQuestion,
     questionNumber, 
     totalQuestions, 
     onUse5050, 
@@ -45,6 +47,15 @@ export function QuestionCard({
       setSelectedOption(null);
     }, 1500);
   };
+
+  const handleSkipClick = () => {
+    if (isAnswered) return;
+    setIsAnswered(true); // Prevent further actions
+    setTimeout(() => {
+        onSkipQuestion();
+        setIsAnswered(false);
+    }, 300); // A small delay to show feedback if any
+  }
   
   const getButtonClass = (option: string) => {
     if (!isAnswered) return 'bg-secondary hover:bg-secondary/80';
@@ -97,6 +108,10 @@ export function QuestionCard({
             <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline">
                 <Clock className="mr-2 h-4 w-4" />
                 +15s
+            </Button>
+             <Button onClick={handleSkipClick} disabled={isAnswered} variant="outline">
+                <SkipForward className="mr-2 h-4 w-4" />
+                Saltar
             </Button>
         </CardFooter>
       </Card>
