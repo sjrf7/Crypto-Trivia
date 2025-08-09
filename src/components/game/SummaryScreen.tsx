@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from '../ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useProfile } from '@farcaster/auth-kit';
+import { Label } from '../ui/label';
 
 interface SummaryScreenProps {
   score: number;
@@ -31,11 +33,14 @@ interface SummaryScreenProps {
 export function SummaryScreen({ score, questionsAnswered, onRestart, questions }: SummaryScreenProps) {
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
+    const [wager, setWager] = useState('');
+    const { profile } = useProfile();
 
     const generateChallenge = () => {
+        const challenger = profile?.data?.displayName ?? 'A friend';
         const questionIndices = questions.map(q => q.originalIndex).join(',');
-        const data = `${questionIndices}|${score}`;
-        const encodedData = btoa(data); // Base64 encode the data
+        const data = `${questionIndices}|${score}|${wager}|${challenger}`;
+        const encodedData = btoa(data); 
         const url = `${window.location.origin}/challenge/${encodedData}`;
         setChallengeUrl(url);
     };
@@ -78,9 +83,12 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                     </Link>
                 </Button>
             </div>
-            <AlertDialog>
+            <AlertDialog onOpenChange={(open) => {
+                // Generate link when dialog opens
+                if (open) generateChallenge();
+            }}>
               <AlertDialogTrigger asChild>
-                <Button onClick={generateChallenge} variant="secondary" className="w-full">
+                <Button variant="secondary" className="w-full">
                     <Share2 className="mr-2 h-4 w-4" />
                     Challenge a Friend
                 </Button>
@@ -89,14 +97,33 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                 <AlertDialogHeader>
                   <AlertDialogTitle>Share Your Challenge</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Send this link to a friend. They will play with the same questions and try to beat your score!
+                    Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <div className="flex items-center space-x-2">
-                    <Input value={challengeUrl} readOnly />
-                    <Button onClick={copyToClipboard} size="icon">
-                        <ClipboardCheck className="h-4 w-4" />
-                    </Button>
+                <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="wager">Wager (ETH on Base Sepolia)</Label>
+                        <Input 
+                            id="wager"
+                            type="number"
+                            placeholder="e.g., 0.01"
+                            value={wager}
+                            onChange={(e) => {
+                                setWager(e.target.value);
+                                // Regenerate link on wager change
+                                setTimeout(generateChallenge, 100);
+                            }}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                         <Label>Challenge Link</Label>
+                        <div className="flex items-center space-x-2">
+                            <Input value={challengeUrl} readOnly />
+                            <Button onClick={copyToClipboard} size="icon">
+                                <ClipboardCheck className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
                 </div>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Close</AlertDialogCancel>

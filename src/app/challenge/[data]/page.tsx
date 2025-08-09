@@ -17,7 +17,7 @@ interface ChallengePageProps {
 export default function ChallengePage({ params }: ChallengePageProps) {
   try {
     const decodedData = atob(params.data);
-    const [questionIndicesStr, scoreToBeatStr] = decodedData.split('|');
+    const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = decodedData.split('|');
 
     if (!questionIndicesStr || !scoreToBeatStr) {
         // Data is malformed
@@ -26,10 +26,16 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     
     const questionIndices = questionIndicesStr.split(',').map(Number);
     const scoreToBeat = parseInt(scoreToBeatStr, 10);
+    const wager = wagerStr ? parseFloat(wagerStr) : 0;
 
     const challengeQuestions: TriviaQuestion[] = questionIndices.map(index => TRIVIA_QUESTIONS[index]);
     
-    return <GameClient challengeQuestions={challengeQuestions} scoreToBeat={scoreToBeat} />;
+    return <GameClient 
+                challengeQuestions={challengeQuestions} 
+                scoreToBeat={scoreToBeat} 
+                wager={wager}
+                challenger={challenger}
+            />;
 
   } catch (error) {
     console.error('Failed to decode challenge data:', error);
