@@ -3,18 +3,12 @@
 
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, redirect, useParams } from 'next/navigation';
 import { useProfile } from '@farcaster/auth-kit';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
 
-interface ProfilePageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function ProfilePage({ params }: ProfilePageProps) {
+export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const {
     profile: {
@@ -23,10 +17,12 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       isLoading: isAuthLoading,
     },
   } = useProfile();
-  const { id } = params;
+  
+  const params = useParams();
+  const id = typeof params.id === 'string' ? params.id : '';
 
   useEffect(() => {
-    if (isAuthLoading) return;
+    if (isAuthLoading || !id) return;
 
     if (id === 'me') {
       if (isAuthenticated && userProfile) {
@@ -56,7 +52,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                 achievements: [],
             });
         }
-      } else {
+      } else if (!isAuthLoading) {
         // If user tries to access /profile/me but is not authenticated, redirect them to home.
         redirect('/');
       }
