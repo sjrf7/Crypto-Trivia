@@ -7,7 +7,7 @@ export default function LeaderboardPage() {
   const leaderboardData = LEADERBOARD_DATA;
 
   return (
-    <div className="container mx-auto">
+    <div>
        <Card>
         <CardHeader>
           <div className="flex items-center gap-4">
