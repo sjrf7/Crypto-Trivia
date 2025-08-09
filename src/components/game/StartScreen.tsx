@@ -51,84 +51,86 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
   }
 
   return (
-    <Card className="w-full max-w-md shadow-2xl m-auto">
-      <CardHeader className="text-center">
-        <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
-            <Wand2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
-        </div>
-        <CardTitle className="font-headline text-3xl">AI Trivia Setup</CardTitle>
-        <CardDescription>
-          Choose a topic and number of questions to start the game.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="topic"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Crypto Topic</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Ethereum, NFTs, DeFi" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="numQuestions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Number of Questions</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <div className="flex justify-center items-center flex-grow">
+        <Card className="w-full max-w-md shadow-2xl">
+        <CardHeader className="text-center">
+            <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
+                <Wand2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
+            </div>
+            <CardTitle className="font-headline text-3xl">AI Trivia Setup</CardTitle>
+            <CardDescription>
+            Choose a topic and number of questions to start the game.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                control={form.control}
+                name="topic"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Crypto Topic</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select number of questions" />
-                      </Trigger>
+                        <Input placeholder="e.g., Ethereum, NFTs, DeFi" {...field} />
                     </FormControl>
-                    <SelectContent>
-                      {[...Array(10)].map((_, i) => (
-                        <SelectItem key={i + 1} value={`${i + 1}`}>
-                          {i + 1}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="difficulty"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Difficulty</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </Trigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="easy">Easy</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="hard">Hard</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Generating Questions...' : 'Start Game'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="numQuestions"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Number of Questions</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select number of questions" />
+                        </Trigger>
+                        </FormControl>
+                        <SelectContent>
+                        {[...Array(10)].map((_, i) => (
+                            <SelectItem key={i + 1} value={`${i + 1}`}>
+                            {i + 1}
+                            </SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="difficulty"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Difficulty</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select difficulty" />
+                        </Trigger>
+                        </FormControl>
+                        <SelectContent>
+                        <SelectItem value="easy">Easy</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="hard">Hard</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Generating Questions...' : 'Start Game'}
+                </Button>
+            </form>
+            </Form>
+        </CardContent>
+        </Card>
+    </div>
   );
 }
