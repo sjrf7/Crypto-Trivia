@@ -37,7 +37,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           ...q,
           options: [...q.options].sort(() => Math.random() - 0.5) // Shuffle options
       }))
-      //.sort(() => Math.random() - 0.5); // Shuffle questions order
+      .sort(() => Math.random() - 0.5); // Shuffle questions order
       
     setShuffledQuestions(shuffled);
   }, [questions]);
@@ -148,7 +148,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
             animate={{y: 0, opacity: 1}}
             transition={{delay: 0.2}}
         >
-           <CheckCircle className="h-6 w-6 text-accent drop-shadow-glow-accent" />
+           <CheckCircle size={24} className="text-accent drop-shadow-glow-accent" />
            <span className="text-xl font-bold">{currentQuestionIndex} / {shuffledQuestions.length}</span>
         </motion.div>
         <motion.div 
