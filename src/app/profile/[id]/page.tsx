@@ -4,7 +4,7 @@
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
 import { notFound, useParams } from 'next/navigation';
-import { useProfile, SignInButton } from '@farcaster/auth-kit';
+import { useProfile, useSignIn } from '@farcaster/auth-kit';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +19,7 @@ export default function ProfilePage() {
       isLoading: isAuthLoading,
     },
   } = useProfile();
+  const { signIn } = useSignIn();
   
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
@@ -43,8 +44,8 @@ export default function ProfilePage() {
              // If new player, create a fresh profile using Farcaster identity
              setPlayer({
                 id: userProfile.username,
-                name: userProfile.displayName,
-                avatar: userProfile.pfpUrl,
+                name: user.displayName,
+                avatar: user.pfpUrl,
                 stats: {
                     totalScore: 0,
                     gamesPlayed: 0,
@@ -85,7 +86,7 @@ export default function ProfilePage() {
                 <CardDescription>Sign in with Farcaster to view your game stats and achievements.</CardDescription>
             </CardHeader>
             <CardContent>
-                <SignInButton />
+                <Button onClick={() => signIn()}>Sign In with Farcaster</Button>
             </CardContent>
         </Card>
     )
