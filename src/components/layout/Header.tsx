@@ -5,14 +5,27 @@ import { Bitcoin, Gamepad2, Trophy, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { SignInButton, useProfile } from '@farcaster/auth-kit';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 export function Header() {
   const pathname = usePathname();
+  const {
+    profile: {
+      data: { pfpUrl, displayName },
+      isAuthenticated,
+    },
+  } = useProfile();
 
   const navLinks = [
     { href: '/', label: 'Play', icon: Gamepad2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-    { href: '/profile/dwr', label: 'Profile', icon: User },
   ];
 
   return (
@@ -34,7 +47,7 @@ export function Header() {
               asChild
               className={cn(
                 'transition-colors hover:text-foreground/80',
-                (pathname === link.href || (link.href.startsWith('/profile') && pathname.startsWith('/profile'))) ? 'text-foreground' : 'text-foreground/60'
+                pathname === link.href ? 'text-foreground' : 'text-foreground/60'
               )}
             >
               <Link
@@ -46,6 +59,32 @@ export function Header() {
               </Link>
             </Button>
           ))}
+          {isAuthenticated ? (
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={pfpUrl} alt={displayName} data-ai-hint="profile picture" />
+                    <AvatarFallback>{displayName?.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  {displayName}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile/me">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                   <SignInButton />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <SignInButton />
+          )}
         </nav>
       </div>
     </header>

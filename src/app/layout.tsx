@@ -3,10 +3,17 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/Header';
 import { Toaster } from '@/components/ui/toaster';
+import { AuthKitProvider } from '@farcaster/auth-kit';
 
 export const metadata: Metadata = {
   title: 'Crypto Trivia Showdown',
   description: 'AI-Powered Crypto Trivia Game for Farcaster',
+};
+
+const farcasterAuthConfig = {
+  rpcUrl: 'https://mainnet.optimism.io',
+  domain: 'example.com',
+  siweUri: 'https://example.com/login',
 };
 
 export default function RootLayout({
@@ -30,11 +37,13 @@ export default function RootLayout({
           'flex flex-col'
         )}
       >
-        <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
-          {children}
-        </main>
-        <Toaster />
+        <AuthKitProvider config={farcasterAuthConfig}>
+          <Header />
+          <main className="flex-grow container mx-auto px-4 py-8">
+            {children}
+          </main>
+          <Toaster />
+        </AuthKitProvider>
       </body>
     </html>
   );

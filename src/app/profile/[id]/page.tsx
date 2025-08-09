@@ -1,8 +1,11 @@
+'use client';
+
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
 import { notFound } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import { useProfile } from '@farcaster/auth-kit';
+import { Player } from '@/lib/types';
+import { useEffect, useState } from 'react';
 
 interface ProfilePageProps {
   params: {
@@ -10,17 +13,65 @@ interface ProfilePageProps {
   };
 }
 
-export async function generateStaticParams() {
-    return PLAYERS.map((player) => ({
-      id: player.id,
-    }));
-}
-
 export default function ProfilePage({ params }: ProfilePageProps) {
-  const player = PLAYERS.find((p) => p.id === params.id);
+  const [player, setPlayer] = useState<Player | null>(null);
+  const {
+    profile: {
+      data: userProfile,
+      isAuthenticated,
+      isLoading: isAuthLoading,
+    },
+  } = useProfile();
 
-  if (!player) {
-    notFound();
+  useEffect(() => {
+    if (isAuthLoading) return;
+
+    if (params.id === 'me') {
+      if (isAuthenticated && userProfile) {
+        // Find if this farcaster user is in our mock list to get stats
+        const existingPlayer = PLAYERS.find(p => p.id === userProfile.username);
+        if (existingPlayer) {
+            setPlayer({
+                ...existingPlayer,
+                id: userProfile.username,
+                name: userProfile.displayName,
+                avatar: userProfile.pfpUrl,
+            });
+        } else {
+             // Create a new player profile if not in mock data
+             setPlayer({
+                id: userProfile.username,
+                name: userProfile.displayName,
+                avatar: userProfile.pfpUrl,
+                stats: {
+                    totalScore: 0,
+                    gamesPlayed: 0,
+                    questionsAnswered: 0,
+                    correctAnswers: 0,
+                    accuracy: '0%',
+                    topRank: null,
+                },
+            });
+        }
+      } else {
+        // notFound();
+      }
+    } else {
+      const foundPlayer = PLAYERS.find((p) => p.id === params.id);
+      if (foundPlayer) {
+        setPlayer(foundPlayer);
+      } else {
+        notFound();
+      }
+    }
+  }, [params.id, userProfile, isAuthenticated, isAuthLoading]);
+
+  if (isAuthLoading || !player) {
+    return (
+        <div className="container mx-auto">
+            <p>Loading profile...</p>
+        </div>
+    );
   }
 
   return (
