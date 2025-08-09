@@ -44,8 +44,8 @@ export default function ProfilePage() {
              // If new player, create a fresh profile using Farcaster identity
              setPlayer({
                 id: userProfile.username,
-                name: user.displayName,
-                avatar: user.pfpUrl,
+                name: userProfile.displayName,
+                avatar: userProfile.pfpUrl,
                 stats: {
                     totalScore: 0,
                     gamesPlayed: 0,
