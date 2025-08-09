@@ -8,6 +8,7 @@ import { TriviaQuestion } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Star, Clock, SkipForward } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
@@ -100,19 +101,39 @@ export function QuestionCard({
             })}
           </div>
         </CardContent>
-        <CardFooter className="justify-between gap-4">
-            <Button onClick={onUse5050} disabled={is5050Used || isAnswered} variant="outline" className="flex-1 basis-0">
-                <Star className="mr-2 h-4 w-4" />
-                50/50
-            </Button>
-            <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline" className="flex-1 basis-0">
-                <Clock className="mr-2 h-4 w-4" />
-                +15s
-            </Button>
-             <Button onClick={handleSkipClick} disabled={isAnswered} variant="outline" className="flex-1 basis-0">
-                <SkipForward className="mr-2 h-4 w-4" />
-                Saltar
-            </Button>
+        <CardFooter className="justify-center gap-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={onUse5050} disabled={is5050Used || isAnswered} variant="outline" size="icon">
+                      <Star className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>50/50 (Removes two wrong answers)</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline" size="icon">
+                      <Clock className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>+15s (Adds 15 seconds to the timer)</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                   <Button onClick={handleSkipClick} disabled={isAnswered} variant="outline" size="icon">
+                      <SkipForward className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Saltar</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
         </CardFooter>
       </Card>
     </motion.div>
