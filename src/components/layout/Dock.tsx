@@ -36,15 +36,15 @@ const icons: { [key: string]: React.ReactNode } = {
         </svg>
     ),
     trophy: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <motion.path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" variants={iconVariants} />
-            <motion.path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" variants={iconVariants} />
-            <motion.path d="M4 22h16" variants={iconVariants} />
-            <motion.path d="M10 14.66V17c0 .55-.47.98-.97 1.21A3.5 3.5 0 0 1 8.5 19a2.5 2.5 0 0 1-2-4" variants={iconVariants} />
-            <motion.path d="M14 14.66V17c0 .55.47.98.97 1.21A3.5 3.5 0 0 0 15.5 19a2.5 2.5 0 0 0 2-4" variants={iconVariants} />
-            <motion.path d="M9 12H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-5" variants={iconVariants} />
-            <motion.path d="M12 15V9" variants={iconVariants} />
-        </svg>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <motion.path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" variants={iconVariants} />
+        <motion.path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" variants={iconVariants} />
+        <motion.path d="M4 22h16" variants={iconVariants} />
+        <motion.path d="M10 14.66V17c0 .55-.47.98-.97 1.21A3.5 3.5 0 0 1 8.5 19H8a2.5 2.5 0 0 1-2.5-2.5V14" variants={iconVariants} />
+        <motion.path d="M14 14.66V17c0 .55.47.98.97 1.21A3.5 3.5 0 0 0 15.5 19h.5a2.5 2.5 0 0 0 2.5-2.5V14" variants={iconVariants} />
+        <motion.path d="M9 12H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-5" variants={iconVariants} />
+        <motion.path d="M12 15V9.5" variants={iconVariants} />
+      </svg>
     ),
     award: (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
