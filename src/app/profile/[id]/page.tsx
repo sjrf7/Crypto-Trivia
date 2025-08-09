@@ -26,17 +26,19 @@ export default function ProfilePage() {
 
     if (id === 'me') {
       if (isAuthenticated && userProfile) {
-        // Find if this farcaster user is in our mock list to get stats
+        // Find if this farcaster user is in our mock list to get game stats
         const existingPlayer = PLAYERS.find(p => p.id === userProfile.username);
+        
         if (existingPlayer) {
+            // If player exists, combine their stats with their Farcaster profile identity
             setPlayer({
                 ...existingPlayer,
-                id: userProfile.username,
-                name: userProfile.displayName,
-                avatar: userProfile.pfpUrl,
+                id: userProfile.username, // Always use Farcaster username
+                name: userProfile.displayName, // Always use Farcaster display name
+                avatar: userProfile.pfpUrl, // Always use Farcaster avatar
             });
         } else {
-             // Create a new player profile if not in mock data
+             // If new player, create a fresh profile using Farcaster identity
              setPlayer({
                 id: userProfile.username,
                 name: userProfile.displayName,
@@ -57,6 +59,7 @@ export default function ProfilePage() {
         redirect('/');
       }
     } else {
+      // For viewing other profiles, find them in mock data
       const foundPlayer = PLAYERS.find((p) => p.id === id);
       if (foundPlayer) {
         setPlayer(foundPlayer);
