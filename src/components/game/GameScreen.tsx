@@ -29,20 +29,16 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   const [isTimeBoostUsed, setIsTimeBoostUsed] = useState(false);
 
   useEffect(() => {
-    if (isChallenge) {
-        const shuffledOpts = questions.map(q => ({
-            ...q,
-            options: [...q.options].sort(() => Math.random() - 0.5)
-        }));
-        setShuffledQuestions(shuffledOpts);
-    } else {
-        const shuffled = questions.map(q => ({
-            ...q,
-            options: [...q.options].sort(() => Math.random() - 0.5)
-        })).sort(() => Math.random() - 0.5);
-        setShuffledQuestions(shuffled);
-    }
-  }, [questions, isChallenge]);
+    // Shuffle questions and their options once when the component mounts
+    const shuffled = questions
+      .map(q => ({
+          ...q,
+          options: [...q.options].sort(() => Math.random() - 0.5) // Shuffle options
+      }))
+      .sort(() => Math.random() - 0.5); // Shuffle questions order
+      
+    setShuffledQuestions(shuffled);
+  }, [questions]);
 
   useEffect(() => {
     const timer = setInterval(() => {
