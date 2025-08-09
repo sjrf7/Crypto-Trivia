@@ -9,7 +9,7 @@ import { Timer, Trophy, CheckCircle, Swords } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 
-const GAME_TIME_SECONDS = 60;
+const GAME_TIME_SECONDS = 120;
 
 interface GameScreenProps {
   questions: TriviaQuestion[];

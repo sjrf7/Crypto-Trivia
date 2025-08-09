@@ -54,7 +54,7 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
   }, [challengeQuestions, scoreToBeat, wager, challenger])
 
   const handleStartClassic = () => {
-    const questionIndices = [...Array(TRIVIA_QUESTIONS.length).keys()].sort(() => Math.random() - 0.5).slice(0, 5);
+    const questionIndices = [...Array(TRIVIA_QUESTIONS.length).keys()].sort(() => Math.random() - 0.5);
     const selectedQuestions = questionIndices.map(i => ({...TRIVIA_QUESTIONS[i], originalIndex: i}));
     setQuestions(selectedQuestions);
     setGameStatus('playing');
