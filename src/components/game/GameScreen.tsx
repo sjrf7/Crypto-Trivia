@@ -27,7 +27,6 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   // Power-up states
   const [is5050Used, setIs5050Used] = useState(false);
   const [isTimeBoostUsed, setIsTimeBoostUsed] = useState(false);
-  const [isDoublePointsActive, setIsDoublePointsActive] = useState(false);
 
   useEffect(() => {
     if (isChallenge) {
@@ -62,16 +61,14 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
-      const points = isDoublePointsActive ? 200 : 100;
+      const points = 100;
       setScore((prevScore) => prevScore + points);
     }
-    
-    setIsDoublePointsActive(false); // Reset double points after each answer
 
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
-      const finalScore = score + (isCorrect ? (isDoublePointsActive ? 200 : 100) : 0);
+      const finalScore = score + (isCorrect ? 100 : 0);
       onGameEnd(finalScore, shuffledQuestions.length);
     }
   };
@@ -96,11 +93,6 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
       if(isTimeBoostUsed) return;
       setTimeLeft(prev => prev + 15);
       setIsTimeBoostUsed(true);
-  }
-  
-  const handleUseDoublePoints = () => {
-      if(isDoublePointsActive) return;
-      setIsDoublePointsActive(true);
   }
 
   const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
@@ -149,8 +141,6 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           is5050Used={is5050Used}
           onUseTimeBoost={handleUseTimeBoost}
           isTimeBoostUsed={isTimeBoostUsed}
-          onUseDoublePoints={handleUseDoublePoints}
-          isDoublePointsActive={isDoublePointsActive}
         />
       </AnimatePresence>
     </div>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { TriviaQuestion } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Star, Clock, TrendingUp } from 'lucide-react';
+import { Star, Clock } from 'lucide-react';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
@@ -17,8 +17,6 @@ interface QuestionCardProps {
   is5050Used: boolean;
   onUseTimeBoost: () => void;
   isTimeBoostUsed: boolean;
-  onUseDoublePoints: () => void;
-  isDoublePointsActive: boolean;
 }
 
 export function QuestionCard({ 
@@ -30,8 +28,6 @@ export function QuestionCard({
     is5050Used,
     onUseTimeBoost,
     isTimeBoostUsed,
-    onUseDoublePoints,
-    isDoublePointsActive
 }: QuestionCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -55,10 +51,6 @@ export function QuestionCard({
     if (option === selectedOption) return 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
     return 'bg-secondary opacity-50';
   };
-
-  const handleUseDoublePoints = () => {
-      onUseDoublePoints();
-  }
 
   return (
     <motion.div
@@ -99,10 +91,6 @@ export function QuestionCard({
             <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline">
                 <Clock className="mr-2 h-4 w-4" />
                 +15s
-            </Button>
-            <Button onClick={handleUseDoublePoints} disabled={isDoublePointsActive || isAnswered} variant="outline" className={cn(isDoublePointsActive && 'border-accent text-accent')}>
-                <TrendingUp className="mr-2 h-4 w-4" />
-                2x Puntos
             </Button>
         </CardFooter>
       </Card>
