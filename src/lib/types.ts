@@ -1,6 +1,9 @@
-import type { GenerateCryptoTriviaOutput } from "@/ai/flows/generate-crypto-trivia";
 
-export type TriviaQuestion = GenerateCryptoTriviaOutput['questions'][0];
+export interface TriviaQuestion {
+  question: string;
+  answer: string;
+  options: string[];
+}
 
 export interface Player {
   id: string;

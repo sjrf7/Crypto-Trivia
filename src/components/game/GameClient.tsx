@@ -1,48 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { TriviaQuestion } from '@/lib/types';
-import { getTriviaQuestions } from '@/app/actions';
+import { TRIVIA_QUESTIONS } from '@/lib/mock-data';
 
 import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Gamepad2 } from 'lucide-react';
 
-type GameState = 'loading' | 'playing' | 'summary';
+type GameState = 'start' | 'playing' | 'summary';
 
 export function GameClient() {
-  const [gameState, setGameState] = useState<GameState>('loading');
+  const [gameState, setGameState] = useState<GameState>('start');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const { toast } = useToast();
 
   useEffect(() => {
-    const startGame = async () => {
-      try {
-        const { questions: fetchedQuestions } = await getTriviaQuestions({ topic: 'Bitcoin', numQuestions: 5, difficulty: 'medium' });
-        if (fetchedQuestions.length === 0) {
-          throw new Error('No questions were generated.');
-        }
-        setQuestions(fetchedQuestions);
-        setGameState('playing');
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: error instanceof Error ? error.message : 'An unknown error occurred.',
-        });
-        // If it fails, maybe allow restarting? For now, we'll just show the error.
-        // To prevent a loop, we don't set state back to loading here.
-      }
-    };
-
-    if (gameState === 'loading') {
-      startGame();
-    }
-  }, [gameState, toast]);
-
+    // Pre-load questions when the component mounts
+    setQuestions(TRIVIA_QUESTIONS);
+  }, []);
 
   const handleGameEnd = (score: number, numAnswered: number) => {
     setFinalScore(score);
@@ -51,20 +30,37 @@ export function GameClient() {
   };
 
   const handleRestart = () => {
-    setGameState('loading');
-    setQuestions([]);
+    setGameState('start');
     setFinalScore(0);
     setQuestionsAnswered(0);
   };
+  
+  const handleStart = () => {
+    setGameState('playing');
+  }
 
   const renderGameState = () => {
     switch (gameState) {
-      case 'loading':
+      case 'start':
         return (
-          <div className="flex flex-col items-center justify-center h-full gap-4">
-            <p className="text-2xl font-headline">Generating Trivia Questions...</p>
-            <Skeleton className="w-full max-w-md h-96" />
-          </div>
+            <div className="flex justify-center items-center flex-grow">
+                <Card className="w-full max-w-md shadow-2xl">
+                    <CardHeader className="text-center">
+                        <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
+                            <Gamepad2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
+                        </div>
+                        <CardTitle className="font-headline text-3xl">Crypto Trivia Showdown</CardTitle>
+                        <CardDescription>
+                            Test your crypto knowledge!
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button onClick={handleStart} className="w-full">
+                            Start Game
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
         );
       case 'playing':
         return <GameScreen questions={questions} onGameEnd={handleGameEnd} />;

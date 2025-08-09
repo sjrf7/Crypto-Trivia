@@ -1,4 +1,4 @@
-import type { Player, LeaderboardEntry } from './types';
+import type { Player, LeaderboardEntry, TriviaQuestion } from './types';
 
 export const PLAYERS: Player[] = [
   {
@@ -75,3 +75,31 @@ export const LEADERBOARD_DATA: LeaderboardEntry[] = PLAYERS.map(
   })
 ).sort((a, b) => b.player.stats.totalScore - a.player.stats.totalScore)
  .map((entry, index) => ({ ...entry, rank: index + 1 }));
+
+export const TRIVIA_QUESTIONS: TriviaQuestion[] = [
+    {
+        question: "Who is the anonymous creator of Bitcoin?",
+        answer: "Satoshi Nakamoto",
+        options: ["Vitalik Buterin", "Satoshi Nakamoto", "Charlie Lee", "Elon Musk"]
+    },
+    {
+        question: "What is the name of the process that adds new transactions to the blockchain?",
+        answer: "Mining",
+        options: ["Forging", "Staking", "Mining", "Minting"]
+    },
+    {
+        question: "Which cryptocurrency is known for its smart contract capabilities?",
+        answer: "Ethereum",
+        options: ["Bitcoin", "Litecoin", "Dogecoin", "Ethereum"]
+    },
+    {
+        question: "What does 'DeFi' stand for?",
+        answer: "Decentralized Finance",
+        options: ["Digital Finance", "Decentralized Finance", "Distributed Finance", "Decentralized Funding"]
+    },
+    {
+        question: "What is the maximum supply of Bitcoin?",
+        answer: "21 million",
+        options: ["100 million", "21 million", "42 million", "Unlimited"]
+    }
+];
