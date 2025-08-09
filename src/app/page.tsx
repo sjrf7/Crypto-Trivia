@@ -8,6 +8,7 @@ import { TriviaQuestion } from '@/lib/types';
 import { generateCryptoTrivia } from '@/ai/flows/generate-crypto-trivia';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 export default function Home() {
   const [aiQuestions, setAiQuestions] = useState<TriviaQuestion[] | null>(null);
@@ -81,11 +82,3 @@ export default function Home() {
     </div>
   );
 }
-
-// Add a simple Card component for the loading state, as it might not be available
-// in this scope otherwise.
-const Card = ({ className, children }: { className?: string, children: React.ReactNode }) => (
-    <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}>
-        {children}
-    </div>
-);
