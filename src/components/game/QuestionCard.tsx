@@ -100,16 +100,16 @@ export function QuestionCard({
             })}
           </div>
         </CardContent>
-        <CardFooter className="justify-center gap-4">
-            <Button onClick={onUse5050} disabled={is5050Used || isAnswered} variant="outline">
+        <CardFooter className="justify-between gap-4">
+            <Button onClick={onUse5050} disabled={is5050Used || isAnswered} variant="outline" className="flex-1 basis-0">
                 <Star className="mr-2 h-4 w-4" />
                 50/50
             </Button>
-            <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline">
+            <Button onClick={onUseTimeBoost} disabled={isTimeBoostUsed || isAnswered} variant="outline" className="flex-1 basis-0">
                 <Clock className="mr-2 h-4 w-4" />
                 +15s
             </Button>
-             <Button onClick={handleSkipClick} disabled={isAnswered} variant="outline">
+             <Button onClick={handleSkipClick} disabled={isAnswered} variant="outline" className="flex-1 basis-0">
                 <SkipForward className="mr-2 h-4 w-4" />
                 Saltar
             </Button>
