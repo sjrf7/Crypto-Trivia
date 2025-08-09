@@ -18,6 +18,7 @@ import { z } from 'zod';
 
 // Define the schema for a single trivia question.
 const TriviaQuestionSchema = z.object({
+  topic: z.string().describe('The cryptocurrency topic for this question.'),
   question: z.string().describe('The trivia question text.'),
   options: z.array(z.string()).describe('A list of 4 possible answers.'),
   answer: z.string().describe('The correct answer from the options list.'),
@@ -45,6 +46,7 @@ const triviaPrompt = ai.definePrompt({
   prompt: `
     You are an expert in cryptocurrency and blockchain technology.
     Generate a list of {{numQuestions}} trivia questions about {{topic}}.
+    For each question, also include the topic '{{topic}}' in the response.
     The questions should be of {{difficulty}} difficulty.
     For each question, provide 4 options and clearly indicate the correct answer.
     Ensure the questions are accurate, interesting, and cover a range of aspects related to the topic.
