@@ -76,7 +76,7 @@ export default function Home() {
              </div>
            </Card>
         ) : (
-          <GameSetup onStart={handleStartAIGame} loading={loading} />
+          aiQuestions === null && <GameSetup onStart={handleStartAIGame} loading={loading} />
         )}
       </div>
     </div>
