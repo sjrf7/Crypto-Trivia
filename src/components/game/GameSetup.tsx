@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -87,7 +88,7 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select number of questions" />
-                      </Trigger>
+                      </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {[...Array(10)].map((_, i) => (
@@ -111,7 +112,7 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select difficulty" />
-                      </Trigger>
+                      </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="easy">Easy</SelectItem>
@@ -125,7 +126,7 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
             />
           </CardContent>
           <div className="p-6 pt-0">
-             <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Generating Questions...' : 'Start Game'}
             </Button>
           </div>

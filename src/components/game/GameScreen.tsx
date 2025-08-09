@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
-import { Timer, Trophy, CheckCircle, Swords, SkipForward, Target, Hourglass } from 'lucide-react';
+import { Timer, Trophy, CheckCircle, Swords, SkipForward, Target, Hourglass, Wand2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { Button } from '../ui/button';
@@ -18,9 +18,10 @@ interface GameScreenProps {
   onGameEnd: (score: number, questionsAnswered: number) => void;
   scoreToBeat?: number;
   isChallenge?: boolean;
+  isAiGame?: boolean;
 }
 
-export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = false }: GameScreenProps) {
+export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = false, isAiGame = false }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
@@ -36,13 +37,13 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
       .map(q => ({
           ...q,
           options: [...q.options].sort(() => Math.random() - 0.5) // Shuffle options
-      }))
-      .sort(() => Math.random() - 0.5); // Shuffle questions order
-      
-    setShuffledQuestions(shuffled);
-  }, [questions]);
+      }));
+      // Don't re-shuffle the order of AI questions, but do for classic
+    setShuffledQuestions(isAiGame ? shuffled : shuffled.sort(() => Math.random() - 0.5));
+  }, [questions, isAiGame]);
 
   useEffect(() => {
+    if (questions.length === 0) return;
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -55,7 +56,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onGameEnd, score, currentQuestionIndex]);
+  }, [onGameEnd, score, currentQuestionIndex, questions.length]);
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
@@ -71,12 +72,15 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
       setScore((prevScore) => prevScore + points);
     }
 
-    if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    } else {
-      const finalScore = score + (isCorrect ? 100 : 0);
-      onGameEnd(finalScore, shuffledQuestions.length);
-    }
+    // Delay before moving to the next question to show feedback
+    setTimeout(() => {
+      if (currentQuestionIndex < shuffledQuestions.length - 1) {
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+      } else {
+        const finalScore = score + (isCorrect ? 100 : 0);
+        onGameEnd(finalScore, shuffledQuestions.length);
+      }
+    }, 1500);
   };
   
   const handleSkipQuestion = () => {
@@ -88,6 +92,9 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     const currentQuestion = shuffledQuestions[currentQuestionIndex];
     const correctAnswer = currentQuestion.answer;
     const incorrectOptions = currentQuestion.options.filter(opt => opt !== correctAnswer);
+    // Ensure we have incorrect options to remove
+    if (incorrectOptions.length < 2) return;
+    
     const optionsToKeep = [correctAnswer, incorrectOptions[0]];
     const newQuestions = [...shuffledQuestions];
     newQuestions[currentQuestionIndex] = {
@@ -108,8 +115,15 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
   
   if (shuffledQuestions.length === 0) {
-    return <div>Loading questions...</div>
+    return (
+        <div className="flex flex-col items-center justify-center h-full">
+            <Loader className="animate-spin h-8 w-8 text-primary" />
+            <p className="mt-4 text-muted-foreground">Cargando partida...</p>
+        </div>
+    )
   }
+
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
 
   return (
     <motion.div 
@@ -120,16 +134,30 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-        {isChallenge && (
-            <motion.div 
-                className="text-center bg-card p-3 rounded-lg border-2 border-primary"
-                initial={{y: -20, opacity: 0}}
-                animate={{y: 0, opacity: 1}}
-            >
-                <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>Challenge Mode</h3>
-                <p className="text-muted-foreground">Beat a score of <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
-            </motion.div>
-        )}
+        <AnimatePresence>
+            {isChallenge && (
+                <motion.div 
+                    className="text-center bg-card p-3 rounded-lg border-2 border-primary"
+                    initial={{y: -20, opacity: 0}}
+                    animate={{y: 0, opacity: 1}}
+                    exit={{y: -20, opacity: 0}}
+                >
+                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>Modo Desafío</h3>
+                    <p className="text-muted-foreground">¡Supera una puntuación de <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
+                </motion.div>
+            )}
+            {isAiGame && (
+                 <motion.div 
+                    className="text-center bg-card p-3 rounded-lg border-2 border-accent"
+                    initial={{y: -20, opacity: 0}}
+                    animate={{y: 0, opacity: 1}}
+                    exit={{y: -20, opacity: 0}}
+                >
+                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Wand2 className="h-5 w-5 text-accent"/>Trivia con IA</h3>
+                    <p className="text-muted-foreground">Tema: <span className="font-bold text-accent">{currentQuestion.topic}</span></p>
+                </motion.div>
+            )}
+        </AnimatePresence>
       <div className="grid grid-cols-3 gap-4 text-center">
         <motion.div 
             className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg"
@@ -149,7 +177,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
             transition={{delay: 0.2}}
         >
            <Target className="h-6 w-6 text-accent drop-shadow-glow-accent" />
-           <span className="text-xl font-bold">{currentQuestionIndex} / {shuffledQuestions.length}</span>
+           <span className="text-xl font-bold">{currentQuestionIndex + 1} / {shuffledQuestions.length}</span>
         </motion.div>
         <motion.div 
             className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg"
@@ -169,9 +197,8 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
       <AnimatePresence mode="wait">
         <QuestionCard
           key={currentQuestionIndex}
-          question={shuffledQuestions[currentQuestionIndex]}
+          question={currentQuestion}
           onAnswer={handleAnswer}
-          onSkipQuestion={handleSkipQuestion}
           questionNumber={currentQuestionIndex + 1}
           totalQuestions={shuffledQuestions.length}
           onUse5050={handleUse5050}
@@ -183,3 +210,20 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     </motion.div>
   );
 }
+
+const Loader = ({ className }: { className?: string }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  );

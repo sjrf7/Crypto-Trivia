@@ -13,7 +13,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 interface QuestionCardProps {
   question: TriviaQuestion;
   onAnswer: (isCorrect: boolean) => void;
-  onSkipQuestion: () => void;
   questionNumber: number;
   totalQuestions: number;
   onUse5050: () => void;
@@ -25,7 +24,6 @@ interface QuestionCardProps {
 export function QuestionCard({ 
     question, 
     onAnswer,
-    onSkipQuestion,
     questionNumber, 
     totalQuestions, 
     onUse5050, 
@@ -37,30 +35,16 @@ export function QuestionCard({
   const [isAnswered, setIsAnswered] = useState(false);
 
   const handleOptionClick = (option: string) => {
-    if (isAnswered) return;
+    if (isAnswered || option === '') return;
     setIsAnswered(true);
     setSelectedOption(option);
     const isCorrect = option === question.answer;
-
-    setTimeout(() => {
-      onAnswer(isCorrect);
-      setIsAnswered(false);
-      setSelectedOption(null);
-    }, 1500);
+    onAnswer(isCorrect);
   };
-
-  const handleSkipClick = () => {
-    if (isAnswered) return;
-    setIsAnswered(true); // Prevent further actions
-    setTimeout(() => {
-        onSkipQuestion();
-        setIsAnswered(false);
-    }, 300); // A small delay to show feedback if any
-  }
   
   const getButtonClass = (option: string) => {
     if (!isAnswered) return 'bg-secondary hover:bg-secondary/80';
-    if (option === question.answer) return 'bg-accent text-accent-foreground hover:bg-accent/90 animate-pulse';
+    if (option === question.answer) return 'bg-green-500 hover:bg-green-500/90 animate-pulse text-white';
     if (option === selectedOption) return 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
     return 'bg-secondary opacity-50';
   };
@@ -75,7 +59,7 @@ export function QuestionCard({
     >
       <Card className="w-full max-w-2xl mx-auto border-primary shadow-lg shadow-primary/10">
         <CardHeader>
-          <p className="text-sm text-muted-foreground">Question {questionNumber} of {totalQuestions}</p>
+          <p className="text-sm text-muted-foreground">Pregunta {questionNumber} de {totalQuestions}</p>
           <CardTitle className="font-headline text-2xl leading-tight">{question.question}</CardTitle>
         </CardHeader>
         <CardContent>
@@ -84,7 +68,7 @@ export function QuestionCard({
                 if(option === '') return <div key={index} />; // Render empty div for hidden options
                 return (
                     <motion.div
-                        key={index}
+                        key={option + index}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
                     >
@@ -110,7 +94,7 @@ export function QuestionCard({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>50/50 (Removes two wrong answers)</p>
+                  <p>50/50 (Elimina dos respuestas incorrectas)</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -120,17 +104,7 @@ export function QuestionCard({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>+15s (Adds 15 seconds to the timer)</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                   <Button onClick={handleSkipClick} disabled={isAnswered} variant="outline" size="icon">
-                      <SkipForward className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Saltar</p>
+                  <p>+15s (Añade 15 segundos al temporizador)</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

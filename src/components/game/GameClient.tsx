@@ -20,6 +20,7 @@ interface GameClientProps {
     scoreToBeat?: number;
     wager?: number;
     challenger?: string;
+    onRestart?: () => void; // Make onRestart a prop
 }
 
 const screenVariants = {
@@ -34,16 +35,18 @@ const screenTransition = {
   damping: 30,
 };
 
-export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger }: GameClientProps) {
+export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger, onRestart }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [isChallenge, setIsChallenge] = useState(false);
+  const [isAiGame, setIsAiGame] = useState(false);
 
   useEffect(() => {
-    if (challengeQuestions && typeof scoreToBeat !== 'undefined') {
-        setIsChallenge(true);
+    if (challengeQuestions) {
+        setIsChallenge(!!scoreToBeat);
+        setIsAiGame(!scoreToBeat); // It's an AI game if there's no score to beat
         setQuestions(challengeQuestions);
         if (wager && wager > 0 && challenger) {
             setGameStatus('wager');
@@ -54,10 +57,13 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
   }, [challengeQuestions, scoreToBeat, wager, challenger])
 
   const handleStartClassic = () => {
+    // Give original indices to classic questions for challenge links
     const questionIndices = [...Array(TRIVIA_QUESTIONS.length).keys()].sort(() => Math.random() - 0.5);
     const selectedQuestions = questionIndices.map(i => ({...TRIVIA_QUESTIONS[i], originalIndex: i}));
     setQuestions(selectedQuestions);
     setGameStatus('playing');
+    setIsAiGame(false);
+    setIsChallenge(false);
   };
 
   const handleGameEnd = (score: number, numAnswered: number) => {
@@ -67,10 +73,16 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
   };
 
   const handleRestart = () => {
-    setGameStatus('setup');
-    setFinalScore(0);
-    setQuestionsAnswered(0);
-    setIsChallenge(false);
+    if (onRestart) {
+        onRestart(); // Call parent restart logic if it exists
+    } else {
+        setGameStatus('setup');
+        setFinalScore(0);
+        setQuestionsAnswered(0);
+        setIsChallenge(false);
+        setIsAiGame(false);
+        setQuestions([]);
+    }
   };
   
   const handleWagerAccept = () => {
@@ -111,14 +123,14 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Test your crypto knowledge with our classic trivia questions.
+          Test your crypto knowledge with our classic trivia questions, or generate a new quiz with AI!
         </motion.p>
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <Button onClick={handleStartClassic} size="lg">Start Game</Button>
+          <Button onClick={handleStartClassic} size="lg">Start Classic Game</Button>
         </motion.div>
     </motion.div>
   );
@@ -133,17 +145,29 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger 
                     onDecline={handleRestart}
                 />;
       case 'playing':
-        return <GameScreen questions={questions} onGameEnd={handleGameEnd} scoreToBeat={scoreToBeat} isChallenge={isChallenge} />;
+        return <GameScreen 
+                  questions={questions} 
+                  onGameEnd={handleGameEnd} 
+                  scoreToBeat={scoreToBeat} 
+                  isChallenge={isChallenge}
+                  isAiGame={isAiGame}
+               />;
       case 'summary':
-        return <SummaryScreen score={finalScore} questionsAnswered={questionsAnswered} onRestart={handleRestart} questions={questions} />;
+        return <SummaryScreen 
+                  score={finalScore} 
+                  questionsAnswered={questionsAnswered} 
+                  onRestart={handleRestart} 
+                  questions={questions} 
+               />;
       case 'setup':
       default:
+        // Show welcome screen only if it's not an AI game that's been set up
         return renderWelcomeScreen();
     }
   };
 
   return (
-    <Card className="h-full">
+    <Card className="h-full min-h-[500px]">
       <CardContent className="h-full flex flex-col justify-center">
         <AnimatePresence mode="wait">
           {renderGameContent()}
