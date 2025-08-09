@@ -1,50 +1,94 @@
+import { getFarcasterUser, session } from '@farcaster/auth-kit/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { JWTPayload, SignJWT } from 'jose';
 
-import { getSSLHubRpcClient, Message } from "@farcaster/hub-nodejs";
-import { NextRequest, NextResponse } from "next/server";
+const JWT_SECRET = process.env.JWT_SECRET
+  ? new TextEncoder().encode(process.env.JWT_SECRET)
+  : null;
+const APP_DOMAIN = process.env.NEXT_PUBLIC_URL || 'farcaster-trivia.vercel.app';
 
-const HUB_URL = "nemes.farcaster.xyz:2283";
-const hubClient = getSSLHubRpcClient(HUB_URL);
+if (!JWT_SECRET) {
+  console.warn(
+    'JWT_SECRET is not set. Authentication will not be secure. Please set a secret in your .env file.'
+  );
+}
 
-// Function to handle GET requests for authentication
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
+  const { message, signature, nonce } = await req.json();
+
   try {
-    const { searchParams } = new URL(req.url);
-    const token = searchParams.get('token');
+    const {
+      success,
+      error,
+      user: farcasterUser,
+    } = await getFarcasterUser({
+      message,
+      signature,
+      domain: APP_DOMAIN,
+      nonce,
+    });
 
-    // Here you would typically validate the token and handle session management
-    // For this example, we'll just return a success message
-    if (token) {
-      return NextResponse.json({ success: true, message: "Token received" });
+    if (success && farcasterUser && JWT_SECRET) {
+      const token = await new SignJWT(farcasterUser as unknown as JWTPayload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('24h')
+        .sign(JWT_SECRET);
+      
+      const response = NextResponse.json({
+        ...farcasterUser,
+        token,
+      });
+
+      // Set cookie
+      response.cookies.set('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        maxAge: 60 * 60 * 24, // 24 hours
+        path: '/',
+      });
+
+      return response;
+
+    } else if (error) {
+      return NextResponse.json(
+        { code: error.code, message: error.message },
+        { status: error.statusCode }
+      );
+    } else {
+      // Fallback for missing JWT_SECRET
+      return NextResponse.json({ ...farcasterUser });
     }
-    
-    return NextResponse.json({ success: false, message: "No token provided" }, { status: 400 });
-  } catch (error) {
-    return NextResponse.json({ success: false, message: 'Something went wrong' }, { status: 500 });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json(
+      { code: 'server_error', message: 'Something went wrong' },
+      { status: 500 }
+    );
   }
 }
 
-// Function to handle POST requests for authentication
-export async function POST(req: NextRequest) {
-  try {
-    const {
-      trustedData: { messageBytes },
-    } = await req.json();
+export async function GET(req: NextRequest) {
+  const token = req.cookies.get('token')?.value;
 
-    const frameMessage = Message.decode(Buffer.from(messageBytes, "hex"));
-    const validateResult = await hubClient.validateMessage(frameMessage);
-
-    if (validateResult.isOk() && validateResult.value.valid) {
-      const validMessage = validateResult.value.message;
-      const fid = validMessage?.data?.fid;
-      const action = validMessage?.data?.frameActionBody?.buttonIndex;
-      const text = validMessage?.data?.frameActionBody?.inputText;
-
-      // Here you can handle the validated message, e.g., create a session, etc.
-      return NextResponse.json({ success: true, message: `User ${fid} clicked button ${action} with text ${text}` });
-    } else {
-      return NextResponse.json({ success: false, message: 'Invalid message' }, { status: 400 });
+  if (token && JWT_SECRET) {
+    // Return the user's session if they have a valid token
+    try {
+      const user = await session({
+        token,
+        secret: JWT_SECRET as Uint8Array,
+      });
+      return NextResponse.json(user);
+    } catch (e) {
+       console.error('Session verification failed', e);
+       // Clear invalid cookie
+       const response = NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+       response.cookies.delete('token');
+       return response;
     }
-  } catch (error) {
-    return NextResponse.json({ success: false, message: `Something went wrong: ${error}` }, { status: 500 });
+  } else {
+    // Generate a nonce for the user to sign
+    const { nonce, ...siwe } = await getFarcasterUser();
+    return NextResponse.json({ ...siwe, nonce });
   }
 }
