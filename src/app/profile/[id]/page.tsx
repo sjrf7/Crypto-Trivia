@@ -3,15 +3,18 @@
 
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { useProfile, useSignIn } from '@farcaster/auth-kit';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Loader } from 'lucide-react';
 
 export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
+  const router = useRouter();
+
   const {
     profile: {
       data: userProfile,
@@ -19,7 +22,12 @@ export default function ProfilePage() {
       isLoading: isAuthLoading,
     },
   } = useProfile();
-  const { signIn } = useSignIn();
+
+  const { signIn, isSigningIn } = useSignIn({
+    onSuccess: () => {
+        router.push('/profile/me');
+    }
+  });
   
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
@@ -72,7 +80,8 @@ export default function ProfilePage() {
   if (isAuthLoading) {
     return (
         <div className="container mx-auto flex justify-center items-center h-full">
-            <p>Loading profile...</p>
+            <Loader className="animate-spin" />
+            <p className="ml-2">Loading profile...</p>
         </div>
     );
   }
@@ -86,7 +95,10 @@ export default function ProfilePage() {
                 <CardDescription>Sign in with Farcaster to view your game stats and achievements.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Button onClick={() => signIn()}>Sign In with Farcaster</Button>
+                <Button onClick={() => signIn()} disabled={isSigningIn}>
+                    {isSigningIn ? <Loader className="animate-spin" /> : null}
+                    Sign In with Farcaster
+                </Button>
             </CardContent>
         </Card>
     )
@@ -95,10 +107,10 @@ export default function ProfilePage() {
   if (!player) {
     // This can happen for a moment while the player state is being set, 
     // or if a non-'me' profile is not found.
-    // The notFound() call inside useEffect will handle invalid non-'me' profiles.
     return (
         <div className="container mx-auto flex justify-center items-center h-full">
-            <p>Loading profile...</p>
+             <Loader className="animate-spin" />
+            <p className="ml-2">Loading profile...</p>
         </div>
     );
   }
