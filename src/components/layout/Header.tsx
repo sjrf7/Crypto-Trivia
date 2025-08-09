@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Bitcoin, Gamepad2, Trophy } from 'lucide-react';
+import { Bitcoin, Gamepad2, Trophy, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'Play', icon: Gamepad2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+    { href: '/profile/dwr', label: 'Profile', icon: User },
   ];
 
   return (
@@ -33,7 +34,7 @@ export function Header() {
               asChild
               className={cn(
                 'transition-colors hover:text-foreground/80',
-                pathname === link.href ? 'text-foreground' : 'text-foreground/60'
+                (pathname === link.href || (link.href.startsWith('/profile') && pathname.startsWith('/profile'))) ? 'text-foreground' : 'text-foreground/60'
               )}
             >
               <Link
