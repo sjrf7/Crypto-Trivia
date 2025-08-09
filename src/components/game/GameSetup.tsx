@@ -51,6 +51,8 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
     onStart(values.topic, parseInt(values.numQuestions, 10), values.difficulty);
   };
 
+  const questionOptions = [5, 10, 20, 40, 80];
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
@@ -91,9 +93,9 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {[...Array(10)].map((_, i) => (
-                        <SelectItem key={i + 1} value={`${i + 1}`}>
-                          {i + 1}
+                      {questionOptions.map((num) => (
+                        <SelectItem key={num} value={`${num}`}>
+                          {num}
                         </SelectItem>
                       ))}
                     </SelectContent>

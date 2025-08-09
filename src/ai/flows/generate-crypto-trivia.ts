@@ -28,7 +28,7 @@ const TriviaQuestionSchema = z.object({
 // Define the input schema for the trivia generation flow.
 const GenerateCryptoTriviaInputSchema = z.object({
   topic: z.string().describe('The cryptocurrency topic for the trivia questions (e.g., Bitcoin, Ethereum, DeFi).'),
-  numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
+  numQuestions: z.number().int().min(1).max(80).describe('The number of questions to generate.'),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe('The difficulty level of the questions.'),
 });
 export type GenerateCryptoTriviaInput = z.infer<typeof GenerateCryptoTriviaInputSchema>;
