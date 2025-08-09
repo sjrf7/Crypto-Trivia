@@ -23,11 +23,12 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       isLoading: isAuthLoading,
     },
   } = useProfile();
+  const { id } = params;
 
   useEffect(() => {
     if (isAuthLoading) return;
 
-    if (params.id === 'me') {
+    if (id === 'me') {
       if (isAuthenticated && userProfile) {
         // Find if this farcaster user is in our mock list to get stats
         const existingPlayer = PLAYERS.find(p => p.id === userProfile.username);
@@ -60,14 +61,14 @@ export default function ProfilePage({ params }: ProfilePageProps) {
         redirect('/');
       }
     } else {
-      const foundPlayer = PLAYERS.find((p) => p.id === params.id);
+      const foundPlayer = PLAYERS.find((p) => p.id === id);
       if (foundPlayer) {
         setPlayer(foundPlayer);
       } else {
         notFound();
       }
     }
-  }, [params.id, userProfile, isAuthenticated, isAuthLoading]);
+  }, [id, userProfile, isAuthenticated, isAuthLoading]);
 
   if (isAuthLoading || !player) {
     return (
