@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
-import { Timer, Trophy, CheckCircle, Swords, SkipForward } from 'lucide-react';
+import { Timer, Trophy, CheckCircle, Swords, SkipForward, Target, Hourglass } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { Button } from '../ui/button';
@@ -148,7 +148,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
             animate={{y: 0, opacity: 1}}
             transition={{delay: 0.2}}
         >
-           <CheckCircle size={24} className="text-accent drop-shadow-glow-accent" />
+           <Target className="h-6 w-6 text-accent drop-shadow-glow-accent" />
            <span className="text-xl font-bold">{currentQuestionIndex} / {shuffledQuestions.length}</span>
         </motion.div>
         <motion.div 
@@ -157,7 +157,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
             animate={{y: 0, opacity: 1}}
             transition={{delay: 0.3}}
         >
-          <Timer className="h-6 w-6 text-destructive" />
+          <Hourglass className="h-6 w-6 text-destructive" />
           <span className="text-xl font-bold">{timeLeft}s</span>
         </motion.div>
       </div>
