@@ -5,55 +5,15 @@ import Link from 'next/link';
 import { Gamepad2, Trophy, User, Award } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { SignInButton, useProfile } from '@farcaster/auth-kit';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '../ui/dropdown-menu';
-
-const FarcasterIcon = () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-8 w-8 mx-auto"
-    >
-      <path
-        d="M13.25 4.5H10.75L9 6.25V10.75L10.75 12.5H13.25L15 10.75V6.25L13.25 4.5Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 13.5H15V17.75L12 19.5L9 17.75V13.5Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 
 export function Dock() {
   const pathname = usePathname();
-  const {
-    profile: {
-      isAuthenticated,
-    },
-    signOut,
-  } = useProfile();
 
   const navLinks = [
     { href: '/', label: 'Play', icon: Gamepad2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
     { href: '/achievements', label: 'Achievements', icon: Award },
-    ...(isAuthenticated ? [{ href: '/profile/me', label: 'Profile', icon: User }] : []),
+    { href: '/profile/me', label: 'Profile', icon: User },
   ];
 
   return (
@@ -72,13 +32,6 @@ export function Dock() {
                 <link.icon className="h-8 w-8" />
               </Link>
           ))}
-          {!isAuthenticated && (
-            <SignInButton>
-                <button title="Sign In" className="flex flex-col items-center justify-center h-full w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
-                    <FarcasterIcon />
-                </button>
-            </SignInButton>
-          )}
       </nav>
     </div>
   );
