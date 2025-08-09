@@ -5,9 +5,11 @@ import { useState, useEffect } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
-import { Timer, Trophy, CheckCircle, Swords } from 'lucide-react';
+import { Timer, Trophy, CheckCircle, Swords, SkipForward } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
+import { Button } from '../ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const GAME_TIME_SECONDS = 120;
 
@@ -35,7 +37,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           ...q,
           options: [...q.options].sort(() => Math.random() - 0.5) // Shuffle options
       }))
-      .sort(() => Math.random() - 0.5); // Shuffle questions order
+      //.sort(() => Math.random() - 0.5); // Shuffle questions order
       
     setShuffledQuestions(shuffled);
   }, [questions]);
@@ -59,7 +61,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
-      onGameEnd(score, currentQuestionIndex);
+      onGameEnd(score, currentQuestionIndex + 1);
     }
   };
 
