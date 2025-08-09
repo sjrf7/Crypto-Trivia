@@ -55,7 +55,7 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
-             <Wand2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
+              <Wand2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
           </div>
           <CardTitle className="font-headline text-3xl">AI Trivia Setup</CardTitle>
           <CardDescription>
@@ -88,7 +88,7 @@ export function StartScreen({ onStart, loading }: StartScreenProps) {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select number of questions" />
-                        </SelectTrigger>
+                        </Trigger>
                       </FormControl>
                       <SelectContent>
                         {[...Array(10)].map((_, i) => (
