@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Gamepad2, Trophy, User, Award } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 export function Dock() {
   const pathname = usePathname();
@@ -24,12 +25,19 @@ export function Dock() {
                 key={link.href}
                 href={link.href}
                 title={link.label}
-                className={cn(
-                    "flex flex-col items-center justify-center h-full w-full rounded-lg",
-                    pathname === link.href ? 'text-primary' : 'text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground'
-                )}
+                className="flex items-center justify-center h-full w-full"
               >
-                <link.icon className="h-8 w-8" />
+                <motion.div
+                  className={cn(
+                      "flex flex-col items-center justify-center h-full w-full rounded-lg transition-colors p-2",
+                      pathname === link.href ? 'text-primary' : 'text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground'
+                  )}
+                  whileHover={{ scale: 1.1, y: -5 }}
+                  whileTap={{ scale: 0.9, y: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <link.icon className="h-8 w-8" />
+                </motion.div>
               </Link>
           ))}
       </nav>
