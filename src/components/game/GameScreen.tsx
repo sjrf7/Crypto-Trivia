@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
-import { Timer, Trophy, CheckCircle } from 'lucide-react';
+import { Timer, Trophy, CheckCircle, Swords } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 
@@ -13,9 +14,11 @@ const GAME_TIME_SECONDS = 60;
 interface GameScreenProps {
   questions: TriviaQuestion[];
   onGameEnd: (score: number, questionsAnswered: number) => void;
+  scoreToBeat?: number;
+  isChallenge?: boolean;
 }
 
-export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
+export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = false }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
@@ -23,13 +26,23 @@ export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
   const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
 
   useEffect(() => {
-    // Shuffle questions and options once at the beginning of the game
-    const shuffled = questions.map(q => ({
-        ...q,
-        options: [...q.options].sort(() => Math.random() - 0.5)
-    })).sort(() => Math.random() - 0.5);
-    setShuffledQuestions(shuffled);
-  }, [questions]);
+    if (isChallenge) {
+        // In challenges, questions are already in a specific order.
+        // We just shuffle the options for each question.
+         const shuffledOpts = questions.map(q => ({
+            ...q,
+            options: [...q.options].sort(() => Math.random() - 0.5)
+        }));
+        setShuffledQuestions(shuffledOpts);
+    } else {
+        // Shuffle questions and options once at the beginning of the game
+        const shuffled = questions.map(q => ({
+            ...q,
+            options: [...q.options].sort(() => Math.random() - 0.5)
+        })).sort(() => Math.random() - 0.5);
+        setShuffledQuestions(shuffled);
+    }
+  }, [questions, isChallenge]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -85,6 +98,12 @@ export function GameScreen({ questions, onGameEnd }: GameScreenProps) {
 
   return (
     <div className="flex flex-col gap-8 w-full">
+        {isChallenge && (
+            <div className="text-center bg-card p-3 rounded-lg border-2 border-primary">
+                <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>Challenge Mode</h3>
+                <p className="text-muted-foreground">Beat a score of <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
+            </div>
+        )}
       <div className="grid grid-cols-3 gap-4 text-center">
         <div className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg">
           <Trophy className="h-6 w-6 text-primary drop-shadow-glow-primary" />

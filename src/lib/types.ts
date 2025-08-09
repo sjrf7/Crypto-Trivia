@@ -1,8 +1,10 @@
 
+
 export interface TriviaQuestion {
   question: string;
   answer: string;
   options: string[];
+  originalIndex?: number;
   // Allow for other properties like the ones we'll add for powerups
   [key: string]: any;
 }

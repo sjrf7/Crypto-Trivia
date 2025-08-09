@@ -1,3 +1,4 @@
+
 import type { Player, LeaderboardEntry, TriviaQuestion, Achievement } from './types';
 import { Award, BookOpen, BrainCircuit, FirstAid, Medal, Rocket, Sparkles, Star, TrendingUp } from 'lucide-react';
 
@@ -147,5 +148,25 @@ export const TRIVIA_QUESTIONS: TriviaQuestion[] = [
         question: "What is the maximum supply of Bitcoin?",
         answer: "21 million",
         options: ["100 million", "21 million", "42 million", "Unlimited"]
+    },
+    {
+        question: "What does 'NFT' stand for?",
+        answer: "Non-Fungible Token",
+        options: ["New File Type", "Non-Fungible Token", "Network Fee Token", "No-Fee Transaction"]
+    },
+    {
+        question: "Which of these is a popular hardware wallet?",
+        answer: "Ledger",
+        options: ["MetaMask", "Trust Wallet", "Coinbase Wallet", "Ledger"]
+    },
+    {
+        question: "What is a 'Slippage' in the context of DEX trading?",
+        answer: "The difference between the expected price and the executed price",
+        options: [
+            "A type of arbitrage bot", 
+            "A network connection error",
+            "The difference between the expected price and the executed price", 
+            "A fee paid to liquidity providers"
+        ]
     }
 ];
