@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Bitcoin, Gamepad2, Trophy, User } from 'lucide-react';
+import { Gamepad2, Trophy, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-export function Header() {
+export function Dock() {
   const pathname = usePathname();
   const {
     profile: {
@@ -32,51 +32,41 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex items-center">
-          <Link href="/" className="mr-2 md:mr-6 flex items-center space-x-2">
-            <Bitcoin className="h-6 w-6 text-primary drop-shadow-glow-primary" />
-            <span className="font-bold font-headline text-lg hidden sm:inline-block">
-              Crypto Trivia
-            </span>
-             <span className="font-bold font-headline text-lg hidden lg:inline-block">
-              Showdown
-            </span>
-          </Link>
-        </div>
-        <nav className="flex items-center gap-1 sm:gap-2 ml-auto">
+    <div className="fixed bottom-0 left-0 right-0 h-16 border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
+      <nav className="container flex items-center justify-around h-full">
           {navLinks.map((link) => (
             <Button
               key={link.href}
               variant="ghost"
               asChild
               className={cn(
-                'transition-colors hover:text-foreground/80',
-                pathname === link.href ? 'text-foreground' : 'text-foreground/60'
+                'flex-col h-full px-2',
+                pathname === link.href ? 'text-primary' : 'text-foreground/60'
               )}
             >
               <Link
                 href={link.href}
-                className="flex items-center gap-2 px-2 sm:px-3"
+                className="flex flex-col items-center justify-center h-full gap-1"
               >
-                <link.icon className="h-5 w-5" />
-                <span className="hidden sm:inline">{link.label}</span>
+                <link.icon className="h-6 w-6" />
+                <span className="text-xs">{link.label}</span>
               </Link>
             </Button>
           ))}
           {isAuthenticated ? (
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='ghost' className="flex items-center gap-2 px-2 sm:px-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={pfpUrl} alt={displayName} data-ai-hint="profile picture" />
-                    <AvatarFallback>{displayName?.substring(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden sm:inline">{displayName}</span>
+                <Button variant='ghost' className="flex-col h-full px-2 text-foreground/60">
+                   <div className="flex flex-col items-center justify-center h-full gap-1">
+                        <Avatar className="h-6 w-6">
+                            <AvatarImage src={pfpUrl} alt={displayName} data-ai-hint="profile picture" />
+                            <AvatarFallback>{displayName?.substring(0, 2)}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-xs">Profile</span>
+                    </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="mb-2">
                 <DropdownMenuItem asChild>
                   <Link href="/profile/me">
                     <User className="mr-2 h-4 w-4" />
@@ -89,12 +79,11 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="px-2 sm:px-3">
+             <div className="px-2 sm:px-3">
               <SignInButton />
             </div>
           )}
-        </nav>
-      </div>
-    </header>
+      </nav>
+    </div>
   );
 }

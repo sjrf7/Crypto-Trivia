@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/layout/Header';
 import { Toaster } from '@/components/ui/toaster';
 import { Providers } from './providers';
+import { Dock } from '@/components/layout/Dock';
 
 export const metadata: Metadata = {
   title: 'Crypto Trivia Showdown',
@@ -32,10 +32,10 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <main className="flex-grow container mx-auto px-4 py-8 pb-24">
             {children}
           </main>
+          <Dock />
           <Toaster />
         </Providers>
       </body>

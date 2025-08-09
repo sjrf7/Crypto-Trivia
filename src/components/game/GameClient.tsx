@@ -8,7 +8,8 @@ import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Gamepad2 } from 'lucide-react';
+import { Bitcoin, Gamepad2 } from 'lucide-react';
+import Link from 'next/link';
 
 type GameState = 'start' | 'playing' | 'summary';
 
@@ -45,17 +46,21 @@ export function GameClient() {
         return (
             <div className="flex justify-center items-center flex-grow">
                 <Card className="w-full max-w-md shadow-2xl">
-                    <CardHeader className="text-center">
-                        <div className="mx-auto bg-primary/10 p-3 rounded-full mb-4">
-                            <Gamepad2 className="h-8 w-8 text-primary drop-shadow-glow-primary" />
+                    <CardHeader className="text-center items-center">
+                        <div className="flex items-center space-x-2 mb-4">
+                            <Bitcoin className="h-8 w-8 text-primary drop-shadow-glow-primary" />
+                            <span className="font-bold font-headline text-2xl">
+                            Crypto Trivia Showdown
+                            </span>
                         </div>
-                        <CardTitle className="font-headline text-3xl">Crypto Trivia Showdown</CardTitle>
+                        <CardTitle className="font-headline text-3xl">Ready to Play?</CardTitle>
                         <CardDescription>
-                            Test your crypto knowledge!
+                            Test your crypto knowledge and climb the leaderboard!
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Button onClick={handleStart} className="w-full">
+                        <Button onClick={handleStart} className="w-full" size="lg">
+                            <Gamepad2 className="mr-2"/>
                             Start Game
                         </Button>
                     </CardContent>
