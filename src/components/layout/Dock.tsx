@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -43,7 +44,6 @@ export function Dock() {
   const pathname = usePathname();
   const {
     profile: {
-      data: userProfile,
       isAuthenticated,
     },
     signOut,
@@ -53,6 +53,7 @@ export function Dock() {
     { href: '/', label: 'Play', icon: Gamepad2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
     { href: '/achievements', label: 'Achievements', icon: Award },
+    ...(isAuthenticated ? [{ href: '/profile/me', label: 'Profile', icon: User }] : []),
   ];
 
   return (
@@ -71,30 +72,7 @@ export function Dock() {
                 <link.icon className="h-8 w-8" />
               </Link>
           ))}
-          {isAuthenticated ? (
-             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button title="Profile" className="flex flex-col items-center justify-center h-full w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
-                    <Avatar className="h-8 w-8">
-                        <AvatarImage src={userProfile?.pfpUrl} alt={userProfile?.displayName ?? ''} data-ai-hint="profile picture" />
-                        <AvatarFallback>{userProfile?.displayName?.substring(0, 2)}</AvatarFallback>
-                    </Avatar>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="mb-2 w-48" side="top">
-                <DropdownMenuItem asChild>
-                  <Link href="/profile/me">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>My Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
-                   <span>Sign Out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
+          {!isAuthenticated && (
             <SignInButton>
                 <button title="Sign In" className="flex flex-col items-center justify-center h-full w-full rounded-lg text-foreground/60 hover:bg-accent/50 hover:text-accent-foreground">
                     <FarcasterIcon />

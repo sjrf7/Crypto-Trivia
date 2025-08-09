@@ -46,7 +46,7 @@ export const PLAYERS: Player[] = [
   {
     id: 'vitalik',
     name: 'VitalikButerin',
-    avatar: 'https://placehold.co/100x100.png',
+    avatar: 'https://i.imgur.com/vH9J9a9.jpeg',
     stats: {
       totalScore: 9850,
       gamesPlayed: 15,
@@ -60,7 +60,7 @@ export const PLAYERS: Player[] = [
   {
     id: 'satoshi',
     name: 'SatoshiNakamoto',
-    avatar: 'https://placehold.co/100x100.png',
+    avatar: 'https://i.imgur.com/s65W4sH.jpeg',
     stats: {
       totalScore: 9500,
       gamesPlayed: 12,
@@ -74,7 +74,7 @@ export const PLAYERS: Player[] = [
   {
     id: 'cz',
     name: 'CZ_Binance',
-    avatar: 'https://placehold.co/100x100.png',
+    avatar: 'https://i.imgur.com/J32tcfT.jpeg',
     stats: {
       totalScore: 8700,
       gamesPlayed: 20,
@@ -88,7 +88,7 @@ export const PLAYERS: Player[] = [
   {
     id: 'dwr',
     name: 'dwr.eth',
-    avatar: 'https://placehold.co/100x100.png',
+    avatar: 'https://i.imgur.com/L4p6Tdl.jpeg',
     stats: {
       totalScore: 8200,
       gamesPlayed: 18,
@@ -102,7 +102,7 @@ export const PLAYERS: Player[] = [
   {
     id: 'cobie',
     name: 'Cobie',
-    avatar: 'https://placehold.co/100x100.png',
+    avatar: 'https://i.imgur.com/1b4s33J.jpeg',
     stats: {
       totalScore: 7800,
       gamesPlayed: 25,

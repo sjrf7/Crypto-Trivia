@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Player } from '@/lib/types';
@@ -18,7 +19,7 @@ const StatItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label
 )
 
 export function ProfileCard({ player }: ProfileCardProps) {
-  const unlockedAchievements = ACHIEVEMENTS.filter(ach => player.achievements.includes(ach.id));
+  const unlockedAchievements = player.achievements ? ACHIEVEMENTS.filter(ach => player.achievements.includes(ach.id)) : [];
   
   return (
     <Card className="w-full max-w-4xl mx-auto">

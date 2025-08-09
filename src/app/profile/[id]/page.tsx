@@ -1,8 +1,9 @@
+
 'use client';
 
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { useProfile } from '@farcaster/auth-kit';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
@@ -51,10 +52,12 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                     accuracy: '0%',
                     topRank: null,
                 },
+                achievements: [],
             });
         }
       } else {
-        // notFound();
+        // If user tries to access /profile/me but is not authenticated, redirect them to home.
+        redirect('/');
       }
     } else {
       const foundPlayer = PLAYERS.find((p) => p.id === params.id);
@@ -68,7 +71,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   if (isAuthLoading || !player) {
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto flex justify-center items-center h-full">
             <p>Loading profile...</p>
         </div>
     );
