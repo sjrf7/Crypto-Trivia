@@ -35,14 +35,17 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Link href="/" className="mr-2 md:mr-6 flex items-center space-x-2">
             <Bitcoin className="h-6 w-6 text-primary drop-shadow-glow-primary" />
-            <span className="font-bold font-headline text-lg">
-              Crypto Trivia Showdown
+            <span className="font-bold font-headline text-lg hidden sm:inline-block">
+              Crypto Trivia
+            </span>
+             <span className="font-bold font-headline text-lg hidden lg:inline-block">
+              Showdown
             </span>
           </Link>
         </div>
-        <nav className="flex items-center gap-4 text-sm lg:gap-6 ml-auto">
+        <nav className="flex items-center gap-1 sm:gap-2 ml-auto">
           {navLinks.map((link) => (
             <Button
               key={link.href}
@@ -55,22 +58,22 @@ export function Header() {
             >
               <Link
                 href={link.href}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 px-2 sm:px-3"
               >
                 <link.icon className="h-5 w-5" />
-                {link.label}
+                <span className="hidden sm:inline">{link.label}</span>
               </Link>
             </Button>
           ))}
           {isAuthenticated ? (
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='ghost' className="flex items-center gap-2">
+                <Button variant='ghost' className="flex items-center gap-2 px-2 sm:px-3">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={pfpUrl} alt={displayName} data-ai-hint="profile picture" />
                     <AvatarFallback>{displayName?.substring(0, 2)}</AvatarFallback>
                   </Avatar>
-                  {displayName}
+                  <span className="hidden sm:inline">{displayName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -86,7 +89,9 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <SignInButton />
+            <div className="px-2 sm:px-3">
+              <SignInButton />
+            </div>
           )}
         </nav>
       </div>
