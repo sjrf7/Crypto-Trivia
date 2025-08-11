@@ -6,6 +6,7 @@ import { Award, Target, Gamepad2, Percent, Star } from 'lucide-react';
 import { ACHIEVEMENTS } from '@/lib/mock-data';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProfileCardProps {
   player: Player;
@@ -40,6 +41,29 @@ const StatItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label
 
 export function ProfileCard({ player }: ProfileCardProps) {
   const unlockedAchievements = player.achievements ? ACHIEVEMENTS.filter(ach => player.achievements.includes(ach.id)) : [];
+
+  if (!player) {
+    return (
+        <Card className="w-full max-w-4xl mx-auto">
+            <CardHeader className="text-center">
+                <Skeleton className="w-32 h-32 rounded-full mx-auto mb-4" />
+                <Skeleton className="h-10 w-48 mx-auto" />
+                <Skeleton className="h-5 w-32 mx-auto" />
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex flex-col items-center justify-center bg-secondary p-4 rounded-lg text-center">
+                            <Skeleton className="h-8 w-8 mb-2 rounded-full" />
+                            <Skeleton className="h-4 w-20 mb-1" />
+                            <Skeleton className="h-6 w-10" />
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    )
+  }
   
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants}>
@@ -98,3 +122,4 @@ export function ProfileCard({ player }: ProfileCardProps) {
     </motion.div>
   );
 }
+

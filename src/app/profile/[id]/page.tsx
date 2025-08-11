@@ -13,6 +13,7 @@ import { Loader } from 'lucide-react';
 
 export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const {
@@ -33,7 +34,13 @@ export default function ProfilePage() {
   const id = typeof params.id === 'string' ? params.id : '';
 
   useEffect(() => {
-    if (isAuthLoading || !id) return;
+    // Start loading whenever the dependencies change
+    setIsLoading(true);
+
+    if (isAuthLoading || !id) {
+        // Still waiting for Farcaster auth to resolve, do nothing yet
+        return;
+    }
 
     if (id === 'me') {
       if (isAuthenticated && userProfile) {
@@ -65,6 +72,9 @@ export default function ProfilePage() {
                 achievements: [],
             });
         }
+      } else {
+        // Not authenticated, but trying to view 'me', player remains null
+        setPlayer(null);
       }
     } else {
       // For viewing other profiles, find them in mock data
@@ -73,21 +83,16 @@ export default function ProfilePage() {
         setPlayer(foundPlayer);
       } else {
         notFound();
+        return; // Early return on not found
       }
     }
+    // Finished processing, set loading to false
+    setIsLoading(false);
+
   }, [id, userProfile, isAuthenticated, isAuthLoading, router]);
 
-  if (isAuthLoading) {
-    return (
-        <div className="container mx-auto flex justify-center items-center h-full">
-            <Loader className="animate-spin" />
-            <p className="ml-2">Loading profile...</p>
-        </div>
-    );
-  }
-
-  // If viewing 'me' and not authenticated, show sign-in prompt
-  if (id === 'me' && !isAuthenticated) {
+  // If viewing 'me' and not authenticated (and auth has loaded), show sign-in prompt
+  if (!isAuthLoading && id === 'me' && !isAuthenticated) {
     return (
         <Card className="w-full max-w-md mx-auto text-center">
             <CardHeader>
@@ -104,20 +109,9 @@ export default function ProfilePage() {
     )
   }
 
-  if (!player) {
-    // This can happen for a moment while the player state is being set, 
-    // or if a non-'me' profile is not found.
-    return (
-        <div className="container mx-auto flex justify-center items-center h-full">
-             <Loader className="animate-spin" />
-            <p className="ml-2">Loading profile...</p>
-        </div>
-    );
-  }
-
   return (
     <div className="container mx-auto">
-      <ProfileCard player={player} />
+      {isLoading ? <ProfileCard player={null} /> : <ProfileCard player={player} />}
     </div>
   );
 }
