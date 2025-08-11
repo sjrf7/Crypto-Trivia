@@ -13,7 +13,8 @@ import { Card } from '@/components/ui/card';
 export default function PlayPage() {
   const [aiQuestions, setAiQuestions] = useState<TriviaQuestion[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [gameKey, setGameKey] = useState(0); // Add a key to force re-mount
+  const [gameKey, setGameKey] = useState(0);
+  const [isGameActive, setIsGameActive] = useState(false);
   const { toast } = useToast();
 
   const handleStartAIGame = async (
@@ -22,6 +23,7 @@ export default function PlayPage() {
     difficulty: string
   ) => {
     setLoading(true);
+    setIsGameActive(true); // Game starts loading
     setAiQuestions(null);
     try {
       const result = await generateCryptoTrivia({
@@ -30,14 +32,15 @@ export default function PlayPage() {
         difficulty,
       });
       if (result.questions && result.questions.length > 0) {
-        setAiQuestions(result.questions);
-        setGameKey(prev => prev + 1); // Increment key to re-mount GameClient
+        setAiQuestions(result.questions.map(q => ({...q, topic: topic})));
+        setGameKey(prev => prev + 1);
       } else {
         toast({
           title: 'Tema Inválido',
           description: 'Por favor, introduce un tema relacionado con crypto, blockchain o web3.',
           variant: 'destructive',
         });
+        setIsGameActive(false); // Game did not start
       }
     } catch (error) {
       console.error('Failed to generate AI trivia:', error);
@@ -46,6 +49,7 @@ export default function PlayPage() {
         description: 'Hubo un problema al generar las preguntas. Por favor, intenta de nuevo.',
         variant: 'destructive',
       });
+      setIsGameActive(false); // Game did not start
     } finally {
       setLoading(false);
     }
@@ -53,16 +57,18 @@ export default function PlayPage() {
 
   const handleGameEnd = () => {
     setAiQuestions(null);
-    setGameKey(prev => prev + 1); // Reset for a new game
+    setIsGameActive(false);
+    setGameKey(prev => prev + 1);
   }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
       <div className="lg:col-span-3">
         <GameClient 
-          key={gameKey} // Use key to force re-render
+          key={gameKey}
           challengeQuestions={aiQuestions || undefined} 
           onRestart={handleGameEnd}
+          onGameStatusChange={setIsGameActive}
         />
       </div>
       <div className="lg:col-span-2">
@@ -74,7 +80,7 @@ export default function PlayPage() {
              </div>
            </Card>
         ) : (
-          aiQuestions === null && <GameSetup onStart={handleStartAIGame} loading={loading} />
+          aiQuestions === null && !isGameActive && <GameSetup onStart={handleStartAIGame} loading={loading} />
         )}
       </div>
     </div>

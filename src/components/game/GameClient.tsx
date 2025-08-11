@@ -20,7 +20,8 @@ interface GameClientProps {
     scoreToBeat?: number;
     wager?: number;
     challenger?: string;
-    onRestart?: () => void; // Make onRestart a prop
+    onRestart?: () => void;
+    onGameStatusChange?: (isActive: boolean) => void;
 }
 
 const screenVariants = {
@@ -35,7 +36,7 @@ const screenTransition = {
   damping: 30,
 };
 
-export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger, onRestart }: GameClientProps) {
+export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger, onRestart, onGameStatusChange }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
@@ -45,8 +46,9 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
 
   useEffect(() => {
     if (challengeQuestions) {
+        onGameStatusChange?.(true);
         setIsChallenge(!!scoreToBeat);
-        setIsAiGame(!scoreToBeat); // It's an AI game if there's no score to beat
+        setIsAiGame(!scoreToBeat);
         setQuestions(challengeQuestions);
         if (wager && wager > 0 && challenger) {
             setGameStatus('wager');
@@ -54,10 +56,10 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
             setGameStatus('playing');
         }
     }
-  }, [challengeQuestions, scoreToBeat, wager, challenger])
+  }, [challengeQuestions, scoreToBeat, wager, challenger, onGameStatusChange])
 
   const handleStartClassic = () => {
-    // Give original indices to classic questions for challenge links
+    onGameStatusChange?.(true);
     const questionIndices = [...Array(TRIVIA_QUESTIONS.length).keys()].sort(() => Math.random() - 0.5);
     const selectedQuestions = questionIndices.map(i => ({...TRIVIA_QUESTIONS[i], originalIndex: i}));
     setQuestions(selectedQuestions);
@@ -73,8 +75,9 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
   };
 
   const handleRestart = () => {
+    onGameStatusChange?.(false);
     if (onRestart) {
-        onRestart(); // Call parent restart logic if it exists
+        onRestart();
     } else {
         setGameStatus('setup');
         setFinalScore(0);
@@ -86,7 +89,6 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
   };
   
   const handleWagerAccept = () => {
-    // In a real app, this would trigger a wallet connection and contract call.
     console.log('Wager accepted. Starting game.');
     setGameStatus('playing');
   }
@@ -161,7 +163,6 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
                />;
       case 'setup':
       default:
-        // Show welcome screen only if it's not an AI game that's been set up
         return renderWelcomeScreen();
     }
   };
