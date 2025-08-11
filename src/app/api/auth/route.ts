@@ -8,9 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 const APP_DOMAIN = process.env.NEXT_PUBLIC_URL || 'farcaster-trivia.vercel.app';
 
 if (!JWT_SECRET) {
-  console.warn(
-    'JWT_SECRET is not set. Authentication will not be secure. Please set a secret in your .env file.'
-  );
+  throw new Error('JWT_SECRET is not set. Authentication will not be secure. Please set a secret in your .env file.');
 }
 
 export async function POST(req: NextRequest) {
