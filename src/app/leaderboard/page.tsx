@@ -1,3 +1,4 @@
+
 import { LEADERBOARD_DATA } from '@/lib/mock-data';
 import { LeaderboardTable } from '@/components/leaderboard/LeaderboardTable';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -14,7 +15,7 @@ export default function LeaderboardPage() {
             <Trophy className="h-8 w-8 text-primary drop-shadow-glow-primary" />
             <div>
               <CardTitle className="font-headline text-3xl">Leaderboard</CardTitle>
-              <CardDescription>See who's at the top of the crypto trivia world.</CardDescription>
+              <CardDescription>See who's at the top of the crypto trivia world. View scores and accuracy.</CardDescription>
             </div>
           </div>
         </CardHeader>

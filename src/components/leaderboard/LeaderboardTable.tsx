@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-type SortKey = 'rank' | 'totalScore' | 'gamesPlayed';
+type SortKey = 'rank' | 'totalScore' | 'accuracy';
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[];
@@ -46,10 +46,10 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
           valA = a.player.stats.totalScore;
           valB = b.player.stats.totalScore;
           break;
-        case 'gamesPlayed':
-          valA = a.player.stats.gamesPlayed;
-          valB = b.player.stats.gamesPlayed;
-          break;
+        case 'accuracy':
+            valA = parseFloat(a.player.stats.accuracy);
+            valB = parseFloat(b.player.stats.accuracy);
+            break;
         default:
           return 0;
       }
@@ -88,8 +88,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
             <SortableHeader tkey="rank" label="Rank" />
             <TableHead>Player</TableHead>
             <SortableHeader tkey="totalScore" label="Score" />
-            <SortableHeader tkey="gamesPlayed" label="Games Played" />
-            <TableHead>Accuracy</TableHead>
+            <SortableHeader tkey="accuracy" label="Accuracy" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -113,7 +112,6 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 </Link>
               </TableCell>
               <TableCell className="font-bold text-primary">{entry.player.stats.totalScore.toLocaleString()}</TableCell>
-              <TableCell>{entry.player.stats.gamesPlayed}</TableCell>
               <TableCell className="text-accent">{entry.player.stats.accuracy}</TableCell>
             </motion.tr>
           ))}
