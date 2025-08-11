@@ -8,10 +8,9 @@ import { Award, CheckCircle, Loader, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 
-// This is a placeholder for actual user data.
-// In a real app, you would fetch this from a user profile or onchain data.
-const unlockedAchievementIds = ['first-game', 'novice-quizzer', 'crypto-enthusiast'];
+const MotionDiv = dynamic(() => import('framer-motion').then(mod => mod.motion.div), { ssr: false });
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,6 +30,10 @@ const itemVariants = {
 export default function AchievementsPage() {
   const [minting, setMinting] = useState<string | null>(null);
   const [minted, setMinted] = useState<string[]>([]);
+
+  // This is a placeholder for actual user data.
+  // In a real app, you would fetch this from a user profile or onchain data.
+  const unlockedAchievementIds = ['first-game', 'novice-quizzer', 'crypto-enthusiast'];
 
   const handleMint = (achievementId: string) => {
     setMinting(achievementId);
@@ -54,7 +57,7 @@ export default function AchievementsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <motion.div 
+          <MotionDiv 
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             variants={containerVariants}
             initial="hidden"
@@ -104,7 +107,7 @@ export default function AchievementsPage() {
                 </motion.div>
               );
             })}
-          </motion.div>
+          </MotionDiv>
         </CardContent>
       </Card>
     </div>

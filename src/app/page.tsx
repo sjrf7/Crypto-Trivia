@@ -63,7 +63,7 @@ export default function WelcomePage() {
 
       <motion.div variants={itemVariants} className="mb-12">
         <Button asChild size="lg" className="text-lg font-bold">
-          <Link href="/play">
+          <Link href="/play" prefetch={true}>
             <Gamepad2 className="mr-2 h-6 w-6" />
             Entrar al Juego
           </Link>
