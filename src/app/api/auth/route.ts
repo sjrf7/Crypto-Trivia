@@ -8,7 +8,13 @@ const JWT_SECRET = process.env.JWT_SECRET
 const APP_DOMAIN = process.env.NEXT_PUBLIC_URL || 'farcaster-trivia.vercel.app';
 
 if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is not set. Authentication will not be secure. Please set a secret in your .env file.');
+  // In development, it's okay to not have a JWT_SECRET, but we should warn the user.
+  // In production, this should be an error.
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET is not set. Authentication will not be secure. Please set a secret in your .env file.');
+  } else {
+    console.warn('JWT_SECRET is not set. Authentication will not be secure.');
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -86,7 +92,7 @@ export async function GET(req: NextRequest) {
     }
   } else {
     // Generate a nonce for the user to sign
-    const { nonce, ...siwe } = await getFarcasterUser();
+    const { nonce, ...siwe } = await getFarcasterUser({ domain: APP_DOMAIN });
     return NextResponse.json({ ...siwe, nonce });
   }
 }
