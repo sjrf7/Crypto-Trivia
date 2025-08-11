@@ -26,14 +26,6 @@ const nextConfig: NextConfig = {
    webpack: (config, { isServer }) => {
     // Solves build errors with libraries that require server-only dependencies
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
-
-    // Solves "TypeError: (0 , eu.createContext) is not a function"
-    // by ensuring a single version of React is used.
-    config.resolve.alias = {
-        ...config.resolve.alias,
-        'react': path.resolve('./node_modules/react'),
-        'react-dom': path.resolve('./node_modules/react-dom'),
-    };
     
     return config;
   },
