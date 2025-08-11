@@ -111,7 +111,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                   <span className="font-medium group-hover:text-primary transition-colors">{entry.player.name}</span>
                 </Link>
               </TableCell>
-              <TableCell className="font-bold text-primary">{entry.player.stats.totalScore.toLocaleString()}</TableCell>
+              <TableCell className="font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
               <TableCell className="text-accent">{entry.player.stats.accuracy}</TableCell>
             </motion.tr>
           ))}

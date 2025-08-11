@@ -64,7 +64,7 @@ export function ProfileCard({ player }: ProfileCardProps) {
             variants={containerVariants}
         >
             <StatItem icon={Award} label="Top Rank" value={player.stats.topRank} />
-            <StatItem icon={Star} label="Total Score" value={player.stats.totalScore.toLocaleString()} />
+            <StatItem icon={Star} label="Total Score" value={player.stats.totalScore.toLocaleString('en-US')} />
             <StatItem icon={Gamepad2} label="Games Played" value={player.stats.gamesPlayed} />
             <StatItem icon={Target} label="Questions Answered" value={player.stats.questionsAnswered} />
             <StatItem icon={Percent} label="Accuracy" value={player.stats.accuracy} />
