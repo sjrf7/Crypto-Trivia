@@ -1,4 +1,4 @@
-import { getFarcasterUser, session } from '@farcaster/auth-kit/server';
+import { getFarcasterUser, session } from '@farcaster/auth-kit';
 import { type NextRequest, NextResponse } from 'next/server';
 import { JWTPayload, SignJWT } from 'jose';
 
