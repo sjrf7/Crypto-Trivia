@@ -1,3 +1,4 @@
+
 'use client';
 
 import { PLAYERS } from '@/lib/mock-data';
@@ -62,7 +63,7 @@ export default function ProfilePage() {
             achievements: [],
         });
     } else {
-      notFound();
+      setPlayer(null);
     }
     
     setIsLoading(false);
