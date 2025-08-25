@@ -27,8 +27,8 @@ export default function ProfilePage() {
   } = useProfile();
 
   const { signIn, isSigningIn } = useSignIn({
-    api_url: '/api/auth',
     onSuccess: () => {
+        // We push to the router to force a re-render and fetch the new session.
         router.push('/profile/me');
     },
     onError: (error) => {
