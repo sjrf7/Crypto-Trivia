@@ -118,5 +118,522 @@
       "leaderboard": "Leaderboard",
       "achievements": "Achievements",
       "profile": "Profile"
-  }
+  },
+  "classic_questions": [
+    {
+        "question": "Who is the anonymous creator of Bitcoin?",
+        "answer": "Satoshi Nakamoto",
+        "options": ["Vitalik Buterin", "Satoshi Nakamoto", "Charlie Lee", "Elon Musk"]
+    },
+    {
+        "question": "What is the name of the process that adds new transactions to the blockchain?",
+        "answer": "Mining",
+        "options": ["Forging", "Staking", "Mining", "Minting"]
+    },
+    {
+        "question": "Which cryptocurrency is known for its smart contract capabilities?",
+        "answer": "Ethereum",
+        "options": ["Bitcoin", "Litecoin", "Dogecoin", "Ethereum"]
+    },
+    {
+        "question": "What does 'DeFi' stand for?",
+        "answer": "Decentralized Finance",
+        "options": ["Digital Finance", "Decentralized Finance", "Distributed Finance", "Decentralized Funding"]
+    },
+    {
+        "question": "What is the maximum supply of Bitcoin?",
+        "answer": "21 million",
+        "options": ["100 million", "21 million", "42 million", "Unlimited"]
+    },
+    {
+        "question": "What does 'NFT' stand for?",
+        "answer": "Non-Fungible Token",
+        "options": ["New File Type", "Non-Fungible Token", "Network Fee Token", "No-Fee Transaction"]
+    },
+    {
+        "question": "Which of these is a popular hardware wallet?",
+        "answer": "Ledger",
+        "options": ["MetaMask", "Trust Wallet", "Coinbase Wallet", "Ledger"]
+    },
+    {
+        "question": "What is a 'Slippage' in the context of DEX trading?",
+        "answer": "The difference between the expected price and the executed price",
+        "options": [
+            "A type of arbitrage bot", 
+            "A network connection error",
+            "The difference between the expected price and the executed price", 
+            "A fee paid to liquidity providers"
+        ]
+    },
+    {
+        "question": "What is the term for a digital ledger of all cryptocurrency transactions?",
+        "answer": "Blockchain",
+        "options": ["Cryptochain", "Datastream", "Blockchain", "Tokenlog"]
+    },
+    {
+        "question": "Which consensus mechanism does Bitcoin use?",
+        "answer": "Proof of Work (PoW)",
+        "options": ["Proof of Stake (PoS)", "Proof of Work (PoW)", "Proof of Authority (PoA)", "Delegated Proof of Stake (DPoS)"]
+    },
+    {
+        "question": "What is the native cryptocurrency of the Binance exchange?",
+        "answer": "BNB",
+        "options": ["BUSD", "BTC", "BNB", "BAKE"]
+    },
+    {
+        "question": "What does 'ICO' stand for?",
+        "answer": "Initial Coin Offering",
+        "options": ["Initial Crypto Offering", "Initial Coin Offering", "Internal Crypto Order", "Instant Coin Opportunity"]
+    },
+    {
+        "question": "Which of the following is a 'stablecoin'?",
+        "answer": "USDC",
+        "options": ["Cardano (ADA)", "Solana (SOL)", "USDC", "Chainlink (LINK)"]
+    },
+    {
+        "question": "What is the 'halving' event in Bitcoin?",
+        "answer": "The reward for mining new blocks is cut in half",
+        "options": ["The transaction speed doubles", "The reward for mining new blocks is cut in half", "The total supply of Bitcoin is reduced", "The difficulty of mining is halved"]
+    },
+    {
+        "question": "Who is the co-founder of Ethereum?",
+        "answer": "Vitalik Buterin",
+        "options": ["Charles Hoskinson", "Gavin Wood", "Joseph Lubin", "Vitalik Buterin"]
+    },
+    {
+        "question": "What is the primary use case for Ripple (XRP)?",
+        "answer": "International payments and remittances",
+        "options": ["Decentralized applications", "Privacy-focused transactions", "International payments and remittances", "Supply chain management"]
+    },
+    {
+        "question": "What is a 'gas fee' on the Ethereum network?",
+        "answer": "The cost to perform a transaction or execute a contract",
+        "options": ["A fee to purchase Ethereum", "The cost to perform a transaction or execute a contract", "A tax on crypto profits", "The electricity cost of mining"]
+    },
+    {
+        "question": "Which blockchain is the native home for the popular NFT collection CryptoPunks?",
+        "answer": "Ethereum",
+        "options": ["Solana", "Ethereum", "Flow", "Cardano"]
+    },
+    {
+        "question": "What is a 'DAO'?",
+        "answer": "Decentralized Autonomous Organization",
+        "options": ["Digital Asset Organization", "Decentralized Autonomous Organization", "Data Access Object", "Distributed Application Online"]
+    },
+    {
+        "question": "Which cryptocurrency was created as a fork of Bitcoin?",
+        "answer": "Bitcoin Cash (BCH)",
+        "options": ["Ethereum (ETH)", "Litecoin (LTC)", "Bitcoin Cash (BCH)", "Ripple (XRP)"]
+    },
+    {
+        "question": "What is 'staking' in the context of cryptocurrencies?",
+        "answer": "Locking up crypto holdings to support a network and earn rewards",
+        "options": ["A type of short-term trading", "Locking up crypto holdings to support a network and earn rewards", "A method for encrypting wallets", "The process of creating new coins"]
+    },
+    {
+        "question": "What standard do most Ethereum-based tokens follow?",
+        "answer": "ERC-20",
+        "options": ["ERC-721", "ERC-20", "ERC-1155", "BEP-2"]
+    },
+    {
+        "question": "Which country was the first to adopt Bitcoin as legal tender?",
+        "answer": "El Salvador",
+        "options": ["USA", "China", "Japan", "El Salvador"]
+    },
+    {
+        "question": "What is the name of the first-ever NFT project?",
+        "answer": "Quantum",
+        "options": ["EtherRock", "CryptoPunks", "Quantum", "Bored Ape Yacht Club"]
+    },
+    {
+        "question": "What is 'cold storage' for cryptocurrency?",
+        "answer": "Storing crypto offline in a hardware wallet or paper wallet",
+        "options": ["Storing crypto on a mobile device", "Storing crypto on an exchange", "Storing crypto offline in a hardware wallet or paper wallet", "A savings account for crypto"]
+    },
+    {
+        "question": "Which of these is a decentralized exchange (DEX)?",
+        "answer": "Uniswap",
+        "options": ["Coinbase", "Binance", "Kraken", "Uniswap"]
+    },
+    {
+        "question": "What does the term 'HODL' mean in the crypto community?",
+        "answer": "Holding onto a cryptocurrency rather than selling it",
+        "options": ["A technical analysis indicator", "A type of crypto wallet", "Holding onto a cryptocurrency rather than selling it", "A government regulation on crypto"]
+    },
+    {
+        "question": "Which blockchain platform is a direct competitor to Ethereum, often called an 'Ethereum killer'?",
+        "answer": "Solana",
+        "options": ["Dogecoin", "Bitcoin", "Solana", "Monero"]
+    },
+    {
+        "question": "What is a 'whitepaper' in the context of a crypto project?",
+        "answer": "A document outlining the project's technology, goals, and tokenomics",
+        "options": ["A user manual for a crypto wallet", "A legal disclaimer", "A document outlining the project's technology, goals, and tokenomics", "A history of the project's price"]
+    },
+    {
+        "question": "What is the 'market capitalization' or 'market cap' of a cryptocurrency?",
+        "answer": "The total value of all the coins in circulation",
+        "options": ["The price of a single coin", "The daily trading volume", "The total value of all the coins in circulation", "The number of active users"]
+    },
+    {
+        "question": "Which programming language is primarily used for writing smart contracts on Ethereum?",
+        "answer": "Solidity",
+        "options": ["Python", "JavaScript", "C++", "Solidity"]
+    },
+    {
+        "question": "What type of cryptocurrency is Dogecoin (DOGE)?",
+        "answer": "A memecoin",
+        "options": ["A stablecoin", "A privacy coin", "A memecoin", "A governance token"]
+    },
+    {
+        "question": "What does 'KYC' stand for in the context of crypto exchanges?",
+        "answer": "Know Your Customer",
+        "options": ["Keep Your Crypto", "Know Your Code", "Know Your Customer", "Key Yield Currency"]
+    },
+    {
+        "question": "What is a '51% attack'?",
+        "answer": "When a single entity controls more than 50% of a network's hashing power",
+        "options": ["A phishing scam", "When a single entity controls more than 50% of a network's hashing power", "A denial-of-service attack", "Hacking an exchange"]
+    },
+    {
+        "question": "Which of these is NOT a cryptocurrency?",
+        "answer": "NVIDIA",
+        "options": ["Cardano", "Polkadot", "NVIDIA", "Chainlink"]
+    },
+    {
+        "question": "What is the purpose of a 'seed phrase' or 'recovery phrase'?",
+        "answer": "To restore access to a cryptocurrency wallet",
+        "options": ["To encrypt transaction data", "To set the wallet password", "To restore access to a cryptocurrency wallet", "To connect to a decentralized application"]
+    },
+    {
+        "question": "What is an 'oracle' in blockchain technology?",
+        "answer": "A service that provides external data to smart contracts",
+        "options": ["A type of consensus algorithm", "A service that provides external data to smart contracts", "A blockchain analytics tool", "A hardware wallet manufacturer"]
+    },
+    {
+        "question": "Which cryptocurrency is focused on providing a private and untraceable transaction history?",
+        "answer": "Monero (XMR)",
+        "options": ["Ripple (XRP)", "Monero (XMR)", "Cardano (ADA)", "Litecoin (LTC)"]
+    },
+    {
+        "question": "What is the 'genesis block'?",
+        "answer": "The first block ever created on a blockchain",
+        "options": ["The most recent block", "The block with the highest transaction fee", "The first block ever created on a blockchain", "A block that contains no transactions"]
+    },
+    {
+        "question": "Which company is behind the USDC stablecoin?",
+        "answer": "Circle",
+        "options": ["Tether", "Binance", "Circle", "Coinbase"]
+    },
+    {
+        "question": "What is a 'smart contract'?",
+        "answer": "A self-executing contract with the terms of the agreement written into code",
+        "options": ["A legally binding digital document", "A self-executing contract with the terms of the agreement written into code", "A template for creating new cryptocurrencies", "A type of crypto loan"]
+    },
+    {
+        "question": "Which token standard is used for creating Non-Fungible Tokens (NFTs) on Ethereum?",
+        "answer": "ERC-721",
+        "options": ["ERC-20", "ERC-721", "BEP-20", "TRC-20"]
+    },
+    {
+        "question": "What does 'ATH' stand for in crypto trading?",
+        "answer": "All-Time High",
+        "options": ["Average Trading Hours", "All-Time High", "Automated Trading Host", "Asset Trust Holder"]
+    },
+    {
+        "question": "Who founded Litecoin (LTC)?",
+        "answer": "Charlie Lee",
+        "options": ["Jed McCaleb", "Charlie Lee", "Dan Larimer", "Roger Ver"]
+    },
+    {
+        "question": "What is a 'Layer 2' scaling solution?",
+        "answer": "A secondary framework or protocol built on top of an existing blockchain",
+        "options": ["A hard fork of a blockchain", "A completely new blockchain", "A secondary framework or protocol built on top of an existing blockchain", "A type of sidechain"]
+    },
+    {
+        "question": "What is the name of the virtual world platform built on the Ethereum blockchain?",
+        "answer": "Decentraland",
+        "options": ["Roblox", "Second Life", "Decentraland", "Fortnite"]
+    },
+    {
+        "question": "What is 'yield farming'?",
+        "answer": "The practice of staking or lending crypto assets to generate high returns or rewards",
+        "options": ["A type of crypto mining", "The practice of staking or lending crypto assets to generate high returns or rewards", "A strategy for day trading", "A way to create NFTs"]
+    },
+    {
+        "question": "Which of these is a popular blockchain for building games (GameFi)?",
+        "answer": "Flow",
+        "options": ["Bitcoin", "Monero", "Flow", "Dash"]
+    },
+    {
+        "question": "What is 'impermanent loss'?",
+        "answer": "A potential loss of funds experienced by liquidity providers on DEXs",
+        "options": ["Losing your private keys", "A drop in a token's price", "A potential loss of funds experienced by liquidity providers on DEXs", "A failed transaction"]
+    },
+    {
+        "question": "What is the name of Cardano's consensus protocol?",
+        "answer": "Ouroboros",
+        "options": ["Avalanche", "Tendermint", "Ouroboros", "Casper"]
+    },
+    {
+        "question": "Which crypto project aims to connect all other blockchains, creating an 'internet of blockchains'?",
+        "answer": "Polkadot (DOT)",
+        "options": ["Chainlink (LINK)", "Polkadot (DOT)", "Cosmos (ATOM)", "Tezos (XTZ)"]
+    },
+    {
+        "question": "What is the term for a market where prices are falling?",
+        "answer": "Bear Market",
+        "options": ["Bull Market", "Stagnant Market", "Bear Market", "Ranging Market"]
+    },
+    {
+        "question": "Which of the following is a key feature of a decentralized network?",
+        "answer": "No single point of failure",
+        "options": ["Controlled by a central authority", "Requires permission to participate", "No single point of failure", "Slow transaction speeds"]
+    },
+    {
+        "question": "What is a 'hard fork' in a blockchain?",
+        "answer": "A permanent divergence from the previous version of the blockchain",
+        "options": ["A temporary network upgrade", "A software update for a wallet", "A permanent divergence from the previous version of the blockchain", "A minor protocol adjustment"]
+    },
+    {
+        "question": "What is MetaMask?",
+        "answer": "A software cryptocurrency wallet used to interact with the Ethereum blockchain",
+        "options": ["A hardware wallet", "A crypto exchange", "A blockchain explorer", "A software cryptocurrency wallet used to interact with the Ethereum blockchain"]
+    },
+    {
+        "question": "What is the main purpose of the Chainlink (LINK) network?",
+        "answer": "To provide reliable, tamper-proof data to smart contracts",
+        "options": ["To create private transactions", "To scale the Ethereum network", "To provide reliable, tamper-proof data to smart contracts", "To build decentralized social media"]
+    },
+    {
+        "question": "The 'flippening' refers to the hypothetical moment when...",
+        "answer": "Ethereum's market cap surpasses Bitcoin's",
+        "options": ["Bitcoin's price reaches $100,000", "The US government approves a Bitcoin ETF", "Ethereum's market cap surpasses Bitcoin's", "NFTs become more valuable than cryptocurrencies"]
+    },
+    {
+        "question": "Which NFT marketplace is the largest by trading volume?",
+        "answer": "OpenSea",
+        "options": ["Rarible", "SuperRare", "OpenSea", "Magic Eden"]
+    },
+    {
+        "question": "What is a 'rug pull' in the crypto space?",
+        "answer": "A scam where developers abandon a project and run away with investors' funds",
+        "options": ["A sudden price drop", "A type of market manipulation", "A scam where developers abandon a project and run away with investors' funds", "A failed airdrop"]
+    },
+    {
+        "question": "What is the native token of the Solana blockchain?",
+        "answer": "SOL",
+        "options": ["ADA", "DOT", "AVAX", "SOL"]
+    },
+    {
+        "question": "What is 'sharding'?",
+        "answer": "A database partitioning technique used to increase scalability",
+        "options": ["A type of consensus algorithm", "A database partitioning technique used to increase scalability", "A way to create sidechains", "A method for encrypting data"]
+    },
+    {
+        "question": "Which of these is a privacy-focused web browser with a built-in crypto wallet?",
+        "answer": "Brave",
+        "options": ["Chrome", "Brave", "Firefox", "Safari"]
+    },
+    {
+        "question": "What is the token associated with the Brave browser?",
+        "answer": "Basic Attention Token (BAT)",
+        "options": ["Brave Coin (BVC)", "Attention Token (ATN)", "Basic Attention Token (BAT)", "Browser Coin (BRC)"]
+    },
+    {
+        "question": "Who is the founder of Cardano (ADA)?",
+        "answer": "Charles Hoskinson",
+        "options": ["Vitalik Buterin", "Charles Hoskinson", "Brendan Eich", "Gavin Wood"]
+    },
+    {
+        "question": "What is 'gasless' transaction?",
+        "answer": "A transaction where the user does not have to pay the gas fee directly",
+        "options": ["A transaction with no fee", "A transaction that is not recorded on the blockchain", "A transaction where the user does not have to pay the gas fee directly", "An offline transaction"]
+    },
+    {
+        "question": "What does 'EIP' stand for in the context of Ethereum?",
+        "answer": "Ethereum Improvement Proposal",
+        "options": ["Ethereum Internal Protocol", "Ethereum Investment Plan", "Ethereum Improvement Proposal", "Ethereum Integrated Platform"]
+    },
+    {
+        "question": "Which consensus mechanism is generally considered more energy-efficient?",
+        "answer": "Proof of Stake (PoS)",
+        "options": ["Proof of Work (PoW)", "Proof of Stake (PoS)", "Both are equal", "Neither are energy-efficient"]
+    },
+    {
+        "question": "What is the name for a cryptocurrency that is a copy of another, with minor changes?",
+        "answer": "A fork",
+        "options": ["A clone", "A fork", "A duplicate", "A mirror"]
+    },
+    {
+        "question": "Which event in 2014 led to the loss of 850,000 BTC?",
+        "answer": "The Mt. Gox hack",
+        "options": ["The DAO hack", "The Silk Road seizure", "The Mt. Gox hack", "The Bitfinex hack"]
+    },
+    {
+        "question": "What is the primary function of a blockchain explorer like Etherscan?",
+        "answer": "To view transactions, blocks, and addresses on the blockchain",
+        "options": ["To trade cryptocurrencies", "To create smart contracts", "To view transactions, blocks, and addresses on the blockchain", "To store private keys"]
+    },
+    {
+        "question": "What is a 'dApp'?",
+        "answer": "A decentralized application",
+        "options": ["A digital application", "A distributed application", "A downloadable application", "A decentralized application"]
+    },
+    {
+        "question": "What is the purpose of the 'nonce' in a Bitcoin transaction?",
+        "answer": "A number that miners must find to solve a block",
+        "options": ["The transaction amount", "The recipient's address", "A number that miners must find to solve a block", "A timestamp"]
+    },
+    {
+        "question": "Which project is developing a 'world computer' that can host dApps at scale?",
+        "answer": "Internet Computer (ICP)",
+        "options": ["Filecoin (FIL)", "Internet Computer (ICP)", "Helium (HNT)", "Theta (THETA)"]
+    },
+    {
+        "question": "What does 'P2P' stand for in 'P2P network'?",
+        "answer": "Peer-to-Peer",
+        "options": ["Person-to-Person", "Peer-to-Peer", "Password-to-Password", "Protocol-to-Protocol"]
+    },
+    {
+        "question": "What is a 'token burn'?",
+        "answer": "Permanently removing tokens from circulation",
+        "options": ["Selling tokens at a loss", "Exchanging one token for another", "Permanently removing tokens from circulation", "A type of token distribution"]
+    },
+    {
+        "question": "What is the main goal of the The Graph (GRT) protocol?",
+        "answer": "To index and query data from blockchains",
+        "options": ["To provide decentralized storage", "To create 3D graphics for the metaverse", "To index and query data from blockchains", "To offer decentralized insurance"]
+    },
+    {
+        "question": "Which of the following is a popular platform for launching DAOs?",
+        "answer": "Aragon",
+        "options": ["Uniswap", "Aave", "Aragon", "Compound"]
+    },
+    {
+        "question": "What is the 'difficulty bomb' in Ethereum?",
+        "answer": "A mechanism designed to make mining harder over time to encourage a move to PoS",
+        "options": ["A type of malware targeting miners", "A sudden increase in gas fees", "A mechanism designed to make mining harder over time to encourage a move to PoS", "A vulnerability in smart contracts"]
+    },
+    {
+        "question": "What does 'CeFi' stand for?",
+        "answer": "Centralized Finance",
+        "options": ["Community Finance", "Crypto Finance", "Centralized Finance", "Corporate Finance"]
+    },
+    {
+        "question": "Which of these is a decentralized file storage network?",
+        "answer": "Filecoin (FIL)",
+        "options": ["Dropbox", "Google Drive", "Filecoin (FIL)", "iCloud"]
+    },
+    {
+        "question": "What is a 'flash loan'?",
+        "answer": "An uncollateralized loan that must be repaid within the same transaction block",
+        "options": ["A loan that is approved instantly", "A loan with a very high interest rate", "An uncollateralized loan that must be repaid within the same transaction block", "A loan for buying cryptocurrencies"]
+    },
+    {
+        "question": "Which blockchain uses the 'Proof of History' consensus mechanism?",
+        "answer": "Solana",
+        "options": ["Ethereum", "Cardano", "Polkadot", "Solana"]
+    },
+    {
+        "question": "What is the name of the upgrade that transitioned Ethereum to Proof of Stake?",
+        "answer": "The Merge",
+        "options": ["The Beacon", "The Surge", "The Merge", "The Verge"]
+    },
+    {
+        "question": "Which NFT project features a collection of 10,000 unique pixelated characters?",
+        "answer": "CryptoPunks",
+        "options": ["Bored Ape Yacht Club", "Meebits", "CryptoPunks", "Cool Cats"]
+    },
+    {
+        "question": "What is a 'governance token'?",
+        "answer": "A token that gives holders voting rights in a project's future",
+        "options": ["A token used to pay for government services", "A token that represents ownership of a real-world asset", "A token that gives holders voting rights in a project's future", "A stablecoin pegged to a national currency"]
+    },
+    {
+        "question": "What is the native asset of the Cosmos ecosystem?",
+        "answer": "ATOM",
+        "options": ["DOT", "LINK", "ATOM", "XTZ"]
+    },
+    {
+        "question": "What is 'atomic swap'?",
+        "answer": "A way to exchange cryptocurrencies directly between different blockchains without an intermediary",
+        "options": ["A very fast transaction", "A type of decentralized exchange", "A way to exchange cryptocurrencies directly between different blockchains without an intermediary", "A transaction that cannot be reversed"]
+    },
+    {
+        "question": "Which protocol is a leading decentralized lending and borrowing platform?",
+        "answer": "Aave",
+        "options": ["Curve", "MakerDAO", "Aave", "Balancer"]
+    },
+    {
+        "question": "What is the name of Tether's stablecoin?",
+        "answer": "USDT",
+        "options": ["USDC", "BUSD", "DAI", "USDT"]
+    },
+    {
+        "question": "What is a 'Satoshi'?",
+        "answer": "The smallest unit of a Bitcoin",
+        "options": ["A type of Bitcoin wallet", "The smallest unit of a Bitcoin", "A Bitcoin mining rig", "The creator of Bitcoin"]
+    },
+    {
+        "question": "Which of these is a decentralized wireless network powered by blockchain?",
+        "answer": "Helium (HNT)",
+        "options": ["Verizon", "AT&T", "Helium (HNT)", "T-Mobile"]
+    },
+    {
+        "question": "What is a 'sidechain'?",
+        "answer": "A separate blockchain that is attached to a parent blockchain",
+        "options": ["A copy of the main blockchain", "A temporary fork", "A separate blockchain that is attached to a parent blockchain", "A layer 2 solution"]
+    },
+    {
+        "question": "What is the purpose of 'wrapped' tokens like wBTC?",
+        "answer": "To represent a cryptocurrency from another blockchain on a different network",
+        "options": ["To increase a token's price", "To make a token more secure", "To represent a cryptocurrency from another blockchain on a different network", "To reduce transaction fees"]
+    },
+    {
+        "question": "Which of these is a popular wallet for the Solana blockchain?",
+        "answer": "Phantom",
+        "options": ["MetaMask", "Phantom", "Trust Wallet", "Exodus"]
+    },
+    {
+        "question": "What does 'FUD' stand for in the crypto community?",
+        "answer": "Fear, Uncertainty, and Doubt",
+        "options": ["For Universal Distribution", "Futures Under Development", "Fear, Uncertainty, and Doubt", "Fast Unilateral Decision"]
+    },
+    {
+        "question": "Which country has the highest volume of cryptocurrency trading?",
+        "answer": "United States",
+        "options": ["China", "Russia", "Nigeria", "United States"]
+    },
+    {
+        "question": "What is the maximum number of transactions per second (TPS) that Bitcoin can handle?",
+        "answer": "Around 7",
+        "options": ["Around 7", "Around 30", "Around 1,000", "Around 65,000"]
+    },
+    {
+        "question": "What is the name of the stablecoin created by MakerDAO?",
+        "answer": "DAI",
+        "options": ["MKR", "DAI", "SAI", "USDM"]
+    },
+    {
+        "question": "Which of these is a type of consensus mechanism that relies on a node's reputation?",
+        "answer": "Proof of Authority (PoA)",
+        "options": ["Proof of Work (PoW)", "Proof of Stake (PoS)", "Proof of Authority (PoA)", "Proof of Burn (PoB)"]
+    },
+    {
+        "question": "What year was the Bitcoin whitepaper published?",
+        "answer": "2008",
+        "options": ["2008", "2009", "2010", "2011"]
+    },
+    {
+        "question": "What is the main advantage of using a hardware wallet?",
+        "answer": "It keeps your private keys offline and secure",
+        "options": ["It has a user-friendly interface", "It supports all cryptocurrencies", "It offers high staking rewards", "It keeps your private keys offline and secure"]
+    },
+    {
+        "question": "Which exchange was famously hacked in 2016, leading to a hard fork of Ethereum?",
+        "answer": "The DAO",
+        "options": ["Mt. Gox", "Bitfinex", "The DAO", "Cryptopia"]
+    }
+  ]
 }

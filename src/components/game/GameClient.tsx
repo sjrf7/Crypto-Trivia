@@ -46,6 +46,8 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
   const [isAiGame, setIsAiGame] = useState(false);
   const { t } = useI18n();
 
+  const classicQuestions = t('classic_questions', {}, { returnObjects: true }) as TriviaQuestion[];
+
   useEffect(() => {
     if (challengeQuestions) {
         onGameStatusChange?.(true);
@@ -62,8 +64,8 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
 
   const handleStartClassic = () => {
     onGameStatusChange?.(true);
-    const questionIndices = [...Array(TRIVIA_QUESTIONS.length).keys()].sort(() => Math.random() - 0.5);
-    const selectedQuestions = questionIndices.map(i => ({...TRIVIA_QUESTIONS[i], originalIndex: i}));
+    const questionIndices = [...Array(classicQuestions.length).keys()].sort(() => Math.random() - 0.5);
+    const selectedQuestions = questionIndices.map(i => ({...classicQuestions[i], originalIndex: i}));
     setQuestions(selectedQuestions);
     setGameStatus('playing');
     setIsAiGame(false);
