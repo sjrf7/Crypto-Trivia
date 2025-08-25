@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PLAYERS } from '@/lib/mock-data';
@@ -122,4 +121,3 @@ export default function ProfilePage() {
 const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
-
