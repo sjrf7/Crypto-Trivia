@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
         { status: error.statusCode }
       );
     } else {
+      // Fallback for when JWT_SECRET is not available in development
       return NextResponse.json({ ...farcasterUser });
     }
   } catch (e) {
@@ -83,10 +84,11 @@ export async function GET(req: NextRequest) {
        console.error('Session verification failed', e);
        const response = NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
        response.cookies.delete('token');
-       // Fall through to generate a new nonce
+       // Let it fall through to generate a new nonce for re-authentication
     }
   }
   
+  // This part runs if there's no token or if session verification fails
   const { nonce, ...siwe } = await getFarcasterUser({ domain: APP_DOMAIN });
   return NextResponse.json({ ...siwe, nonce });
 }
