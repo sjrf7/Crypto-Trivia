@@ -1,3 +1,4 @@
+
 'use client';
 
 import { PLAYERS } from '@/lib/mock-data';
@@ -20,22 +21,25 @@ export default function ProfilePage() {
   const { isAuthenticated, profile: user, loading: isUserLoading } = useProfile();
 
   useEffect(() => {
-    setIsLoading(true);
+    // This effect's job is to figure out which player to display.
+    
+    // Don't do anything until the Farcaster auth state is resolved.
+    if (isUserLoading) {
+        setIsLoading(true);
+        return;
+    }
 
     // Case 1: The user is viewing their own profile (/profile/me)
     if (id === 'me') {
-      if (isUserLoading) {
-        // We are still waiting to see if the user is logged in
-        return; 
-      }
-
       if (isAuthenticated && user) {
-        // User is logged in, create a profile for them on the fly
+        // The user is logged in. Create a profile for them on the fly.
+        // We can check if they are one of the mock players, but for simplicity,
+        // we'll just create a new profile object every time for /me.
         setPlayer({
           id: user.username || `fid-${user.fid}`,
           name: user.displayName || user.username || `User ${user.fid}`,
           avatar: user.pfpUrl || `https://placehold.co/128x128.png`,
-          stats: { // Default stats for a new user
+          stats: { // Default stats for a new user, or could be fetched from a DB
             totalScore: 0,
             gamesPlayed: 0,
             questionsAnswered: 0,
@@ -46,7 +50,8 @@ export default function ProfilePage() {
           achievements: [],
         });
       } else {
-        // User is not logged in and trying to see 'me', show nothing (SignIn prompt will be rendered)
+        // The user is not logged in and trying to see their own profile.
+        // Set player to null to trigger the Sign In prompt.
         setPlayer(null);
       }
     
@@ -61,7 +66,7 @@ export default function ProfilePage() {
   }, [id, user, isAuthenticated, isUserLoading]);
 
 
-  if (isLoading || isUserLoading) {
+  if (isLoading) {
     return (
        <Card>
             <CardHeader>
@@ -84,7 +89,8 @@ export default function ProfilePage() {
     )
   }
 
-  if (!player && id === 'me' && !isAuthenticated) {
+  // After loading, if the user is on /profile/me and not authenticated, show the sign-in card.
+  if (id === 'me' && !isAuthenticated) {
     return (
       <UICard className="w-full max-w-md mx-auto text-center">
         <UICardContent className="pt-6">
@@ -96,10 +102,12 @@ export default function ProfilePage() {
     )
   }
 
+  // After loading, if no player could be found (e.g., /profile/non-existent-user), show 404.
   if (!player) {
     notFound();
   }
 
+  // If we have a player, show their profile.
   return (
     <div className="container mx-auto">
       <ProfileCard player={player} />
