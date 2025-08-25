@@ -3,6 +3,7 @@
 
 import { SignInButton as FarcasterSignInButton, useProfile } from '@farcaster/auth-kit';
 import { Button } from '../ui/button';
+import { LogIn } from 'lucide-react';
 
 export function SignInButton() {
   const { signOut, isAuthenticated, profile: user } = useProfile();
@@ -16,5 +17,12 @@ export function SignInButton() {
     );
   }
 
-  return <FarcasterSignInButton />;
+  return (
+    <FarcasterSignInButton>
+      <Button>
+        <LogIn className="mr-2 h-4 w-4" />
+        Sign in with Farcaster
+      </Button>
+    </FarcasterSignInButton>
+  );
 }
