@@ -21,12 +21,6 @@ const nextConfig = {
       }
     ],
   },
-   webpack: (config, { isServer }) => {
-    // Solves build errors with libraries that require server-only dependencies
-    config.externals.push('pino-pretty', 'lokijs', 'encoding');
-    
-    return config;
-  },
 };
 
 module.exports = nextConfig;
