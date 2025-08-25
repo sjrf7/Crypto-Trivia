@@ -10,8 +10,6 @@ import { SummaryScreen } from './SummaryScreen';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Wand2 } from 'lucide-react';
-import { TRIVIA_QUESTIONS } from '@/lib/mock-data';
-import { WagerCard } from './WagerCard';
 import { useI18n } from '@/hooks/use-i18n';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
@@ -23,6 +21,8 @@ interface GameClientProps {
     challenger?: string;
     onRestart?: () => void;
     onGameStatusChange?: (isActive: boolean) => void;
+    onNextQuestionNeeded?: (currentQuestions: TriviaQuestion[]) => void;
+    totalAiQuestions?: number;
 }
 
 const screenVariants = {
@@ -37,7 +37,16 @@ const screenTransition = {
   damping: 30,
 };
 
-export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger, onRestart, onGameStatusChange }: GameClientProps) {
+export function GameClient({ 
+    challengeQuestions, 
+    scoreToBeat, 
+    wager, 
+    challenger, 
+    onRestart, 
+    onGameStatusChange,
+    onNextQuestionNeeded,
+    totalAiQuestions
+}: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
@@ -51,13 +60,15 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
   useEffect(() => {
     if (challengeQuestions) {
         onGameStatusChange?.(true);
-        setIsChallenge(!!scoreToBeat);
-        setIsAiGame(!scoreToBeat);
-        setQuestions(challengeQuestions);
-        if (wager && wager > 0 && challenger) {
-            setGameStatus('wager');
-        } else {
-            setGameStatus('playing');
+        if (challengeQuestions.length > 0) {
+            setIsChallenge(!!scoreToBeat);
+            setIsAiGame(!scoreToBeat);
+            setQuestions(challengeQuestions);
+             if (wager && wager > 0 && challenger) {
+                setGameStatus('wager');
+            } else {
+                setGameStatus('playing');
+            }
         }
     }
   }, [challengeQuestions, scoreToBeat, wager, challenger, onGameStatusChange])
@@ -157,6 +168,8 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
                   scoreToBeat={scoreToBeat} 
                   isChallenge={isChallenge}
                   isAiGame={isAiGame}
+                  onNextQuestionNeeded={onNextQuestionNeeded}
+                  totalAiQuestions={totalAiQuestions}
                />;
       case 'summary':
         return <SummaryScreen 

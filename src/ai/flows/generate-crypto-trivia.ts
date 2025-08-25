@@ -9,9 +9,9 @@
  * array of questions, each with a question, a list of options, and the correct
  * answer.
  *
- * - generateCryptoTrivia - The main function that triggers the trivia generation flow.
- * - GenerateCryptoTriviaInput - The type definition for the input of the generation flow.
- * - GenerateCryptoTriviaOutput - The type definition for the output of the generation flow.
+ * - generateSingleCryptoQuestion - The main function that triggers the trivia generation flow for a single question.
+ * - GenerateSingleCryptoQuestionInput - The type definition for the input of the generation flow.
+ * - GenerateSingleCryptoQuestionOutput - The type definition for the output of the generation flow.
  */
 
 import { ai } from '@/ai/genkit';
@@ -24,55 +24,60 @@ const TriviaQuestionSchema = z.object({
   options: z.array(z.string()).describe('A list of 4 possible answers.'),
   answer: z.string().describe('The correct answer from the options list.'),
 });
+export type TriviaQuestion = z.infer<typeof TriviaQuestionSchema>;
+
 
 // Define the input schema for the trivia generation flow.
-const GenerateCryptoTriviaInputSchema = z.object({
+const GenerateSingleCryptoQuestionInputSchema = z.object({
   topic: z.string().describe('The cryptocurrency topic for the trivia questions (e.g., Bitcoin, Ethereum, DeFi).'),
-  numQuestions: z.number().int().min(1).max(80).describe('The number of questions to generate.'),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe('The difficulty level of the questions.'),
   language: z.enum(['en', 'es']).describe('The language for the questions.'),
+  exclude: z.array(z.string()).optional().describe('A list of questions to exclude to avoid duplicates.'),
 });
-export type GenerateCryptoTriviaInput = z.infer<typeof GenerateCryptoTriviaInputSchema>;
+export type GenerateSingleCryptoQuestionInput = z.infer<typeof GenerateSingleCryptoQuestionInputSchema>;
 
 // Define the output schema for the trivia generation flow.
-const GenerateCryptoTriviaOutputSchema = z.object({
-  questions: z.array(TriviaQuestionSchema).describe('The array of generated trivia questions.'),
-});
-export type GenerateCryptoTriviaOutput = z.infer<typeof GenerateCryptoTriviaOutputSchema>;
+const GenerateSingleCryptoQuestionOutputSchema = TriviaQuestionSchema;
+export type GenerateSingleCryptoQuestionOutput = z.infer<typeof GenerateSingleCryptoQuestionOutputSchema>;
 
 // Define the prompt for the AI model.
 const triviaPrompt = ai.definePrompt({
   name: 'cryptoTriviaPrompt',
-  input: { schema: GenerateCryptoTriviaInputSchema },
-  output: { schema: GenerateCryptoTriviaOutputSchema },
+  input: { schema: GenerateSingleCryptoQuestionInputSchema },
+  output: { schema: GenerateSingleCryptoQuestionOutputSchema },
   prompt: `
-    You are an expert in cryptocurrency, blockchain, and web3 technology. Your task is to generate trivia questions.
-    It is very important that you ONLY generate questions about topics related to cryptocurrency, blockchain, or web3.
-    If the user provides a topic that is NOT related to these subjects, you MUST return an empty "questions" array.
+    You are an expert in cryptocurrency, blockchain, and web3 technology. Your task is to generate ONE trivia question.
+    It is very important that you ONLY generate a question about a topic related to cryptocurrency, blockchain, or web3.
+    If the user provides a topic that is NOT related to these subjects, you MUST return an error.
+    
+    Do not generate a question from this list: {{#if exclude}} {{exclude}} {{/if}}
 
-    Generate a list of {{numQuestions}} trivia questions about {{topic}}.
-    The questions should be in {{language}}.
-    For each question, also include the topic '{{topic}}' in the response.
-    The questions should be of {{difficulty}} difficulty.
-    For each question, provide 4 options and clearly indicate the correct answer.
-    Ensure the questions are accurate, interesting, and cover a range of aspects related to the topic.
+    Generate ONE trivia question about {{topic}}.
+    The question should be in {{language}}.
+    For the question, also include the topic '{{topic}}' in the response.
+    The question should be of {{difficulty}} difficulty.
+    Provide 4 options and clearly indicate the correct answer.
+    Ensure the question is accurate, interesting, and covers a specific aspect of the topic.
   `,
 });
 
 // Define the main flow for generating crypto trivia.
 const generateCryptoTriviaFlow = ai.defineFlow(
   {
-    name: 'generateCryptoTriviaFlow',
-    inputSchema: GenerateCryptoTriviaInputSchema,
-    outputSchema: GenerateCryptoTriviaOutputSchema,
+    name: 'generateSingleCryptoQuestionFlow',
+    inputSchema: GenerateSingleCryptoQuestionInputSchema,
+    outputSchema: GenerateSingleCryptoQuestionOutputSchema,
   },
   async (input) => {
     const { output } = await triviaPrompt(input);
-    return output!;
+    if (!output?.question) {
+        throw new Error('Generated question is empty or invalid.');
+    }
+    return output;
   }
 );
 
 // Export an async wrapper function to be called from the client.
-export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Promise<GenerateCryptoTriviaOutput> {
+export async function generateSingleCryptoQuestion(input: GenerateSingleCryptoQuestionInput): Promise<GenerateSingleCryptoQuestionOutput> {
   return generateCryptoTriviaFlow(input);
 }

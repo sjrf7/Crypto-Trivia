@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
@@ -20,30 +20,50 @@ interface GameScreenProps {
   scoreToBeat?: number;
   isChallenge?: boolean;
   isAiGame?: boolean;
+  onNextQuestionNeeded?: (currentQuestions: TriviaQuestion[]) => void;
+  totalAiQuestions?: number;
 }
 
-export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = false, isAiGame = false }: GameScreenProps) {
+export function GameScreen({ 
+    questions, 
+    onGameEnd, 
+    scoreToBeat, 
+    isChallenge = false, 
+    isAiGame = false,
+    onNextQuestionNeeded,
+    totalAiQuestions
+}: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
-  const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
+  const [shuffledOptionsQuestions, setShuffledOptionsQuestions] = useState<TriviaQuestion[]>([]);
   const { t } = useI18n();
   
   // Power-up states
   const [is5050Used, setIs5050Used] = useState(false);
   const [isTimeBoostUsed, setIsTimeBoostUsed] = useState(false);
 
-  useEffect(() => {
-    // Shuffle questions and their options once when the component mounts
-    const shuffled = questions
+  const shuffleOptions = useCallback((questionsToShuffle: TriviaQuestion[]) => {
+     return questionsToShuffle
       .filter(q => q && q.options) // defensive check
       .map(q => ({
           ...q,
           options: [...q.options].sort(() => Math.random() - 0.5) // Shuffle options
       }));
-      // Don't re-shuffle the order of AI questions, but do for classic
-    setShuffledQuestions(isAiGame ? shuffled : shuffled.sort(() => Math.random() - 0.5));
-  }, [questions, isAiGame]);
+  }, []);
+
+  useEffect(() => {
+    // For AI games, we get questions one by one. For classic/challenge, we get them all at once.
+    if (isAiGame) {
+        // Just shuffle options for the new question that has arrived.
+        setShuffledOptionsQuestions(shuffleOptions(questions));
+    } else {
+        // Shuffle question order and their options once.
+        const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+        setShuffledOptionsQuestions(shuffleOptions(shuffledQuestions));
+    }
+  }, [questions, isAiGame, shuffleOptions]);
+
 
   useEffect(() => {
     if (questions.length === 0) return;
@@ -62,10 +82,18 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   }, [onGameEnd, score, currentQuestionIndex, questions.length]);
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    const isLastQuestion = isAiGame 
+        ? currentQuestionIndex >= (totalAiQuestions ?? 0) -1
+        : currentQuestionIndex >= shuffledOptionsQuestions.length - 1;
+
+    if (!isLastQuestion) {
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+        // For AI games, if we're approaching the last loaded question, fetch the next one.
+        if (isAiGame && onNextQuestionNeeded && currentQuestionIndex === questions.length - 2) {
+            onNextQuestionNeeded(questions);
+        }
     } else {
-      onGameEnd(score, currentQuestionIndex + 1);
+        onGameEnd(score, currentQuestionIndex + 1);
     }
   };
 
@@ -74,14 +102,23 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
       const points = 100;
       setScore((prevScore) => prevScore + points);
     }
+    
+    // For AI games, pre-fetch the next question as soon as an answer is given.
+    if (isAiGame && onNextQuestionNeeded) {
+        onNextQuestionNeeded(questions);
+    }
 
     // Delay before moving to the next question to show feedback
     setTimeout(() => {
-      if (currentQuestionIndex < shuffledQuestions.length - 1) {
+      const isLastQuestion = isAiGame 
+        ? currentQuestionIndex >= (totalAiQuestions ?? 0) - 1
+        : currentQuestionIndex >= shuffledOptionsQuestions.length - 1;
+
+      if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       } else {
         const finalScore = score + (isCorrect ? 100 : 0);
-        onGameEnd(finalScore, shuffledQuestions.length);
+        onGameEnd(finalScore, currentQuestionIndex + 1);
       }
     }, 1500);
   };
@@ -92,20 +129,20 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
 
   const handleUse5050 = () => {
     if (is5050Used) return;
-    const currentQuestion = shuffledQuestions[currentQuestionIndex];
+    const currentQuestion = shuffledOptionsQuestions[currentQuestionIndex];
     const correctAnswer = currentQuestion.answer;
     const incorrectOptions = currentQuestion.options.filter(opt => opt !== correctAnswer);
     // Ensure we have incorrect options to remove
     if (incorrectOptions.length < 2) return;
     
     const optionsToKeep = [correctAnswer, incorrectOptions[0]];
-    const newQuestions = [...shuffledQuestions];
+    const newQuestions = [...shuffledOptionsQuestions];
     newQuestions[currentQuestionIndex] = {
         ...currentQuestion,
         options: currentQuestion.options.map(opt => optionsToKeep.includes(opt) ? opt : ''),
         hiddenOptions: currentQuestion.options.filter(opt => !optionsToKeep.includes(opt))
     };
-    setShuffledQuestions(newQuestions);
+    setShuffledOptionsQuestions(newQuestions);
     setIs5050Used(true);
   };
   
@@ -115,9 +152,12 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
       setIsTimeBoostUsed(true);
   }
 
-  const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+  const totalQuestions = isAiGame ? (totalAiQuestions ?? questions.length) : questions.length;
+  const progress = ((currentQuestionIndex) / totalQuestions) * 100;
   
-  if (shuffledQuestions.length === 0) {
+  const currentQuestion = shuffledOptionsQuestions[currentQuestionIndex];
+
+  if (!currentQuestion) {
     return (
         <div className="flex flex-col items-center justify-center h-full">
             <Loader className="animate-spin h-8 w-8 text-primary" />
@@ -125,8 +165,6 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
         </div>
     )
   }
-
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
 
   return (
     <motion.div 
@@ -180,7 +218,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
             transition={{delay: 0.2}}
         >
            <Target className="h-6 w-6 text-accent drop-shadow-glow-accent" />
-           <span className="text-xl font-bold">{currentQuestionIndex + 1} / {shuffledQuestions.length}</span>
+           <span className="text-xl font-bold">{currentQuestionIndex + 1} / {totalQuestions}</span>
         </motion.div>
         <motion.div 
             className="flex items-center justify-center gap-2 bg-card p-4 rounded-lg"
@@ -203,7 +241,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
           question={currentQuestion}
           onAnswer={handleAnswer}
           questionNumber={currentQuestionIndex + 1}
-          totalQuestions={shuffledQuestions.length}
+          totalQuestions={totalQuestions}
           onUse5050={handleUse5050}
           is5050Used={is5050Used}
           onUseTimeBoost={handleUseTimeBoost}

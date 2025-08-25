@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { GameClient } from '@/components/game/GameClient';
 import { GameSetup } from '@/components/game/GameSetup';
 import { TriviaQuestion } from '@/lib/types';
-import { generateCryptoTrivia } from '@/ai/flows/generate-crypto-trivia';
+import { generateSingleCryptoQuestion } from '@/ai/flows/generate-crypto-trivia';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -19,31 +19,61 @@ export default function PlayPage() {
   const { toast } = useToast();
   const { t, language } = useI18n();
 
+  // Store game settings to fetch next questions
+  const [gameSettings, setGameSettings] = useState<{topic: string, numQuestions: number, difficulty: string} | null>(null);
+
+  const fetchNextQuestion = useCallback(async (currentQuestions: TriviaQuestion[]) => {
+    if (!gameSettings || currentQuestions.length >= gameSettings.numQuestions) {
+      return;
+    }
+    
+    try {
+      const existingQuestions = currentQuestions.map(q => q.question);
+      const nextQuestion = await generateSingleCryptoQuestion({
+        ...gameSettings,
+        language,
+        exclude: existingQuestions,
+      });
+
+      if (nextQuestion) {
+        setAiQuestions(prev => prev ? [...prev, nextQuestion] : [nextQuestion]);
+      }
+    } catch (error) {
+       console.error('Failed to fetch next AI trivia question:', error);
+       // Optional: Notify user that the next question failed to load
+    }
+  }, [gameSettings, language]);
+
+
   const handleStartAIGame = async (
     topic: string,
     numQuestions: number,
     difficulty: string
   ) => {
     setLoading(true);
-    setIsGameActive(true); // Game starts loading
+    setIsGameActive(true);
     setAiQuestions(null);
+    setGameSettings({ topic, numQuestions, difficulty });
+
     try {
-      const result = await generateCryptoTrivia({
+      // Fetch the first question to start the game immediately
+      const firstQuestion = await generateSingleCryptoQuestion({
         topic,
-        numQuestions,
         difficulty,
         language,
+        exclude: [],
       });
-      if (result.questions && result.questions.length > 0) {
-        setAiQuestions(result.questions.map(q => ({...q, topic: topic})));
+      
+      if (firstQuestion) {
+        setAiQuestions([firstQuestion]);
         setGameKey(prev => prev + 1);
       } else {
-        toast({
+         toast({
           title: t('play.toast.invalid_topic.title'),
           description: t('play.toast.invalid_topic.description'),
           variant: 'destructive',
         });
-        setIsGameActive(false); // Game did not start
+        setIsGameActive(false);
       }
     } catch (error) {
       console.error('Failed to generate AI trivia:', error);
@@ -52,15 +82,16 @@ export default function PlayPage() {
         description: t('play.toast.error.description'),
         variant: 'destructive',
       });
-      setIsGameActive(false); // Game did not start
+      setIsGameActive(false);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleGameEnd = () => {
     setAiQuestions(null);
     setIsGameActive(false);
+    setGameSettings(null);
     setGameKey(prev => prev + 1);
   }
 
@@ -72,6 +103,8 @@ export default function PlayPage() {
           challengeQuestions={aiQuestions || undefined} 
           onRestart={handleGameEnd}
           onGameStatusChange={setIsGameActive}
+          onNextQuestionNeeded={fetchNextQuestion}
+          totalAiQuestions={gameSettings?.numQuestions}
         />
       </div>
       <div className="lg:col-span-2">
@@ -89,3 +122,4 @@ export default function PlayPage() {
     </div>
   );
 }
+
