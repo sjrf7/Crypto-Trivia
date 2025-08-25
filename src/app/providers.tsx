@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AuthKitProvider } from '@farcaster/auth-kit';
