@@ -21,7 +21,7 @@ import { z } from 'zod';
 const TriviaQuestionSchema = z.object({
   topic: z.string().describe('The cryptocurrency topic for this question.'),
   question: z.string().describe('The trivia question text.'),
-  options: z.array(z.string()).describe('A list of 4 possible answers.'),
+  options: z.array(z.string()).min(4).max(4).describe('A list of exactly 4 possible answers.'),
   answer: z.string().describe('The correct answer from the options list.'),
 });
 export type TriviaQuestion = z.infer<typeof TriviaQuestionSchema>;
@@ -32,7 +32,7 @@ const GenerateCryptoTriviaInputSchema = z.object({
   topic: z.string().describe('The cryptocurrency topic for the trivia questions (e.g., Bitcoin, Ethereum, DeFi).'),
   numQuestions: z.number().describe('The number of questions to generate.'),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe('The difficulty level of the questions.'),
-  language: z.enum(['en', 'es']).describe('The language for the questions.'),
+  language: z.enum(['en', 'es']).describe('The language for the questions (ISO 639-1 code).'),
 });
 export type GenerateCryptoTriviaInput = z.infer<typeof GenerateCryptoTriviaInputSchema>;
 
@@ -48,16 +48,24 @@ const triviaPrompt = ai.definePrompt({
   input: { schema: GenerateCryptoTriviaInputSchema },
   output: { schema: GenerateCryptoTriviaOutputSchema },
   prompt: `
-    You are an expert in cryptocurrency, blockchain, and web3 technology. Your task is to generate a set of trivia questions.
-    It is very important that you ONLY generate questions about a topic related to cryptocurrency, blockchain, or web3.
-    If the user provides a topic that is NOT related to these subjects, you MUST return an error.
+    You are an expert in cryptocurrency, blockchain, and web3 technology. 
+    Your task is to generate a set of trivia questions based on the user's request.
 
-    Generate {{numQuestions}} trivia questions about {{topic}}.
-    The questions should be in {{language}}.
-    For each question, also include the topic '{{topic}}' in the response.
-    The questions should be of {{difficulty}} difficulty.
-    For each question, provide 4 options and clearly indicate the correct answer.
+    It is very important that you ONLY generate questions about topics related to cryptocurrency, blockchain, or web3.
+    If the user provides a topic that is NOT related to these subjects, you MUST return an empty list of questions.
+
+    Please generate exactly {{numQuestions}} trivia questions about the topic: "{{topic}}".
+    The questions should be in the language specified by the code: {{language}}.
+    The difficulty of the questions should be {{difficulty}}.
+
+    For each question, you must provide:
+    1. The original topic requested ('{{topic}}').
+    2. The question text.
+    3. A list of exactly 4 answer options.
+    4. The correct answer, which must be one of the 4 options.
+
     Ensure the questions are accurate, interesting, and cover specific aspects of the topic.
+    Format the output as a valid JSON object that adheres to the defined schema.
   `,
 });
 
@@ -70,9 +78,13 @@ const generateCryptoTriviaFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await triviaPrompt(input);
-    if (!output?.questions || output.questions.length === 0) {
-        throw new Error('Generated questions are empty or invalid.');
+
+    // Add robust validation to ensure the output is usable.
+    if (!output || !output.questions || output.questions.length === 0) {
+        console.error('AI model returned empty or invalid questions for topic:', input.topic);
+        throw new Error('The AI model could not generate questions for the given topic. Please try a different one.');
     }
+    
     return output;
   }
 );
