@@ -13,7 +13,6 @@ import { Card as UICard, CardContent as UICardContent } from '@/components/ui/ca
 
 export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
@@ -25,7 +24,6 @@ export default function ProfilePage() {
     
     // Don't do anything until the Farcaster auth state is resolved.
     if (isUserLoading) {
-        setIsLoading(true);
         return;
     }
 
@@ -33,8 +31,6 @@ export default function ProfilePage() {
     if (id === 'me') {
       if (isAuthenticated && user) {
         // The user is logged in. Create a profile for them on the fly.
-        // We can check if they are one of the mock players, but for simplicity,
-        // we'll just create a new profile object every time for /me.
         setPlayer({
           id: user.username || `fid-${user.fid}`,
           name: user.displayName || user.username || `User ${user.fid}`,
@@ -61,12 +57,10 @@ export default function ProfilePage() {
       setPlayer(foundPlayer || null);
     }
 
-    setIsLoading(false);
-
   }, [id, user, isAuthenticated, isUserLoading]);
 
 
-  if (isLoading) {
+  if (isUserLoading) {
     return (
        <Card>
             <CardHeader>
@@ -103,16 +97,21 @@ export default function ProfilePage() {
   }
 
   // After loading, if no player could be found (e.g., /profile/non-existent-user), show 404.
-  if (!player) {
+  if (!player && id !== 'me') {
     notFound();
   }
-
-  // If we have a player, show their profile.
-  return (
-    <div className="container mx-auto">
-      <ProfileCard player={player} />
-    </div>
-  );
+  
+  if (player) {
+    // If we have a player, show their profile.
+    return (
+      <div className="container mx-auto">
+        <ProfileCard player={player} />
+      </div>
+    );
+  }
+  
+  // Default case if something goes wrong, or if it's /me and the player hasn't been created yet.
+  return null;
 }
 
 
@@ -120,3 +119,4 @@ export default function ProfilePage() {
 const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
+
