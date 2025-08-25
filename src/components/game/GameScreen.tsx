@@ -1,15 +1,13 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
-import { Timer, Trophy, CheckCircle, Swords, SkipForward, Target, Hourglass, Wand2, Loader } from 'lucide-react';
+import { Timer, Trophy, Target, Hourglass, Wand2, Loader, Swords } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
-import { Button } from '../ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useI18n } from '@/hooks/use-i18n';
 
 const GAME_TIME_SECONDS = 120;
@@ -20,8 +18,6 @@ interface GameScreenProps {
   scoreToBeat?: number;
   isChallenge?: boolean;
   isAiGame?: boolean;
-  onNextQuestionNeeded?: (currentQuestions: TriviaQuestion[]) => void;
-  totalAiQuestions?: number;
 }
 
 export function GameScreen({ 
@@ -29,9 +25,7 @@ export function GameScreen({
     onGameEnd, 
     scoreToBeat, 
     isChallenge = false, 
-    isAiGame = false,
-    onNextQuestionNeeded,
-    totalAiQuestions
+    isAiGame = false
 }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -42,6 +36,11 @@ export function GameScreen({
   // Power-up states
   const [is5050Used, setIs5050Used] = useState(false);
   const [isTimeBoostUsed, setIsTimeBoostUsed] = useState(false);
+
+  // Sound Refs
+  const correctSoundRef = useRef<HTMLAudioElement>(null);
+  const incorrectSoundRef = useRef<HTMLAudioElement>(null);
+  const timerSoundRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (questions && questions.length > 0) {
@@ -69,12 +68,16 @@ export function GameScreen({
 
   useEffect(() => {
     if (shuffledQuestions.length === 0) return;
+
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
           onGameEnd(score, currentQuestionIndex);
           return 0;
+        }
+        if (prevTime === 11) { // Play sound at 10 seconds left
+            timerSoundRef.current?.play().catch(console.error);
         }
         return prevTime - 1;
       });
@@ -83,17 +86,11 @@ export function GameScreen({
     return () => clearInterval(timer);
   }, [onGameEnd, score, currentQuestionIndex, shuffledQuestions.length]);
 
-  const handleNextQuestion = () => {
-    const isLastQuestion = isAiGame 
-        ? currentQuestionIndex >= (totalAiQuestions ?? 0) -1
-        : currentQuestionIndex >= shuffledQuestions.length - 1;
 
+  const handleNextQuestion = () => {
+    const isLastQuestion = currentQuestionIndex >= shuffledQuestions.length - 1;
     if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-        // For AI games, if we're approaching the last loaded question, fetch the next one.
-        if (isAiGame && onNextQuestionNeeded && currentQuestionIndex === questions.length - 2) {
-            onNextQuestionNeeded(questions);
-        }
     } else {
         onGameEnd(score, currentQuestionIndex + 1);
     }
@@ -103,18 +100,14 @@ export function GameScreen({
     if (isCorrect) {
       const points = 100;
       setScore((prevScore) => prevScore + points);
+      correctSoundRef.current?.play().catch(console.error);
+    } else {
+      incorrectSoundRef.current?.play().catch(console.error);
     }
     
-    // For AI games, pre-fetch the next question as soon as an answer is given.
-    if (isAiGame && onNextQuestionNeeded) {
-        onNextQuestionNeeded(questions);
-    }
-
     // Delay before moving to the next question to show feedback
     setTimeout(() => {
-      const isLastQuestion = isAiGame 
-        ? currentQuestionIndex >= (totalAiQuestions ?? 0) - 1
-        : currentQuestionIndex >= shuffledQuestions.length - 1;
+      const isLastQuestion = currentQuestionIndex >= shuffledQuestions.length - 1;
 
       if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -155,7 +148,7 @@ export function GameScreen({
       setIsTimeBoostUsed(true);
   }
 
-  const totalQuestions = isAiGame ? (totalAiQuestions ?? questions.length) : questions.length;
+  const totalQuestions = questions.length;
   const progress = ((currentQuestionIndex) / totalQuestions) * 100;
   
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
@@ -178,6 +171,11 @@ export function GameScreen({
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
+        {/* Hidden audio elements */}
+        <audio ref={correctSoundRef} src="/sounds/correct.mp3" preload="auto" />
+        <audio ref={incorrectSoundRef} src="/sounds/incorrect.mp3" preload="auto" />
+        <audio ref={timerSoundRef} src="/sounds/timer.mp3" preload="auto" />
+
         <AnimatePresence>
             {isChallenge && (
                 <motion.div 
