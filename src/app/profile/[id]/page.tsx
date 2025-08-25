@@ -7,7 +7,7 @@ import { notFound, useParams } from 'next/navigation';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUser } from '@/hooks/use-user';
+import { useProfile } from '@farcaster/auth-kit';
 import { SignInButton } from '@/components/profile/SignInButton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 
@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
-  const { user, isAuthenticated, isLoading: isUserLoading } = useUser();
+  const { isAuthenticated, profile: user, loading: isUserLoading } = useProfile();
 
   useEffect(() => {
     setIsLoading(true);
@@ -26,28 +26,23 @@ export default function ProfilePage() {
 
     if (id === 'me') {
       if (isUserLoading) {
-        // Wait for user loading to complete
         setIsLoading(true);
         return;
       }
       if (isAuthenticated && user?.username) {
         playerId = user.username;
       } else {
-        // Not authenticated, show sign-in prompt
         setPlayer(null);
         setIsLoading(false);
         return;
       }
     }
     
-    // Find player in mock data. In a real app, you'd fetch from an API.
-    // For this example, we'll try to find a logged-in user in our mock data.
     const foundPlayer = PLAYERS.find((p) => p.id.toLowerCase() === playerId.toLowerCase());
     
     if (foundPlayer) {
       setPlayer(foundPlayer);
     } else if (id === 'me' && isAuthenticated && user) {
-        // If the logged-in user is not in our mock data, create a temporary player object.
         setPlayer({
             id: user.username!,
             name: user.displayName || user.username!,

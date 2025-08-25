@@ -24,6 +24,7 @@ import { Label } from '../ui/label';
 import { motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
+import { useProfile } from '@farcaster/auth-kit';
 
 interface SummaryScreenProps {
   score: number;
@@ -37,9 +38,10 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
+    const { profile: user } = useProfile();
     
     const generateChallenge = () => {
-        const challenger = 'A friend'; // Since auth is removed
+        const challenger = user?.displayName || 'A friend';
         const questionIndices = questions.map(q => q.originalIndex).join(',');
         const data = `${questionIndices}|${score}|${wager}|${challenger}`;
         const encodedData = btoa(data); 
