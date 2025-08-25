@@ -17,7 +17,7 @@ export default function PlayPage() {
   const [gameKey, setGameKey] = useState(0);
   const [isGameActive, setIsGameActive] = useState(false);
   const { toast } = useToast();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const handleStartAIGame = async (
     topic: string,
@@ -32,6 +32,7 @@ export default function PlayPage() {
         topic,
         numQuestions,
         difficulty,
+        language,
       });
       if (result.questions && result.questions.length > 0) {
         setAiQuestions(result.questions.map(q => ({...q, topic: topic})));

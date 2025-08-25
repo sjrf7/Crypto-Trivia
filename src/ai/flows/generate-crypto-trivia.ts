@@ -30,6 +30,7 @@ const GenerateCryptoTriviaInputSchema = z.object({
   topic: z.string().describe('The cryptocurrency topic for the trivia questions (e.g., Bitcoin, Ethereum, DeFi).'),
   numQuestions: z.number().int().min(1).max(80).describe('The number of questions to generate.'),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe('The difficulty level of the questions.'),
+  language: z.enum(['en', 'es']).describe('The language for the questions.'),
 });
 export type GenerateCryptoTriviaInput = z.infer<typeof GenerateCryptoTriviaInputSchema>;
 
@@ -50,6 +51,7 @@ const triviaPrompt = ai.definePrompt({
     If the user provides a topic that is NOT related to these subjects, you MUST return an empty "questions" array.
 
     Generate a list of {{numQuestions}} trivia questions about {{topic}}.
+    The questions should be in {{language}}.
     For each question, also include the topic '{{topic}}' in the response.
     The questions should be of {{difficulty}} difficulty.
     For each question, provide 4 options and clearly indicate the correct answer.
