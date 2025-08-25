@@ -1,0 +1,122 @@
+
+{
+  "welcome": {
+    "title": "Crypto Trivia Showdown",
+    "subtitle": "Pon a prueba tus conocimientos sobre criptomonedas, compite contra otros, y genera tus propias trivias con el poder de la IA.",
+    "cta": "Entrar al Juego",
+    "feature1": {
+      "title": "Trivia con IA",
+      "description": "Genera cuestionarios únicos sobre cualquier tema de cripto, blockchain o web3 al instante."
+    },
+    "feature2": {
+      "title": "Modo Clásico",
+      "description": "Enfréntate a nuestras preguntas clásicas y demuestra que eres un experto."
+    },
+    "feature3": {
+      "title": "Tablas de Clasificación",
+      "description": "Compite por el primer puesto y mira cómo te posicionas frente a los mejores."
+    },
+    "feature4": {
+      "title": "Logros y Recompensas",
+      "description": "Desbloquea logros por tus hitos y muéstralos en tu perfil."
+    },
+    "feature5": {
+      "title": "Perfil de Farcaster",
+      "description": "Inicia sesión con Farcaster para guardar tu progreso y personalizar tu perfil."
+    },
+    "feature6": {
+      "title": "Desafíos",
+      "description": "Reta a tus amigos a superar tu puntuación con las mismas preguntas."
+    }
+  },
+  "play": {
+    "generating_trivia": "Generando tu trivia...",
+    "toast": {
+      "invalid_topic": {
+        "title": "Tema Inválido",
+        "description": "Por favor, introduce un tema relacionado con crypto, blockchain o web3."
+      },
+      "error": {
+        "title": "Error",
+        "description": "Hubo un problema al generar las preguntas. Por favor, intenta de nuevo."
+      }
+    }
+  },
+  "game": {
+    "client": {
+        "title": "Crypto Trivia Showdown",
+        "description": "¡Pon a prueba tus conocimientos de cripto con nuestras preguntas de trivia clásicas o genera un nuevo cuestionario con IA!",
+        "start_classic_button": "Iniciar Juego Clásico"
+    },
+    "setup": {
+      "title": "Configuración de Trivia con IA",
+      "description": "Personaliza tu juego de trivia.",
+      "topic": {
+        "label": "Tema de Cripto",
+        "placeholder": "ej., Ethereum, NFTs, DeFi"
+      },
+      "num_questions": {
+        "label": "Número de Preguntas",
+        "placeholder": "Selecciona el número de preguntas"
+      },
+      "difficulty": {
+        "label": "Dificultad",
+        "placeholder": "Selecciona la dificultad",
+        "easy": "Fácil",
+        "medium": "Medio",
+        "hard": "Difícil"
+      },
+      "start_button": "Iniciar Juego",
+      "loading_button": "Generando Preguntas..."
+    },
+    "screen": {
+        "loading": "Cargando partida...",
+        "challenge_mode": {
+            "title": "Modo Desafío",
+            "description": "¡Supera una puntuación de"
+        },
+        "ai_trivia": {
+            "title": "Trivia con IA",
+            "topic": "Tema"
+        }
+    },
+    "question": {
+        "header": "Pregunta {questionNumber} de {totalQuestions}",
+        "powerup_5050": "50/50 (Elimina dos respuestas incorrectas)",
+        "powerup_time": "+15s (Añade 15 segundos al temporizador)"
+    }
+  },
+  "summary": {
+    "title": "¡Fin del Juego!",
+    "description": "Así te fue.",
+    "final_score": "Puntuación Final",
+    "questions_answered": "Respondiste {count} preguntas.",
+    "play_again_button": "Jugar de Nuevo",
+    "leaderboard_button": "Tabla de Clasificación",
+    "challenge": {
+      "button": "Desafiar a un Amigo",
+      "title": "Comparte tu Desafío",
+      "description": "Envía este enlace a un amigo. ¡Jugarán con las mismas preguntas e intentarán superar tu puntuación! Añade una apuesta opcional para más diversión.",
+      "wager": {
+        "label": "Apuesta (ETH en Base Sepolia)",
+        "placeholder": "ej., 0.01"
+      },
+      "link": {
+        "label": "Enlace del Desafío"
+      },
+      "close_button": "Cerrar"
+    },
+    "toast": {
+        "copied": {
+            "title": "¡Copiado al portapapeles!",
+            "description": "El enlace del desafío está listo para ser compartido."
+        }
+    }
+  },
+  "dock": {
+      "play": "Jugar",
+      "leaderboard": "Clasificación",
+      "achievements": "Logros",
+      "profile": "Perfil"
+  }
+}

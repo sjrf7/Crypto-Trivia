@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Star, Clock, SkipForward } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useI18n } from '@/hooks/use-i18n';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
@@ -33,6 +34,7 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const { t } = useI18n();
 
   const handleOptionClick = (option: string) => {
     if (isAnswered || option === '') return;
@@ -59,7 +61,7 @@ export function QuestionCard({
     >
       <Card className="w-full max-w-2xl mx-auto border-primary shadow-lg shadow-primary/10">
         <CardHeader>
-          <p className="text-sm text-muted-foreground">Pregunta {questionNumber} de {totalQuestions}</p>
+          <p className="text-sm text-muted-foreground">{t('game.question.header', { questionNumber, totalQuestions })}</p>
           <CardTitle className="font-headline text-2xl leading-tight">{question.question}</CardTitle>
         </CardHeader>
         <CardContent>
@@ -94,7 +96,7 @@ export function QuestionCard({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>50/50 (Elimina dos respuestas incorrectas)</p>
+                  <p>{t('game.question.powerup_5050')}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -104,7 +106,7 @@ export function QuestionCard({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>+15s (Añade 15 segundos al temporizador)</p>
+                  <p>{t('game.question.powerup_time')}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

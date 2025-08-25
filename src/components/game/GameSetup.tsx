@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wand2 } from 'lucide-react';
+import { useI18n } from '@/hooks/use-i18n';
 
 const formSchema = z.object({
   topic: z.string().min(2, 'Topic must be at least 2 characters.'),
@@ -38,6 +39,7 @@ interface GameSetupProps {
 }
 
 export function GameSetup({ onStart, loading }: GameSetupProps) {
+  const { t } = useI18n();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,10 +62,10 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
           <CardHeader>
             <div className="flex items-center gap-3">
               <Wand2 className="h-6 w-6 text-primary drop-shadow-glow-primary" />
-              <CardTitle className="font-headline text-2xl">AI Trivia Setup</CardTitle>
+              <CardTitle className="font-headline text-2xl">{t('game.setup.title')}</CardTitle>
             </div>
             <CardDescription>
-              Customize your trivia game.
+              {t('game.setup.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 flex-grow">
@@ -72,9 +74,9 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
               name="topic"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Crypto Topic</FormLabel>
+                  <FormLabel>{t('game.setup.topic.label')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Ethereum, NFTs, DeFi" {...field} />
+                    <Input placeholder={t('game.setup.topic.placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,11 +87,11 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
               name="numQuestions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Number of Questions</FormLabel>
+                  <FormLabel>{t('game.setup.num_questions.label')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select number of questions" />
+                        <SelectValue placeholder={t('game.setup.num_questions.placeholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -109,17 +111,17 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
               name="difficulty"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Difficulty</FormLabel>
+                  <FormLabel>{t('game.setup.difficulty.label')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
+                        <SelectValue placeholder={t('game.setup.difficulty.placeholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="easy">Easy</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="hard">Hard</SelectItem>
+                      <SelectItem value="easy">{t('game.setup.difficulty.easy')}</SelectItem>
+                      <SelectItem value="medium">{t('game.setup.difficulty.medium')}</SelectItem>
+                      <SelectItem value="hard">{t('game.setup.difficulty.hard')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -129,7 +131,7 @@ export function GameSetup({ onStart, loading }: GameSetupProps) {
           </CardContent>
           <div className="p-6 pt-0">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Generating Questions...' : 'Start Game'}
+              {loading ? t('game.setup.loading_button') : t('game.setup.start_button')}
             </Button>
           </div>
         </Card>

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 const navLinks = [
   { href: '/play', label: 'Play', icon: 'gamepad' },
@@ -71,7 +72,7 @@ export function Dock() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-20 border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
-      <nav className="container grid grid-cols-4 items-center justify-items-center h-full text-center">
+      <nav className="container grid grid-cols-5 items-center justify-items-center h-full text-center">
           {navLinks.map((link) => (
              <Link
                 key={link.href}
@@ -95,6 +96,7 @@ export function Dock() {
                 </motion.div>
               </Link>
           ))}
+          <LanguageSwitcher />
       </nav>
     </div>
   );

@@ -24,6 +24,7 @@ import { useProfile } from '@farcaster/auth-kit';
 import { Label } from '../ui/label';
 import { motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
+import { useI18n } from '@/hooks/use-i18n';
 
 interface SummaryScreenProps {
   score: number;
@@ -33,6 +34,7 @@ interface SummaryScreenProps {
 }
 
 export function SummaryScreen({ score, questionsAnswered, onRestart, questions }: SummaryScreenProps) {
+    const { t } = useI18n();
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
@@ -50,8 +52,8 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
     const copyToClipboard = () => {
         navigator.clipboard.writeText(challengeUrl);
         toast({
-            title: "Copied to clipboard!",
-            description: "Challenge link is ready to be shared.",
+            title: t('summary.toast.copied.title'),
+            description: t('summary.toast.copied.description'),
         });
     }
 
@@ -74,16 +76,16 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
           >
              <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
           </motion.div>
-          <CardTitle className="font-headline text-4xl">Game Over!</CardTitle>
-          <CardDescription>Here's how you did.</CardDescription>
+          <CardTitle className="font-headline text-4xl">{t('summary.title')}</CardTitle>
+          <CardDescription>{t('summary.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="text-6xl font-bold text-primary">
                 <AnimatedScore score={score} />
             </div>
-            <p className="text-muted-foreground">Final Score</p>
+            <p className="text-muted-foreground">{t('summary.final_score')}</p>
             <p className="text-lg">
-                You answered <span className="font-bold text-accent">{questionsAnswered}</span> questions.
+                {t('summary.questions_answered', { count: questionsAnswered })}
             </p>
         </CardContent>
         <CardFooter className="flex-col gap-4">
@@ -95,12 +97,12 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
             >
                 <Button onClick={onRestart} variant="outline">
                     <RotateCw className="mr-2 h-4 w-4" />
-                    Play Again
+                    {t('summary.play_again_button')}
                 </Button>
                 <Button asChild>
                     <Link href="/leaderboard">
                         <BarChart2 className="mr-2 h-4 w-4" />
-                        Leaderboard
+                        {t('summary.leaderboard_button')}
                     </Link>
                 </Button>
             </motion.div>
@@ -117,23 +119,23 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                 <AlertDialogTrigger asChild>
                   <Button variant="secondary" className="w-full">
                       <Share2 className="mr-2 h-4 w-4" />
-                      Challenge a Friend
+                      {t('summary.challenge.button')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Share Your Challenge</AlertDialogTitle>
+                    <AlertDialogTitle>{t('summary.challenge.title')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.
+                      {t('summary.challenge.description')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                          <Label htmlFor="wager">Wager (ETH on Base Sepolia)</Label>
+                          <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
                           <Input 
                               id="wager"
                               type="number"
-                              placeholder="e.g., 0.01"
+                              placeholder={t('summary.challenge.wager.placeholder')}
                               value={wager}
                               onChange={(e) => {
                                   setWager(e.target.value);
@@ -143,7 +145,7 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                           />
                       </div>
                       <div className="space-y-2">
-                          <Label>Challenge Link</Label>
+                          <Label>{t('summary.challenge.link.label')}</Label>
                           <div className="flex items-center space-x-2">
                               <Input value={challengeUrl} readOnly />
                               <Button onClick={copyToClipboard} size="icon">
@@ -153,7 +155,7 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                       </div>
                   </div>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Close</AlertDialogCancel>
+                    <AlertDialogCancel>{t('summary.challenge.close_button')}</AlertDialogCancel>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

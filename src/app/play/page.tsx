@@ -9,6 +9,7 @@ import { generateCryptoTrivia } from '@/ai/flows/generate-crypto-trivia';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useI18n } from '@/hooks/use-i18n';
 
 export default function PlayPage() {
   const [aiQuestions, setAiQuestions] = useState<TriviaQuestion[] | null>(null);
@@ -16,6 +17,7 @@ export default function PlayPage() {
   const [gameKey, setGameKey] = useState(0);
   const [isGameActive, setIsGameActive] = useState(false);
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const handleStartAIGame = async (
     topic: string,
@@ -36,8 +38,8 @@ export default function PlayPage() {
         setGameKey(prev => prev + 1);
       } else {
         toast({
-          title: 'Tema Inválido',
-          description: 'Por favor, introduce un tema relacionado con crypto, blockchain o web3.',
+          title: t('play.toast.invalid_topic.title'),
+          description: t('play.toast.invalid_topic.description'),
           variant: 'destructive',
         });
         setIsGameActive(false); // Game did not start
@@ -45,8 +47,8 @@ export default function PlayPage() {
     } catch (error) {
       console.error('Failed to generate AI trivia:', error);
       toast({
-        title: 'Error',
-        description: 'Hubo un problema al generar las preguntas. Por favor, intenta de nuevo.',
+        title: t('play.toast.error.title'),
+        description: t('play.toast.error.description'),
         variant: 'destructive',
       });
       setIsGameActive(false); // Game did not start
@@ -76,7 +78,7 @@ export default function PlayPage() {
            <Card className="h-full flex items-center justify-center">
              <div className="text-center">
                <Loader className="h-12 w-12 animate-spin mx-auto mb-4" />
-               <p className="text-muted-foreground">Generando tu trivia...</p>
+               <p className="text-muted-foreground">{t('play.generating_trivia')}</p>
              </div>
            </Card>
         ) : (

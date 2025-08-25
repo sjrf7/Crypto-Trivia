@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Wand2 } from 'lucide-react';
 import { TRIVIA_QUESTIONS } from '@/lib/mock-data';
 import { WagerCard } from './WagerCard';
+import { useI18n } from '@/hooks/use-i18n';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -43,6 +44,7 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [isChallenge, setIsChallenge] = useState(false);
   const [isAiGame, setIsAiGame] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (challengeQuestions) {
@@ -117,7 +119,7 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          Crypto Trivia Showdown
+          {t('game.client.title')}
         </motion.h2>
         <motion.p 
           className="text-muted-foreground max-w-md mb-6"
@@ -125,14 +127,14 @@ export function GameClient({ challengeQuestions, scoreToBeat, wager, challenger,
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Test your crypto knowledge with our classic trivia questions, or generate a new quiz with AI!
+          {t('game.client.description')}
         </motion.p>
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <Button onClick={handleStartClassic} size="lg">Start Classic Game</Button>
+          <Button onClick={handleStartClassic} size="lg">{t('game.client.start_classic_button')}</Button>
         </motion.div>
     </motion.div>
   );

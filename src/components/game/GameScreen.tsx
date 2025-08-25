@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useI18n } from '@/hooks/use-i18n';
 
 const GAME_TIME_SECONDS = 120;
 
@@ -26,6 +27,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
   const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
+  const { t } = useI18n();
   
   // Power-up states
   const [is5050Used, setIs5050Used] = useState(false);
@@ -118,7 +120,7 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
     return (
         <div className="flex flex-col items-center justify-center h-full">
             <Loader className="animate-spin h-8 w-8 text-primary" />
-            <p className="mt-4 text-muted-foreground">Cargando partida...</p>
+            <p className="mt-4 text-muted-foreground">{t('game.screen.loading')}</p>
         </div>
     )
   }
@@ -142,8 +144,8 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
                     animate={{y: 0, opacity: 1}}
                     exit={{y: -20, opacity: 0}}
                 >
-                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>Modo Desafío</h3>
-                    <p className="text-muted-foreground">¡Supera una puntuación de <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
+                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>{t('game.screen.challenge_mode.title')}</h3>
+                    <p className="text-muted-foreground">{t('game.screen.challenge_mode.description')} <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
                 </motion.div>
             )}
             {isAiGame && (
@@ -153,8 +155,8 @@ export function GameScreen({ questions, onGameEnd, scoreToBeat, isChallenge = fa
                     animate={{y: 0, opacity: 1}}
                     exit={{y: -20, opacity: 0}}
                 >
-                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Wand2 className="h-5 w-5 text-accent"/>Trivia con IA</h3>
-                    <p className="text-muted-foreground">Tema: <span className="font-bold text-accent">{currentQuestion.topic}</span></p>
+                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Wand2 className="h-5 w-5 text-accent"/>{t('game.screen.ai_trivia.title')}</h3>
+                    <p className="text-muted-foreground">{t('game.screen.ai_trivia.topic')}: <span className="font-bold text-accent">{currentQuestion.topic}</span></p>
                 </motion.div>
             )}
         </AnimatePresence>

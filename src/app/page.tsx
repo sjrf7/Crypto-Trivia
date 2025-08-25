@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Award, BrainCircuit, Gamepad2, Trophy, Wand2, User, Swords } from 'lucide-react';
 import Link from 'next/link';
+import { useI18n } from '@/hooks/use-i18n';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,6 +38,8 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementTy
 );
 
 export default function WelcomePage() {
+  const { t } = useI18n();
+
   return (
     <motion.div
       className="container mx-auto px-4 py-8 text-center"
@@ -54,18 +57,18 @@ export default function WelcomePage() {
       </motion.div>
 
       <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold mb-4">
-        Crypto Trivia Showdown
+        {t('welcome.title')}
       </motion.h1>
 
       <motion.p variants={itemVariants} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-        Pon a prueba tus conocimientos sobre criptomonedas, compite contra otros, y genera tus propias trivias con el poder de la IA.
+        {t('welcome.subtitle')}
       </motion.p>
 
       <motion.div variants={itemVariants} className="mb-12">
         <Button asChild size="lg" className="text-lg font-bold">
           <Link href="/play" prefetch={true}>
             <Gamepad2 className="mr-2 h-6 w-6" />
-            Entrar al Juego
+            {t('welcome.cta')}
           </Link>
         </Button>
       </motion.div>
@@ -73,33 +76,33 @@ export default function WelcomePage() {
       <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
         <FeatureCard
           icon={Wand2}
-          title="Trivia con IA"
-          description="Genera cuestionarios únicos sobre cualquier tema de cripto, blockchain o web3 al instante."
+          title={t('welcome.feature1.title')}
+          description={t('welcome.feature1.description')}
         />
         <FeatureCard
           icon={BrainCircuit}
-          title="Modo Clásico"
-          description="Enfréntate a nuestras preguntas clásicas y demuestra que eres un experto."
+          title={t('welcome.feature2.title')}
+          description={t('welcome.feature2.description')}
         />
         <FeatureCard
           icon={Trophy}
-          title="Tablas de Clasificación"
-          description="Compite por el primer puesto y mira cómo te posicionas frente a los mejores."
+          title={t('welcome.feature3.title')}
+          description={t('welcome.feature3.description')}
         />
         <FeatureCard
           icon={Award}
-          title="Logros y Recompensas"
-          description="Desbloquea logros por tus hitos y muéstralos en tu perfil."
+          title={t('welcome.feature4.title')}
+          description={t('welcome.feature4.description')}
         />
          <FeatureCard
           icon={User}
-          title="Perfil de Farcaster"
-          description="Inicia sesión con Farcaster para guardar tu progreso y personalizar tu perfil."
+          title={t('welcome.feature5.title')}
+          description={t('welcome.feature5.description')}
         />
          <FeatureCard
           icon={Swords}
-          title="Desafíos"
-          description="Reta a tus amigos a superar tu puntuación con las mismas preguntas."
+          title={t('welcome.feature6.title')}
+          description={t('welcome.feature6.description')}
         />
       </motion.div>
     </motion.div>

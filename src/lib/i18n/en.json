@@ -1,0 +1,122 @@
+
+{
+  "welcome": {
+    "title": "Crypto Trivia Showdown",
+    "subtitle": "Test your crypto knowledge, compete against others, and generate your own quizzes with the power of AI.",
+    "cta": "Enter Game",
+    "feature1": {
+      "title": "AI-Powered Trivia",
+      "description": "Instantly generate unique quizzes on any crypto, blockchain, or web3 topic."
+    },
+    "feature2": {
+      "title": "Classic Mode",
+      "description": "Take on our classic questions and prove you're an expert."
+    },
+    "feature3": {
+      "title": "Leaderboards",
+      "description": "Compete for the top spot and see how you stack up against the best."
+    },
+    "feature4": {
+      "title": "Achievements & Rewards",
+      "description": "Unlock achievements for your milestones and show them off on your profile."
+    },
+    "feature5": {
+      "title": "Farcaster Profile",
+      "description": "Log in with Farcaster to save your progress and customize your profile."
+    },
+    "feature6": {
+      "title": "Challenges",
+      "description": "Challenge your friends to beat your score on the same set of questions."
+    }
+  },
+  "play": {
+    "generating_trivia": "Generating your trivia...",
+    "toast": {
+      "invalid_topic": {
+        "title": "Invalid Topic",
+        "description": "Please enter a topic related to crypto, blockchain, or web3."
+      },
+      "error": {
+        "title": "Error",
+        "description": "There was a problem generating the questions. Please try again."
+      }
+    }
+  },
+  "game": {
+    "client": {
+        "title": "Crypto Trivia Showdown",
+        "description": "Test your crypto knowledge with our classic trivia questions, or generate a new quiz with AI!",
+        "start_classic_button": "Start Classic Game"
+    },
+    "setup": {
+      "title": "AI Trivia Setup",
+      "description": "Customize your trivia game.",
+      "topic": {
+        "label": "Crypto Topic",
+        "placeholder": "e.g., Ethereum, NFTs, DeFi"
+      },
+      "num_questions": {
+        "label": "Number of Questions",
+        "placeholder": "Select number of questions"
+      },
+      "difficulty": {
+        "label": "Difficulty",
+        "placeholder": "Select difficulty",
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "start_button": "Start Game",
+      "loading_button": "Generating Questions..."
+    },
+    "screen": {
+        "loading": "Loading game...",
+        "challenge_mode": {
+            "title": "Challenge Mode",
+            "description": "Beat a score of"
+        },
+        "ai_trivia": {
+            "title": "AI Trivia",
+            "topic": "Topic"
+        }
+    },
+    "question": {
+        "header": "Question {questionNumber} of {totalQuestions}",
+        "powerup_5050": "50/50 (Removes two incorrect answers)",
+        "powerup_time": "+15s (Adds 15 seconds to the timer)"
+    }
+  },
+  "summary": {
+    "title": "Game Over!",
+    "description": "Here's how you did.",
+    "final_score": "Final Score",
+    "questions_answered": "You answered {count} questions.",
+    "play_again_button": "Play Again",
+    "leaderboard_button": "Leaderboard",
+    "challenge": {
+      "button": "Challenge a Friend",
+      "title": "Share Your Challenge",
+      "description": "Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.",
+      "wager": {
+        "label": "Wager (ETH on Base Sepolia)",
+        "placeholder": "e.g., 0.01"
+      },
+      "link": {
+        "label": "Challenge Link"
+      },
+      "close_button": "Close"
+    },
+    "toast": {
+        "copied": {
+            "title": "Copied to clipboard!",
+            "description": "Challenge link is ready to be shared."
+        }
+    }
+  },
+  "dock": {
+      "play": "Play",
+      "leaderboard": "Leaderboard",
+      "achievements": "Achievements",
+      "profile": "Profile"
+  }
+}
