@@ -25,8 +25,9 @@ export default function ProfilePage() {
   } = useProfile();
 
   const { signIn, isSigningIn } = useSignIn({
-    onSuccess: (res) => {
-        // We push to the router to force a re-render and fetch the new session.
+    onSuccess: () => {
+        // The AuthKitProvider handles the API call and session creation.
+        // We just need to redirect to the profile page to show the new state.
         router.push('/profile/me');
     },
     onError: (error) => {

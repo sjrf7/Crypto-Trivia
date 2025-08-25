@@ -7,8 +7,8 @@ import { I18nProvider } from '@/hooks/use-i18n';
 
 const farcasterAuthConfig = {
   rpcUrl: 'https://mainnet.optimism.io',
-  // The api_url is not needed anymore as we handle the session manually
-  // api_url: '/api/auth',
+  api: '/api/auth',
+  domain: process.env.NEXT_PUBLIC_URL || 'farcaster-trivia.vercel.app',
 };
 
 export function Providers({ children }: { children: ReactNode }) {
