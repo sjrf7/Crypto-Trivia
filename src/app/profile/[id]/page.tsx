@@ -19,13 +19,13 @@ export default function ProfilePage() {
   const { toast } = useToast();
 
   const {
-    data: userProfile,
+    profile: userProfile,
     isAuthenticated,
     isLoading: isAuthLoading,
   } = useProfile();
 
   const { signIn, isSigningIn } = useSignIn({
-    onSuccess: () => {
+    onSuccess: (res) => {
         // We push to the router to force a re-render and fetch the new session.
         router.push('/profile/me');
     },

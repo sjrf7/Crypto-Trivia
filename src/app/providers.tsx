@@ -7,7 +7,8 @@ import { I18nProvider } from '@/hooks/use-i18n';
 
 const farcasterAuthConfig = {
   rpcUrl: 'https://mainnet.optimism.io',
-  api_url: '/api/auth',
+  // The api_url is not needed anymore as we handle the session manually
+  // api_url: '/api/auth',
 };
 
 export function Providers({ children }: { children: ReactNode }) {
