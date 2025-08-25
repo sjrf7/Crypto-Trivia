@@ -9,8 +9,6 @@ const JWT_SECRET = process.env.JWT_SECRET
 const APP_DOMAIN = process.env.NEXT_PUBLIC_URL || 'farcaster-trivia.vercel.app';
 
 if (!JWT_SECRET) {
-  // In development, it's okay to not have a JWT_SECRET, but we should warn the user.
-  // In production, this should be an error.
   if (process.env.NODE_ENV === 'production') {
     throw new Error('JWT_SECRET is not set. Authentication will not be secure. Please set a secret in your .env file.');
   } else {
@@ -45,7 +43,6 @@ export async function POST(req: NextRequest) {
         token,
       });
 
-      // Set cookie
       response.cookies.set('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
@@ -61,7 +58,6 @@ export async function POST(req: NextRequest) {
         { status: error.statusCode }
       );
     } else {
-      // Fallback for missing JWT_SECRET
       return NextResponse.json({ ...farcasterUser });
     }
   } catch (e) {
@@ -77,7 +73,6 @@ export async function GET(req: NextRequest) {
   const token = req.cookies.get('token')?.value;
 
   if (token && JWT_SECRET) {
-    // Return the user's session if they have a valid token
     try {
       const user = await session({
         token,
@@ -86,13 +81,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(user);
     } catch (e) {
        console.error('Session verification failed', e);
-       // Clear invalid cookie
        const response = NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
        response.cookies.delete('token');
        return response;
     }
   } else {
-    // Generate a nonce for the user to sign
     const { nonce, ...siwe } = await getFarcasterUser({ domain: APP_DOMAIN });
     return NextResponse.json({ ...siwe, nonce });
   }
