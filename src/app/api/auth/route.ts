@@ -5,8 +5,6 @@ import { SignJWT, jwtVerify } from 'jose';
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret-for-development');
 const ALGORITHM = 'HS256';
 
-// This is a simplified session management. 
-// In a production app, you'd want to store sessions in a database.
 const getJwt = (fid: number, username: string) => {
   const now = Math.floor(Date.now() / 1000);
   const iat = now;
