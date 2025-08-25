@@ -19,11 +19,9 @@ export default function ProfilePage() {
   const { toast } = useToast();
 
   const {
-    profile: {
-      data: userProfile,
-      isAuthenticated,
-      isLoading: isAuthLoading,
-    },
+    data: userProfile,
+    isAuthenticated,
+    isLoading: isAuthLoading,
   } = useProfile();
 
   const { signIn, isSigningIn } = useSignIn({
@@ -108,6 +106,7 @@ export default function ProfilePage() {
         <Card className="w-full max-w-md mx-auto text-center">
             <CardHeader>
                 <CardTitle className="font-headline text-3xl">View Your Profile</CardTitle>
+
                 <CardDescription>Sign in with Farcaster to view your game stats and achievements.</CardDescription>
             </CardHeader>
             <CardContent>
