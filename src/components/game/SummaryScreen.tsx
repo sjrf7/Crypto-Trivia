@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from '../ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { useProfile } from '@farcaster/auth-kit';
 import { Label } from '../ui/label';
 import { motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
@@ -38,10 +37,9 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
-    const { profile } = useProfile();
-
+    
     const generateChallenge = () => {
-        const challenger = profile?.data?.displayName ?? 'A friend';
+        const challenger = 'A friend'; // Since auth is removed
         const questionIndices = questions.map(q => q.originalIndex).join(',');
         const data = `${questionIndices}|${score}|${wager}|${challenger}`;
         const encodedData = btoa(data); 

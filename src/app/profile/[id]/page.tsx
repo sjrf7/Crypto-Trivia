@@ -3,118 +3,58 @@
 
 import { PLAYERS } from '@/lib/mock-data';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-import { notFound, useParams, useRouter } from 'next/navigation';
-import { useProfile, useSignIn } from '@farcaster/auth-kit';
+import { notFound, useParams } from 'next/navigation';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const { toast } = useToast();
-
-  const {
-    profile: userProfile,
-    isAuthenticated,
-    isLoading: isAuthLoading,
-  } = useProfile();
-
-  const { signIn, isSigningIn } = useSignIn({
-    onSuccess: () => {
-        // The AuthKitProvider handles the API call and session creation.
-        // We just need to redirect to the profile page to show the new state.
-        router.push('/profile/me');
-    },
-    onError: (error) => {
-        console.error('Farcaster sign in error:', error);
-        toast({
-            title: 'Sign In Failed',
-            description: 'There was a problem signing you in. Please try again.',
-            variant: 'destructive'
-        })
-    }
-  });
   
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
   useEffect(() => {
-    // Start loading whenever the dependencies change
     setIsLoading(true);
 
-    if (isAuthLoading || !id) {
-        // Still waiting for Farcaster auth to resolve, do nothing yet
+    if (!id) {
         return;
     }
-
-    if (id === 'me') {
-      if (isAuthenticated && userProfile) {
-        // Find if this farcaster user is in our mock list to get game stats
-        const existingPlayer = PLAYERS.find(p => p.id === userProfile.username);
-        
-        if (existingPlayer) {
-            // If player exists, combine their stats with their Farcaster profile identity
-            setPlayer({
-                ...existingPlayer,
-                id: userProfile.username, // Always use Farcaster username
-                name: userProfile.displayName, // Always use Farcaster display name
-                avatar: userProfile.pfpUrl, // Always use Farcaster avatar
-            });
-        } else {
-             // If new player, create a fresh profile using Farcaster identity
-             setPlayer({
-                id: userProfile.username,
-                name: userProfile.displayName,
-                avatar: userProfile.pfpUrl,
-                stats: {
-                    totalScore: 0,
-                    gamesPlayed: 0,
-                    questionsAnswered: 0,
-                    correctAnswers: 0,
-                    accuracy: '0%',
-                    topRank: null,
-                },
-                achievements: [],
-            });
-        }
-      } else {
-        // Not authenticated, but trying to view 'me', player remains null
-        setPlayer(null);
-      }
+    
+    const foundPlayer = PLAYERS.find((p) => p.id === id);
+    if (foundPlayer) {
+      setPlayer(foundPlayer);
     } else {
-      // For viewing other profiles, find them in mock data
-      const foundPlayer = PLAYERS.find((p) => p.id === id);
-      if (foundPlayer) {
-        setPlayer(foundPlayer);
-      } else {
-        notFound();
-        return; // Early return on not found
-      }
+      // If no player is found for a specific ID, show 404.
+      // This also handles the case for '/profile/me' gracefully.
+      notFound();
+      return;
     }
-    // Finished processing, set loading to false
+    
     setIsLoading(false);
 
-  }, [id, userProfile, isAuthenticated, isAuthLoading, router]);
+  }, [id]);
 
-  // If viewing 'me' and not authenticated (and auth has loaded), show sign-in prompt
-  if (!isAuthLoading && id === 'me' && !isAuthenticated) {
+
+  if (isLoading) {
     return (
-        <Card className="w-full max-w-md mx-auto text-center">
-            <CardHeader>
-                <CardTitle className="font-headline text-3xl">View Your Profile</CardTitle>
-
-                <CardDescription>Sign in with Farcaster to view your game stats and achievements.</CardDescription>
+       <Card className="w-full max-w-4xl mx-auto">
+            <CardHeader className="text-center">
+                <Skeleton className="w-32 h-32 rounded-full mx-auto mb-4" />
+                <Skeleton className="h-10 w-48 mx-auto" />
+                <Skeleton className="h-5 w-32 mx-auto" />
             </CardHeader>
             <CardContent>
-                <Button onClick={() => signIn()} disabled={isSigningIn}>
-                    {isSigningIn ? <Loader className="animate-spin mr-2" /> : null}
-                    Sign In with Farcaster
-                </Button>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex flex-col items-center justify-center bg-secondary p-4 rounded-lg text-center">
+                            <Skeleton className="h-8 w-8 mb-2 rounded-full" />
+                            <Skeleton className="h-4 w-20 mb-1" />
+                            <Skeleton className="h-6 w-10" />
+                        </div>
+                    ))}
+                </div>
             </CardContent>
         </Card>
     )
@@ -122,7 +62,13 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto">
-      {isLoading ? <ProfileCard player={null} /> : <ProfileCard player={player} />}
+      <ProfileCard player={player} />
     </div>
   );
 }
+
+
+// Helper components for skeleton loading, assuming they are defined elsewhere or defined here
+const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
+const CardHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
+const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
