@@ -1,5 +1,5 @@
 
-import { getFarcasterUser, session } from '@farcaster/auth-kit';
+import { getFarcasterUser, session } from '@farcaster/auth-kit/lib/hubble';
 import { type NextRequest, NextResponse } from 'next/server';
 import { JWTPayload, SignJWT } from 'jose';
 
@@ -83,10 +83,10 @@ export async function GET(req: NextRequest) {
        console.error('Session verification failed', e);
        const response = NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
        response.cookies.delete('token');
-       return response;
+       // Fall through to generate a new nonce
     }
-  } else {
-    const { nonce, ...siwe } = await getFarcasterUser({ domain: APP_DOMAIN });
-    return NextResponse.json({ ...siwe, nonce });
   }
+  
+  const { nonce, ...siwe } = await getFarcasterUser({ domain: APP_DOMAIN });
+  return NextResponse.json({ ...siwe, nonce });
 }

@@ -21,6 +21,22 @@ const nextConfig = {
       }
     ],
   },
+   webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push(
+        'handlebars',
+        'lokijs',
+        '@opentelemetry/exporter-jaeger',
+        '@opentelemetry/sdk-node',
+         // Genkit plugins depending on grpc may not work properly.
+        'grpc',
+        '@grpc/grpc-js',
+        'express'
+      );
+    }
+    return config;
+  },
 };
 
 module.exports = nextConfig;
+
