@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Wand2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
+import { WagerCard } from './WagerCard';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -75,8 +76,8 @@ export function GameClient({
 
   const handleStartClassic = () => {
     onGameStatusChange?.(true);
-    const questionIndices = [...Array(classicQuestions.length).keys()].sort(() => Math.random() - 0.5);
-    const selectedQuestions = questionIndices.map(i => ({...classicQuestions[i], originalIndex: i}));
+    // The questions are now shuffled directly in GameScreen via useMemo
+    const selectedQuestions = classicQuestions.map((q, i) => ({...q, originalIndex: i}));
     setQuestions(selectedQuestions);
     setGameStatus('playing');
     setIsAiGame(false);
@@ -153,6 +154,10 @@ export function GameClient({
   );
 
   const renderGameContent = () => {
+    if (questions.length === 0 && (gameStatus === 'playing' || gameStatus === 'wager')) {
+        return renderWelcomeScreen();
+    }
+    
     switch (gameStatus) {
       case 'wager':
         return <WagerCard 
