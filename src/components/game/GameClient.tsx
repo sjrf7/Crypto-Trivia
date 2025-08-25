@@ -59,8 +59,8 @@ export function GameClient({
         onGameStatusChange?.(true);
         if (challengeQuestions.length > 0) {
             setIsChallenge(!!scoreToBeat);
-            setIsAiGame(!scoreToBeat);
-            setQuestions(challengeQuestions);
+            setIsAiGame(!scoreToBeat); // It's an AI game if there's no score to beat
+            setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
              if (wager && wager > 0 && challenger) {
                 setGameStatus('wager');
             } else {
@@ -72,7 +72,6 @@ export function GameClient({
 
   const handleStartClassic = () => {
     onGameStatusChange?.(true);
-    // Shuffle the classic questions and take the first 20
     const shuffled = [...classicQuestions]
       .map((q, i) => ({ ...q, originalIndex: i }))
       .sort(() => 0.5 - Math.random());

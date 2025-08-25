@@ -44,6 +44,7 @@ export function GameScreen({
 
   useEffect(() => {
     if (questions && questions.length > 0) {
+      // Always shuffle the options for every question to prevent cheating in challenges
       const shuffleOptions = (questionsToShuffle: TriviaQuestion[]) => {
         return questionsToShuffle
           .filter(q => q && q.options)
@@ -55,7 +56,8 @@ export function GameScreen({
       
       const optionsShuffled = shuffleOptions(questions);
 
-      if (isAiGame) {
+      // Only shuffle the order of questions if it's NOT a challenge game
+      if (isChallenge || isAiGame) {
         setShuffledQuestions(optionsShuffled);
       } else {
         setShuffledQuestions([...optionsShuffled].sort(() => Math.random() - 0.5));
@@ -63,7 +65,7 @@ export function GameScreen({
     } else {
         setShuffledQuestions([]);
     }
-  }, [questions, isAiGame]);
+  }, [questions, isAiGame, isChallenge]);
 
 
   useEffect(() => {
