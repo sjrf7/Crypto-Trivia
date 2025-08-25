@@ -10,11 +10,13 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProfilePage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const { toast } = useToast();
 
   const {
     profile: {
@@ -25,8 +27,17 @@ export default function ProfilePage() {
   } = useProfile();
 
   const { signIn, isSigningIn } = useSignIn({
+    api_url: '/api/auth',
     onSuccess: () => {
         router.push('/profile/me');
+    },
+    onError: (error) => {
+        console.error('Farcaster sign in error:', error);
+        toast({
+            title: 'Sign In Failed',
+            description: 'There was a problem signing you in. Please try again.',
+            variant: 'destructive'
+        })
     }
   });
   
