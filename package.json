@@ -9,6 +9,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@farcaster/auth-kit": "^0.2.2",
     "@genkit-ai/googleai": "^1.0.0",
