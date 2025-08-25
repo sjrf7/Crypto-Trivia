@@ -72,8 +72,13 @@ export function GameClient({
 
   const handleStartClassic = () => {
     onGameStatusChange?.(true);
-    // The questions are now shuffled directly in GameScreen via useMemo
-    const selectedQuestions = classicQuestions.map((q, i) => ({...q, originalIndex: i}));
+    // Shuffle the classic questions and take the first 20
+    const shuffled = [...classicQuestions]
+      .map((q, i) => ({ ...q, originalIndex: i }))
+      .sort(() => 0.5 - Math.random());
+    
+    const selectedQuestions = shuffled.slice(0, 20);
+
     setQuestions(selectedQuestions);
     setGameStatus('playing');
     setIsAiGame(false);

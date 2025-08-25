@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Award, RotateCw, BarChart2, Share2, ClipboardCheck } from 'lucide-react';
@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/types';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -40,14 +39,22 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
     const [wager, setWager] = useState('');
     const { profile: user } = useProfile();
     
-    const generateChallenge = () => {
+    const generateChallenge = useCallback(() => {
         const challenger = user?.displayName || 'A friend';
-        const questionIndices = questions.map(q => q.originalIndex).join(',');
+        // Get original indices from the questions actually played
+        const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
+        
+        if (!questionIndices) {
+            console.error("Could not generate challenge: No original indices found on questions.");
+            setChallengeUrl('');
+            return;
+        }
+
         const data = `${questionIndices}|${score}|${wager}|${challenger}`;
         const encodedData = btoa(data); 
         const url = `${window.location.origin}/challenge/${encodedData}`;
         setChallengeUrl(url);
-    };
+    }, [questions, score, wager, user]);
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(challengeUrl);
@@ -148,7 +155,7 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                           <Label>{t('summary.challenge.link.label')}</Label>
                           <div className="flex items-center space-x-2">
                               <Input value={challengeUrl} readOnly />
-                              <Button onClick={copyToClipboard} size="icon">
+                              <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl}>
                                   <ClipboardCheck className="h-4 w-4" />
                               </Button>
                           </div>
