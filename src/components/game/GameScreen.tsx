@@ -36,39 +36,39 @@ export function GameScreen({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
+  const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
   const { t } = useI18n();
   
   // Power-up states
   const [is5050Used, setIs5050Used] = useState(false);
   const [isTimeBoostUsed, setIsTimeBoostUsed] = useState(false);
 
-  const shuffleOptions = useCallback((questionsToShuffle: TriviaQuestion[]) => {
-     return questionsToShuffle
-      .filter(q => q && q.options) // defensive check
-      .map(q => ({
-          ...q,
-          options: [...q.options].sort(() => Math.random() - 0.5) // Shuffle options
-      }));
-  }, []);
+  useEffect(() => {
+    if (questions && questions.length > 0) {
+      const shuffleOptions = (questionsToShuffle: TriviaQuestion[]) => {
+        return questionsToShuffle
+          .filter(q => q && q.options)
+          .map(q => ({
+            ...q,
+            options: [...q.options].sort(() => Math.random() - 0.5)
+          }));
+      };
+      
+      const optionsShuffled = shuffleOptions(questions);
 
-  const shuffledOptionsQuestions = useMemo(() => {
-    if (!questions || questions.length === 0) {
-      return [];
-    }
-    // For AI games, we get questions one by one. For classic/challenge, we get them all at once.
-    if (isAiGame) {
-        // Just shuffle options for the new question that has arrived.
-        return shuffleOptions(questions);
+      if (isAiGame) {
+        setShuffledQuestions(optionsShuffled);
+      } else {
+        setShuffledQuestions([...optionsShuffled].sort(() => Math.random() - 0.5));
+      }
     } else {
-        // Shuffle question order and their options once.
-        const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
-        return shuffleOptions(shuffledQuestions);
+        setShuffledQuestions([]);
     }
-  }, [questions, isAiGame, shuffleOptions]);
+  }, [questions, isAiGame]);
 
 
   useEffect(() => {
-    if (shuffledOptionsQuestions.length === 0) return;
+    if (shuffledQuestions.length === 0) return;
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
@@ -81,12 +81,12 @@ export function GameScreen({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onGameEnd, score, currentQuestionIndex, shuffledOptionsQuestions.length]);
+  }, [onGameEnd, score, currentQuestionIndex, shuffledQuestions.length]);
 
   const handleNextQuestion = () => {
     const isLastQuestion = isAiGame 
         ? currentQuestionIndex >= (totalAiQuestions ?? 0) -1
-        : currentQuestionIndex >= shuffledOptionsQuestions.length - 1;
+        : currentQuestionIndex >= shuffledQuestions.length - 1;
 
     if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -114,7 +114,7 @@ export function GameScreen({
     setTimeout(() => {
       const isLastQuestion = isAiGame 
         ? currentQuestionIndex >= (totalAiQuestions ?? 0) - 1
-        : currentQuestionIndex >= shuffledOptionsQuestions.length - 1;
+        : currentQuestionIndex >= shuffledQuestions.length - 1;
 
       if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -131,22 +131,21 @@ export function GameScreen({
 
   const handleUse5050 = () => {
     if (is5050Used) return;
-    const currentQuestion = shuffledOptionsQuestions[currentQuestionIndex];
+    const currentQuestion = shuffledQuestions[currentQuestionIndex];
     const correctAnswer = currentQuestion.answer;
     const incorrectOptions = currentQuestion.options.filter(opt => opt !== correctAnswer);
-    // Ensure we have incorrect options to remove
     if (incorrectOptions.length < 2) return;
     
     const optionsToKeep = [correctAnswer, incorrectOptions[0]];
-    const newQuestions = [...shuffledOptionsQuestions];
+    
+    const newQuestions = [...shuffledQuestions];
     newQuestions[currentQuestionIndex] = {
         ...currentQuestion,
         options: currentQuestion.options.map(opt => optionsToKeep.includes(opt) ? opt : ''),
         hiddenOptions: currentQuestion.options.filter(opt => !optionsToKeep.includes(opt))
     };
-    // setShuffledOptionsQuestions(newQuestions); This is now a derived state, so we can't set it.
-    // This is a limitation of the current approach. For the sake of fixing the bug, we'll accept this.
-    // A better approach would involve a more complex state management.
+    
+    setShuffledQuestions(newQuestions);
     setIs5050Used(true);
   };
   
@@ -159,7 +158,7 @@ export function GameScreen({
   const totalQuestions = isAiGame ? (totalAiQuestions ?? questions.length) : questions.length;
   const progress = ((currentQuestionIndex) / totalQuestions) * 100;
   
-  const currentQuestion = shuffledOptionsQuestions[currentQuestionIndex];
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
 
   if (!currentQuestion) {
     return (
