@@ -159,9 +159,9 @@
         "question": "¿Qué es el 'deslizamiento' (Slippage) en el contexto del trading en DEX?",
         "answer": "La diferencia entre el precio esperado y el precio ejecutado",
         "options": [
-            "Un tipo de bot de arbitraje", 
+            "Un tipo de bot de arbitraje",
             "Un error de conexión de red",
-            "La diferencia entre el precio esperado y el precio ejecutado", 
+            "La diferencia entre el precio esperado y el precio ejecutado",
             "Una tarifa pagada a los proveedores de liquidez"
         ]
     },
@@ -631,7 +631,7 @@
         "options": ["Tiene una interfaz fácil de usar", "Admite todas las criptomonedas", "Ofrece altas recompensas de staking", "Mantiene tus claves privadas offline y seguras"]
     },
     {
-        "question": "¿Qué exchange fue hackeado de forma famosa en 2016, lo que llevó a una bifurcación dura de Ethereum?",
+        "question": "¿Qué exchange fue famosamente hackeado en 2016, lo que llevó a una bifurcación dura de Ethereum?",
         "answer": "The DAO",
         "options": ["Mt. Gox", "Bitfinex", "The DAO", "Cryptopia"]
     }
