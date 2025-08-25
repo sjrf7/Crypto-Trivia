@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -56,7 +55,7 @@ export function GameClient({
   const [isAiGame, setIsAiGame] = useState(false);
   const { t } = useI18n();
 
-  const classicQuestions = t('classic_questions', {}, { returnObjects: true }) as TriviaQuestion[];
+  const classicQuestions = t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[];
 
   useEffect(() => {
     if (challengeQuestions) {

@@ -12,13 +12,13 @@ type Language = 'es' | 'en';
 interface I18nContextType {
   language: Language;
   setLanguage: (language: Language) => void;
-  t: (key: string, replacements?: { [key: string]: string | number }) => string;
+  t: (key: string, replacements?: { [key: string]: string | number }, options?: { returnObjects: boolean }) => any;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('es');
+  const [language, setLanguageState] = useState<Language>('en');
 
   useEffect(() => {
     // Set language from localStorage or browser settings on initial load
@@ -36,25 +36,36 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('language', lang);
   };
 
-  const t = useCallback((key: string, replacements?: { [key: string]: string | number }): string => {
+  const t = useCallback((key: string, replacements?: { [key: string]: string | number }, options?: { returnObjects: boolean }): any => {
     const keys = key.split('.');
-    let translation = translations[language];
-
-    for (const k of keys) {
-      translation = translation?.[k];
-      if (translation === undefined) {
-        // Fallback to English if translation is not found
-        let fallback = translations['en'];
-        for (const fk of keys) {
-          fallback = fallback?.[fk];
-          if (fallback === undefined) return key;
+    
+    const findTranslation = (lang: Language, keyParts: string[]) => {
+        let result = translations[lang];
+        for (const k of keyParts) {
+            result = result?.[k];
+            if (result === undefined) return undefined;
         }
-        translation = fallback;
-        break;
-      }
+        return result;
+    }
+
+    let translation = findTranslation(language, keys);
+
+    if (translation === undefined) {
+        translation = findTranslation('en', keys);
     }
     
-    if (typeof translation !== 'string') return key;
+    if (translation === undefined) {
+        return key;
+    }
+
+    if (options?.returnObjects) {
+        return translation;
+    }
+
+    if (typeof translation !== 'string') {
+        console.warn(`Translation for key '${key}' is not a string. Did you mean to use returnObjects?`);
+        return key;
+    }
 
     if (replacements) {
         return Object.keys(replacements).reduce((acc, currentKey) => {
