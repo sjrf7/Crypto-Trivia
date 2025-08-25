@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Award, BrainCircuit, Gamepad2, Trophy, Wand2, User, Swords } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/hooks/use-i18n';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -41,70 +42,75 @@ export default function WelcomePage() {
   const { t } = useI18n();
 
   return (
-    <motion.div
-      className="container mx-auto px-4 py-8 text-center"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
+    <div className="relative">
+       <div className="absolute top-0 right-0 z-10">
+        <LanguageSwitcher />
+      </div>
       <motion.div
-        className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-fit"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1, rotate: 360 }}
-        transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
+        className="container mx-auto px-4 py-8 text-center"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
       >
-        <Trophy className="h-16 w-16 text-primary drop-shadow-glow-primary" />
+        <motion.div
+          className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-fit"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1, rotate: 360 }}
+          transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
+        >
+          <Trophy className="h-16 w-16 text-primary drop-shadow-glow-primary" />
+        </motion.div>
+
+        <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold mb-4">
+          {t('welcome.title')}
+        </motion.h1>
+
+        <motion.p variants={itemVariants} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+          {t('welcome.subtitle')}
+        </motion.p>
+
+        <motion.div variants={itemVariants} className="mb-12">
+          <Button asChild size="lg" className="text-lg font-bold">
+            <Link href="/play" prefetch={true}>
+              <Gamepad2 className="mr-2 h-6 w-6" />
+              {t('welcome.cta')}
+            </Link>
+          </Button>
+        </motion.div>
+
+        <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <FeatureCard
+            icon={Wand2}
+            title={t('welcome.feature1.title')}
+            description={t('welcome.feature1.description')}
+          />
+          <FeatureCard
+            icon={BrainCircuit}
+            title={t('welcome.feature2.title')}
+            description={t('welcome.feature2.description')}
+          />
+          <FeatureCard
+            icon={Trophy}
+            title={t('welcome.feature3.title')}
+            description={t('welcome.feature3.description')}
+          />
+          <FeatureCard
+            icon={Award}
+            title={t('welcome.feature4.title')}
+            description={t('welcome.feature4.description')}
+          />
+          <FeatureCard
+            icon={User}
+            title={t('welcome.feature5.title')}
+            description={t('welcome.feature5.description')}
+          />
+          <FeatureCard
+            icon={Swords}
+            title={t('welcome.feature6.title')}
+            description={t('welcome.feature6.description')}
+          />
+        </motion.div>
       </motion.div>
-
-      <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold mb-4">
-        {t('welcome.title')}
-      </motion.h1>
-
-      <motion.p variants={itemVariants} className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-        {t('welcome.subtitle')}
-      </motion.p>
-
-      <motion.div variants={itemVariants} className="mb-12">
-        <Button asChild size="lg" className="text-lg font-bold">
-          <Link href="/play" prefetch={true}>
-            <Gamepad2 className="mr-2 h-6 w-6" />
-            {t('welcome.cta')}
-          </Link>
-        </Button>
-      </motion.div>
-
-      <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        <FeatureCard
-          icon={Wand2}
-          title={t('welcome.feature1.title')}
-          description={t('welcome.feature1.description')}
-        />
-        <FeatureCard
-          icon={BrainCircuit}
-          title={t('welcome.feature2.title')}
-          description={t('welcome.feature2.description')}
-        />
-        <FeatureCard
-          icon={Trophy}
-          title={t('welcome.feature3.title')}
-          description={t('welcome.feature3.description')}
-        />
-        <FeatureCard
-          icon={Award}
-          title={t('welcome.feature4.title')}
-          description={t('welcome.feature4.description')}
-        />
-         <FeatureCard
-          icon={User}
-          title={t('welcome.feature5.title')}
-          description={t('welcome.feature5.description')}
-        />
-         <FeatureCard
-          icon={Swords}
-          title={t('welcome.feature6.title')}
-          description={t('welcome.feature6.description')}
-        />
-      </motion.div>
-    </motion.div>
+    </div>
   );
 }
