@@ -31,7 +31,8 @@ const nextConfig = {
          // Genkit plugins depending on grpc may not work properly.
         'grpc',
         '@grpc/grpc-js',
-        'express'
+        'express',
+        'firebase-admin'
       );
     }
     return config;
