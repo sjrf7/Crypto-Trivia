@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PLAYERS } from '@/lib/mock-data';
@@ -22,45 +21,41 @@ export default function ProfilePage() {
 
   useEffect(() => {
     setIsLoading(true);
-    let playerId = id;
 
+    // Case 1: The user is viewing their own profile (/profile/me)
     if (id === 'me') {
       if (isUserLoading) {
-        setIsLoading(true);
-        return;
+        // We are still waiting to see if the user is logged in
+        return; 
       }
-      if (isAuthenticated && user?.username) {
-        playerId = user.username;
-      } else {
-        setPlayer(null);
-        setIsLoading(false);
-        return;
-      }
-    }
-    
-    const foundPlayer = PLAYERS.find((p) => p.id.toLowerCase() === playerId.toLowerCase());
-    
-    if (foundPlayer) {
-      setPlayer(foundPlayer);
-    } else if (id === 'me' && isAuthenticated && user) {
+
+      if (isAuthenticated && user) {
+        // User is logged in, create a profile for them on the fly
         setPlayer({
-            id: user.username!,
-            name: user.displayName || user.username!,
-            avatar: user.pfpUrl || `https://placehold.co/128x128.png`,
-            stats: {
-                totalScore: 0,
-                gamesPlayed: 0,
-                questionsAnswered: 0,
-                correctAnswers: 0,
-                accuracy: '0%',
-                topRank: null,
-            },
-            achievements: [],
+          id: user.username || `fid-${user.fid}`,
+          name: user.displayName || user.username || `User ${user.fid}`,
+          avatar: user.pfpUrl || `https://placehold.co/128x128.png`,
+          stats: { // Default stats for a new user
+            totalScore: 0,
+            gamesPlayed: 0,
+            questionsAnswered: 0,
+            correctAnswers: 0,
+            accuracy: '0%',
+            topRank: null,
+          },
+          achievements: [],
         });
-    } else {
-      setPlayer(null);
-    }
+      } else {
+        // User is not logged in and trying to see 'me', show nothing (SignIn prompt will be rendered)
+        setPlayer(null);
+      }
     
+    // Case 2: The user is viewing a specific profile (e.g., /profile/vitalik)
+    } else {
+      const foundPlayer = PLAYERS.find((p) => p.id.toLowerCase() === id.toLowerCase());
+      setPlayer(foundPlayer || null);
+    }
+
     setIsLoading(false);
 
   }, [id, user, isAuthenticated, isUserLoading]);
