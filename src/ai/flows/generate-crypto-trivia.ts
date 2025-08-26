@@ -46,6 +46,9 @@ const triviaPrompt = ai.definePrompt({
   name: 'cryptoTriviaPrompt',
   input: { schema: GenerateCryptoTriviaInputSchema },
   output: { schema: GenerateCryptoTriviaOutputSchema },
+  config: {
+    model: 'googleai/gemini-1.5-flash',
+  },
   prompt: `
     You are an expert in cryptocurrency, blockchain, and web3 technology. 
     Your task is to generate a set of trivia questions based on the user's request.
@@ -81,7 +84,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
     while (attempts < maxAttempts) {
         attempts++;
         try {
-            const { output } = await triviaPrompt(input, { model: 'googleai/gemini-1.5-flash' });
+            const { output } = await triviaPrompt(input);
             
             // Add robust validation to ensure the output is usable.
             if (output && Array.isArray(output.questions)) {
@@ -94,10 +97,11 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                 // Further validation to prevent malformed questions from crashing the app
                 const allQuestionsValid = output.questions.every(q => 
                     q &&
-                    q.question && 
+                    typeof q.question === 'string' && 
                     q.options && 
+                    Array.isArray(q.options) &&
                     q.options.length === 4 && 
-                    q.answer && 
+                    typeof q.answer === 'string' && 
                     q.options.includes(q.answer)
                 );
                 
