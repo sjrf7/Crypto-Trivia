@@ -19,7 +19,6 @@ import { z } from 'zod';
 
 // Define the schema for a single trivia question.
 const TriviaQuestionSchema = z.object({
-  topic: z.string().describe('The cryptocurrency topic for this question.'),
   question: z.string().describe('The trivia question text.'),
   options: z.array(z.string()).min(4).max(4).describe('A list of exactly 4 possible answers.'),
   answer: z.string().describe('The correct answer from the options list.'),
@@ -59,10 +58,9 @@ const triviaPrompt = ai.definePrompt({
     The difficulty of the questions should be {{difficulty}}.
 
     For each question, you must provide:
-    1. The original topic requested ('{{topic}}').
-    2. The question text.
-    3. A list of exactly 4 answer options.
-    4. The correct answer, which must be one of the 4 options.
+    1. The question text.
+    2. A list of exactly 4 answer options.
+    3. The correct answer, which must be one of the 4 options.
 
     Ensure the questions are accurate, interesting, and cover specific aspects of the topic.
     Format the output as a valid JSON object that adheres to the defined schema.
@@ -89,12 +87,13 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             if (output && Array.isArray(output.questions)) {
                 // If the topic is not crypto-related, the model should return an empty array.
                 // We pass this along to the frontend to handle.
-                if (output.questions.length === 0 && attempts === 1) {
+                if (output.questions.length === 0 && input.numQuestions > 0) {
                   return output;
                 }
               
                 // Further validation to prevent malformed questions from crashing the app
                 const allQuestionsValid = output.questions.every(q => 
+                    q &&
                     q.question && 
                     q.options && 
                     q.options.length === 4 && 
@@ -103,7 +102,9 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                 );
                 
                 if (allQuestionsValid && output.questions.length > 0) {
-                  return output; // Success
+                  // Add the original topic back to each question for context if needed by the frontend.
+                  const questionsWithTopic = output.questions.map(q => ({...q, topic: input.topic}));
+                  return { questions: questionsWithTopic }; // Success
                 }
                 
                 console.warn(`Attempt ${attempts}: AI model returned malformed or empty questions for topic:`, input.topic);
