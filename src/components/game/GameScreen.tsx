@@ -23,7 +23,7 @@ export function GameScreen({
     questions, 
     onGameEnd, 
     scoreToBeat, 
-    isChallenge = false, 
+    isChallenge = false,
 }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);

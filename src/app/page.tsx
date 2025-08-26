@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Gamepad2, Trophy, User, Swords, Award, Wand2 } from 'lucide-react';
+import { Gamepad2, Trophy, User, Swords, Award } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/hooks/use-i18n';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';

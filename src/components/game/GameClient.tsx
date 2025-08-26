@@ -40,7 +40,7 @@ export function GameClient({
     scoreToBeat, 
     wager, 
     challenger, 
-    onRestart, 
+    onRestart,
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);

@@ -13,7 +13,7 @@ export default function PlayPage() {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center items-center h-full">
       <AnimatePresence mode="wait">
         <motion.div
             key="playing"
