@@ -12,11 +12,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { topic } = await req.json();
+    const { topic, numQuestions, difficulty } = await req.json();
 
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required.' }, { status: 400 });
     }
+    if (!numQuestions) {
+      return NextResponse.json({ error: 'Number of questions is required.' }, { status: 400 });
+    }
+    if (!difficulty) {
+      return NextResponse.json({ error: 'Difficulty is required.' }, { status: 400 });
+    }
+
 
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({
@@ -45,7 +52,8 @@ export async function POST(req: NextRequest) {
 
       The game should have a clear topic and a set of questions. Each question must have exactly 4 options, and one of them must be the correct answer.
 
-      Please generate a game with 10 questions. Ensure the questions are interesting, cover a range of difficulties, and are directly related to the specified topic.
+      Please generate a game with exactly ${numQuestions} questions.
+      The difficulty of the questions should be: ${difficulty}.
       
       Your output MUST be a valid JSON object that strictly conforms to the following Zod schema:
       

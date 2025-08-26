@@ -7,19 +7,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader, Wand2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const FormSchema = z.object({
   topic: z.string().min(3, 'Topic must be at least 3 characters long.'),
+  numQuestions: z.coerce.number(),
+  difficulty: z.string(),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
 
 interface GameSetupProps {
-  onGameStart: (topic: string) => Promise<void>;
+  onGameStart: (topic: string, numQuestions: number, difficulty: string) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -29,11 +33,13 @@ export function GameSetup({ onGameStart, isLoading }: GameSetupProps) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       topic: '',
+      numQuestions: 10,
+      difficulty: 'Medium',
     },
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await onGameStart(data.topic);
+    await onGameStart(data.topic, data.numQuestions, data.difficulty);
   };
 
   return (
@@ -68,6 +74,54 @@ export function GameSetup({ onGameStart, isLoading }: GameSetupProps) {
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="numQuestions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Questions</FormLabel>
+                      <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select number of questions" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="10">10 Questions</SelectItem>
+                          <SelectItem value="30">30 Questions</SelectItem>
+                          <SelectItem value="50">50 Questions</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="difficulty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Difficulty</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a difficulty" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Easy">Easy</SelectItem>
+                          <SelectItem value="Medium">Medium</SelectItem>
+                          <SelectItem value="Hard">Hard</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? <Loader className="animate-spin" /> : 'Generate Game'}
               </Button>

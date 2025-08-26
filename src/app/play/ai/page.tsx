@@ -18,7 +18,7 @@ export default function AiPlayPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleGameStart = async (topic: string) => {
+  const handleGameStart = async (topic: string, numQuestions: number, difficulty: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -27,7 +27,7 @@ export default function AiPlayPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify({ topic, numQuestions, difficulty }),
       });
 
       if (!response.ok) {
