@@ -34,11 +34,15 @@
     "toast": {
       "invalid_topic": {
         "title": "Tema Inválido",
-        "description": "Por favor, introduce un tema relacionado con crypto, blockchain o web3."
+        "description": "Por favor, introduce un tema relacionado con crypto, blockchain o web3. La IA no pudo generar preguntas para ese tema."
       },
       "error": {
-        "title": "Error",
-        "description": "Hubo un problema al generar las preguntas. Por favor, intenta de nuevo."
+        "title": "Error al Generar Trivia",
+        "description": "Hubo un problema al generar las preguntas. Por favor, intenta de nuevo o con un tema diferente."
+      },
+      "partial_success": {
+        "title": "Se Generaron Menos Preguntas",
+        "description": "La IA generó {generated} de {requested} preguntas. ¡Iniciando el juego con las que tenemos!"
       }
     }
   },

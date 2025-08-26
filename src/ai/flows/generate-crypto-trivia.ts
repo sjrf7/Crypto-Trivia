@@ -60,7 +60,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             // Case 1: Model returns a valid array.
             if (Array.isArray(questions)) {
                 // An empty array is a valid response for non-crypto topics.
-                if (questions.length === 0 && input.numQuestions > 0) {
+                if (questions.length === 0) {
                   return [];
                 }
               

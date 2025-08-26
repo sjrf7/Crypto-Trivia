@@ -38,7 +38,14 @@ export default function PlayPage() {
         language,
       });
       
-      if (result && result.questions.length > 0) {
+      if (result && result.questions && result.questions.length > 0) {
+        if (result.questions.length < numQuestions) {
+          toast({
+            title: t('play.toast.partial_success.title'),
+            description: t('play.toast.partial_success.description', { requested: numQuestions, generated: result.questions.length }),
+            variant: 'default',
+          });
+        }
         setAiQuestions(result.questions);
         setGameKey(prev => prev + 1);
       } else {
@@ -49,11 +56,11 @@ export default function PlayPage() {
         });
         setIsGameActive(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to generate AI trivia:', error);
       toast({
         title: t('play.toast.error.title'),
-        description: t('play.toast.error.description'),
+        description: error.message || t('play.toast.error.description'),
         variant: 'destructive',
       });
       setIsGameActive(false);

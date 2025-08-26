@@ -34,11 +34,15 @@
     "toast": {
       "invalid_topic": {
         "title": "Invalid Topic",
-        "description": "Please enter a topic related to crypto, blockchain, or web3."
+        "description": "Please enter a topic related to crypto, blockchain, or web3. The AI couldn't generate questions for that."
       },
       "error": {
-        "title": "Error",
-        "description": "There was a problem generating the questions. Please try again."
+        "title": "Error Generating Trivia",
+        "description": "There was a problem generating the questions. Please try again or with a different topic."
+      },
+      "partial_success": {
+        "title": "Generated Fewer Questions",
+        "description": "The AI generated {generated} out of {requested} questions. Starting game with what we have!"
       }
     }
   },
