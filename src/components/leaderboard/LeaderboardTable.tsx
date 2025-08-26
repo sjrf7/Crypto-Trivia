@@ -59,7 +59,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       if (sortDirection === 'asc') {
         return valA - valB;
       } else {
-        return valB - valA;
+        return valB - a.player.stats.totalScore;
       }
     });
   }, [data, sortKey, sortDirection]);
@@ -103,18 +103,18 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="p-2 font-medium text-lg">{entry.rank}</TableCell>
-              <TableCell className="p-2">
-                <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-4 group">
-                  <Avatar>
+              <TableCell className="px-2 py-2 font-medium text-lg">{entry.rank}</TableCell>
+              <TableCell className="px-2 py-2">
+                <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-3 group">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={entry.player.avatar} alt={entry.player.name} data-ai-hint="profile picture" />
                     <AvatarFallback>{entry.player.name.substring(0, 2)}</AvatarFallback>
                   </Avatar>
                   <span className="font-medium group-hover:text-primary transition-colors">{entry.player.name}</span>
                 </Link>
               </TableCell>
-              <TableCell className="p-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
-              <TableCell className="p-2 text-accent">{entry.player.stats.accuracy}</TableCell>
+              <TableCell className="px-2 py-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
+              <TableCell className="px-2 py-2 text-accent">{entry.player.stats.accuracy}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
