@@ -45,36 +45,20 @@ const triviaPrompt = ai.definePrompt({
   `,
 });
 
-// Define the main flow for generating crypto trivia.
-// This flow simply calls the prompt. Genkit handles the validation against the output schema automatically.
-const generateCryptoTriviaFlow = ai.defineFlow(
-  {
-    name: 'generateCryptoTriviaFlow',
-    inputSchema: GenerateCryptoTriviaInputSchema,
-    outputSchema: GenerateCryptoTriviaOutputSchema,
-  },
-  async (input) => {
-    try {
-        const questions = await triviaPrompt(input);
-        
-        // Basic validation in case the model returns something unexpected but parsable.
-        if (!Array.isArray(questions)) {
-            console.error('AI model returned a non-array response:', questions);
-            throw new Error('AI model did not return an array of questions.');
-        }
-
-        return questions;
-
-    } catch (e) {
-        console.error(`Failed to generate trivia for topic "${input.topic}":`, e);
-        // Throw a user-friendly error after a failure.
-        throw new Error('The AI model could not generate valid questions for the given topic. Please try a different one.');
-    }
-  }
-);
-
 // Export an async wrapper function to be called from the client.
+// This function now directly calls the prompt and handles errors.
 export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Promise<{ questions: GenerateCryptoTriviaOutput }> {
-  const questions = await generateCryptoTriviaFlow(input);
-  return { questions };
+  try {
+    const questions = await triviaPrompt(input);
+    
+    // Genkit's `definePrompt` with an output schema automatically validates the output.
+    // If the output doesn't match the schema, it will throw an error which is caught below.
+    
+    return { questions };
+
+  } catch (e) {
+    console.error(`Failed to generate trivia for topic "${input.topic}":`, e);
+    // Throw a user-friendly error after a failure.
+    throw new Error('The AI model could not generate valid questions for the given topic. Please try a different one.');
+  }
 }
