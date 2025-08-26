@@ -11,6 +11,8 @@ import { Loader } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 
+export const maxDuration = 60;
+
 export default function PlayPage() {
   const [aiQuestions, setAiQuestions] = useState<TriviaQuestion[] | null>(null);
   const [loading, setLoading] = useState(false);
