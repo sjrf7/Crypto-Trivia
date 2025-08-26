@@ -87,10 +87,23 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             
             // Add robust validation to ensure the output is usable.
             if (output && output.questions && output.questions.length > 0) {
-                return output; // Success
+                // Further validation to prevent malformed questions from crashing the app
+                const allQuestionsValid = output.questions.every(q => 
+                    q.question && 
+                    q.options && 
+                    q.options.length === 4 && 
+                    q.answer && 
+                    q.options.includes(q.answer)
+                );
+                
+                if (allQuestionsValid) {
+                  return output; // Success
+                }
+                
+                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic);
+            } else {
+                console.warn(`Attempt ${attempts}: AI model returned empty or invalid questions for topic:`, input.topic);
             }
-            
-            console.warn(`Attempt ${attempts}: AI model returned empty or invalid questions for topic:`, input.topic);
 
         } catch (e) {
             console.error(`Attempt ${attempts} failed with an error:`, e);
@@ -98,7 +111,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
         
         if (attempts < maxAttempts) {
             // Wait for a short period before retrying
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempts)); // Increase delay on each attempt
         }
     }
 
