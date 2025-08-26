@@ -73,8 +73,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
     }
   };
 
-  const SortableHeader = ({ tkey, label }: { tkey: SortKey; label: string }) => (
-    <TableHead>
+  const SortableHeader = ({ tkey, label, className }: { tkey: SortKey; label: string, className?: string }) => (
+    <TableHead className={className}>
       <Button variant="ghost" onClick={() => handleSort(tkey)}>
         {label}
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -87,7 +87,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableHeader tkey="rank" label={t('leaderboard.table.rank')} />
+            <SortableHeader tkey="rank" label={t('leaderboard.table.rank')} className="w-[80px]" />
             <TableHead>{t('leaderboard.table.player')}</TableHead>
             <SortableHeader tkey="totalScore" label={t('leaderboard.table.score')} />
             <SortableHeader tkey="accuracy" label={t('leaderboard.table.accuracy')} />
@@ -103,8 +103,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="px-2 py-2 font-medium text-lg">{entry.rank}</TableCell>
-              <TableCell className="px-2 py-2">
+              <TableCell className="py-2 px-4 font-medium text-lg text-center">{entry.rank}</TableCell>
+              <TableCell className="py-2 px-2">
                 <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-3 group">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={entry.player.avatar} alt={entry.player.name} data-ai-hint="profile picture" />
@@ -113,8 +113,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                   <span className="font-medium group-hover:text-primary transition-colors">{entry.player.name}</span>
                 </Link>
               </TableCell>
-              <TableCell className="px-2 py-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
-              <TableCell className="px-2 py-2 text-accent">{entry.player.stats.accuracy}</TableCell>
+              <TableCell className="py-2 px-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
+              <TableCell className="py-2 px-2 text-accent">{entry.player.stats.accuracy}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
