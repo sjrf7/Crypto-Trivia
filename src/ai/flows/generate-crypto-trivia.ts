@@ -4,40 +4,13 @@
  * @fileOverview A flow for generating crypto trivia questions.
  *
  * This file defines a Genkit flow that uses an AI model to generate a set of
- * trivia questions about a specified cryptocurrency topic. The flow takes the
- * topic, number of questions, and difficulty as input and returns a structured
- * array of questions, each with a question, a list of options, and the correct
- * answer.
+ * trivia questions about a specified cryptocurrency topic.
  *
  * - generateCryptoTrivia - The main function that triggers the trivia generation flow.
- * - GenerateCryptoTriviaInput - The type definition for the input of the generation flow.
- * - GenerateCryptoTriviaOutput - The type definition for the output of the generation flow.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
-
-// Define the schema for a single trivia question.
-const TriviaQuestionSchema = z.object({
-  question: z.string().describe('The trivia question text.'),
-  options: z.array(z.string()).min(4).max(4).describe('A list of exactly 4 possible answers.'),
-  answer: z.string().describe('The correct answer from the options list.'),
-});
-export type TriviaQuestion = z.infer<typeof TriviaQuestionSchema>;
-
-
-// Define the input schema for the trivia generation flow.
-const GenerateCryptoTriviaInputSchema = z.object({
-  topic: z.string().describe('The cryptocurrency topic for the trivia questions (e.g., Bitcoin, Ethereum, DeFi).'),
-  numQuestions: z.number().describe('The number of questions to generate.'),
-  difficulty: z.enum(['easy', 'medium', 'hard']).describe('The difficulty level of the questions.'),
-  language: z.enum(['en', 'es']).describe('The language for the questions (ISO 639-1 code).'),
-});
-export type GenerateCryptoTriviaInput = z.infer<typeof GenerateCryptoTriviaInputSchema>;
-
-// Define the output schema for the trivia generation flow.
-const GenerateCryptoTriviaOutputSchema = z.array(TriviaQuestionSchema);
-export type GenerateCryptoTriviaOutput = z.infer<typeof GenerateCryptoTriviaOutputSchema>;
+import { GenerateCryptoTriviaInputSchema, GenerateCryptoTriviaInput, GenerateCryptoTriviaOutputSchema, GenerateCryptoTriviaOutput } from '@/lib/types/ai';
 
 // Define the prompt for the AI model.
 const triviaPrompt = ai.definePrompt({
@@ -84,16 +57,13 @@ const generateCryptoTriviaFlow = ai.defineFlow(
         try {
             const { output } = await triviaPrompt(input);
             
-            // Add robust validation to ensure the output is usable.
             if (output && Array.isArray(output)) {
-                // If the topic is not crypto-related, the model should return an empty array.
-                // We pass this along to the frontend to handle.
+                // Case 1: Topic is not crypto-related, model correctly returns an empty array.
                 if (output.length === 0 && input.numQuestions > 0) {
-                  // This case handles non-crypto topics, which is a valid response.
                   return output;
                 }
               
-                // Further validation to prevent malformed questions from crashing the app
+                // Case 2: Validate that all questions in the array are well-formed.
                 const allQuestionsValid = output.every(q => 
                     q &&
                     typeof q.question === 'string' && q.question.length > 0 &&
@@ -105,7 +75,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                 );
                 
                 if (allQuestionsValid && output.length === input.numQuestions) {
-                  return output; // Success
+                  return output; // Success, valid questions received.
                 }
                 
                 console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic, JSON.stringify(output, null, 2));
@@ -118,8 +88,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
         }
         
         if (attempts < maxAttempts) {
-            // Wait for a short period before retrying
-            await new Promise(resolve => setTimeout(resolve, 1000 * attempts)); // Increase delay on each attempt
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
         }
     }
 
@@ -133,4 +102,3 @@ export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Pr
   const questions = await generateCryptoTriviaFlow(input);
   return { questions };
 }
-
