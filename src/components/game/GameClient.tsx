@@ -9,7 +9,7 @@ import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Wand2 } from 'lucide-react';
+import { Gamepad2, Wand2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 
@@ -21,7 +21,6 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
     onRestart?: () => void;
-    onGameStatusChange?: (isActive: boolean) => void;
 }
 
 const screenVariants = {
@@ -42,24 +41,20 @@ export function GameClient({
     wager, 
     challenger, 
     onRestart, 
-    onGameStatusChange,
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [isChallenge, setIsChallenge] = useState(false);
-  const [isAiGame, setIsAiGame] = useState(false);
   const { t } = useI18n();
 
   const classicQuestions = t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[];
 
   useEffect(() => {
     if (challengeQuestions) {
-        onGameStatusChange?.(true);
         if (challengeQuestions.length > 0) {
             setIsChallenge(!!scoreToBeat);
-            setIsAiGame(!scoreToBeat); // It's an AI game if there's no score to beat
             setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
              if (wager && wager > 0 && challenger) {
                 setGameStatus('wager');
@@ -68,10 +63,9 @@ export function GameClient({
             }
         }
     }
-  }, [challengeQuestions, scoreToBeat, wager, challenger, onGameStatusChange])
+  }, [challengeQuestions, scoreToBeat, wager, challenger])
 
   const handleStartClassic = () => {
-    onGameStatusChange?.(true);
     const shuffled = [...classicQuestions]
       .map((q, i) => ({ ...q, originalIndex: i }))
       .sort(() => 0.5 - Math.random());
@@ -80,7 +74,6 @@ export function GameClient({
 
     setQuestions(selectedQuestions);
     setGameStatus('playing');
-    setIsAiGame(false);
     setIsChallenge(false);
   };
 
@@ -91,7 +84,6 @@ export function GameClient({
   };
 
   const handleRestart = () => {
-    onGameStatusChange?.(false);
     if (onRestart) {
         onRestart();
     } else {
@@ -99,7 +91,6 @@ export function GameClient({
         setFinalScore(0);
         setQuestionsAnswered(0);
         setIsChallenge(false);
-        setIsAiGame(false);
         setQuestions([]);
     }
   };
@@ -125,7 +116,7 @@ export function GameClient({
           animate={{ scale: 1, rotate: 360 }}
           transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
         >
-          <Wand2 className="h-12 w-12 text-primary drop-shadow-glow-primary" />
+          <Gamepad2 className="h-12 w-12 text-primary drop-shadow-glow-primary" />
         </motion.div>
         <motion.h2 
           className="text-3xl font-headline mb-2"
@@ -172,7 +163,6 @@ export function GameClient({
                   onGameEnd={handleGameEnd} 
                   scoreToBeat={scoreToBeat} 
                   isChallenge={isChallenge}
-                  isAiGame={isAiGame}
                />;
       case 'summary':
         return <SummaryScreen 
