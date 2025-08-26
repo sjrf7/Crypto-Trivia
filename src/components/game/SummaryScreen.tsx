@@ -50,16 +50,18 @@ export function SummaryScreen({
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
     const { profile: user, isAuthenticated } = useProfile();
-    const { addGameResult } = useUserStats(user?.fid.toString());
+    const { addGameResult } = useUserStats(user?.fid?.toString());
 
     useEffect(() => {
-      if (isAuthenticated) {
+      // Only add game results if the user is authenticated and the hook function is available.
+      if (isAuthenticated && addGameResult) {
         addGameResult({
           score,
           questionsAnswered,
           correctAnswers
         });
       }
+      // The dependency array correctly lists all external values that the effect depends on.
     }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers]);
     
     const generateChallenge = useCallback(() => {
