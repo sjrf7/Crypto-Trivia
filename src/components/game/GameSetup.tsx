@@ -23,15 +23,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Wand2, Loader } from 'lucide-react';
-import { useI18n } from '@/hooks/use-i18n';
+import { GenerateCryptoTriviaInputSchema } from '@/lib/types/ai';
 
-const FormSchema = z.object({
-  topic: z.string().min(2, {
-    message: 'Topic must be at least 2 characters.',
-  }),
-  numQuestions: z.coerce.number().min(3).max(20),
-  difficulty: z.enum(['Easy', 'Medium', 'Hard']),
-});
+const FormSchema = GenerateCryptoTriviaInputSchema;
 
 interface GameSetupProps {
   onStartGame: (values: z.infer<typeof FormSchema>) => void;
@@ -39,8 +33,6 @@ interface GameSetupProps {
 }
 
 export function GameSetup({ onStartGame, isGenerating }: GameSetupProps) {
-  const { t } = useI18n();
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -60,8 +52,8 @@ export function GameSetup({ onStartGame, isGenerating }: GameSetupProps) {
             <div className="inline-block bg-primary/10 p-3 rounded-full mb-2">
                 <Wand2 className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-2xl font-headline">{t('game.setup.title')}</h2>
-            <p className="text-muted-foreground">{t('game.setup.description')}</p>
+            <h2 className="text-2xl font-headline">AI-Powered Trivia</h2>
+            <p className="text-muted-foreground">Describe any crypto topic and the AI will generate a custom quiz for you.</p>
         </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -70,9 +62,9 @@ export function GameSetup({ onStartGame, isGenerating }: GameSetupProps) {
             name="topic"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('game.setup.topic.label')}</FormLabel>
+                <FormLabel>Topic</FormLabel>
                 <FormControl>
-                  <Input placeholder={t('game.setup.topic.placeholder')} {...field} />
+                  <Input placeholder="e.g., 'Solana Ecosystem' or 'History of Dogecoin'" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,14 +77,14 @@ export function GameSetup({ onStartGame, isGenerating }: GameSetupProps) {
               name="numQuestions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('game.setup.num_questions.label')}</FormLabel>
+                  <FormLabel>Number of Questions</FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(Number(value))}
                     defaultValue={String(field.value)}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('game.setup.num_questions.placeholder')} />
+                        <SelectValue placeholder="Select number of questions" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -112,20 +104,20 @@ export function GameSetup({ onStartGame, isGenerating }: GameSetupProps) {
               name="difficulty"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('game.setup.difficulty.label')}</FormLabel>
+                  <FormLabel>Difficulty</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('game.setup.difficulty.placeholder')} />
+                        <SelectValue placeholder="Select difficulty" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Easy">{t('game.setup.difficulty.easy')}</SelectItem>
-                      <SelectItem value="Medium">{t('game.setup.difficulty.medium')}</SelectItem>
-                      <SelectItem value="Hard">{t('game.setup.difficulty.hard')}</SelectItem>
+                      <SelectItem value="Easy">Easy</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Hard">Hard</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -137,11 +129,11 @@ export function GameSetup({ onStartGame, isGenerating }: GameSetupProps) {
           <Button type="submit" className="w-full" disabled={isGenerating}>
             {isGenerating ? (
               <>
-                <Loader className="animate-spin" />
-                {t('game.setup.loading_button')}
+                <Loader className="animate-spin mr-2" />
+                Generating...
               </>
             ) : (
-                t('game.setup.start_button')
+                "Generate Quiz"
             )}
           </Button>
         </form>

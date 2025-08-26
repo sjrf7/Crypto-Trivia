@@ -23,20 +23,25 @@ const itemVariants = {
   visible: { y: 0, opacity: 1 },
 };
 
-const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
-  <motion.div
-    className="bg-card p-6 rounded-lg border flex flex-col items-center text-center"
-    variants={itemVariants}
-    whileHover={{ scale: 1.05, y: -5 }}
-    transition={{ type: 'spring', stiffness: 300 }}
-  >
-    <div className="bg-primary/10 p-4 rounded-full mb-4">
-      <Icon className="h-8 w-8 text-primary drop-shadow-glow-primary" />
-    </div>
-    <h3 className="text-xl font-headline mb-2">{title}</h3>
-    <p className="text-sm text-muted-foreground">{description}</p>
-  </motion.div>
-);
+const FeatureCard = ({ icon: Icon, title, description, href }: { icon: React.ElementType, title: string, description: string, href?: string }) => {
+  const cardContent = (
+    <motion.div
+      className="bg-card p-6 rounded-lg border flex flex-col items-center text-center h-full"
+      variants={itemVariants}
+      whileHover={{ scale: 1.05, y: -5 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+    >
+      <div className="bg-primary/10 p-4 rounded-full mb-4">
+        <Icon className="h-8 w-8 text-primary drop-shadow-glow-primary" />
+      </div>
+      <h3 className="text-xl font-headline mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground flex-grow">{description}</p>
+    </motion.div>
+  );
+
+  return href ? <Link href={href}>{cardContent}</Link> : cardContent;
+};
+
 
 export default function WelcomePage() {
   const { t } = useI18n();
@@ -69,7 +74,7 @@ export default function WelcomePage() {
           {t('welcome.subtitle')}
         </motion.p>
 
-        <motion.div variants={itemVariants} className="mb-12">
+        <motion.div variants={itemVariants} className="mb-12 flex gap-4 justify-center">
           <Button asChild size="lg" className="text-lg font-bold">
             <Link href="/play" prefetch={true}>
               <Gamepad2 className="mr-2 h-6 w-6" />
