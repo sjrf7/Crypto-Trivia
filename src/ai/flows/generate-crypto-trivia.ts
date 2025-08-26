@@ -4,7 +4,7 @@
 import { ai } from '@/ai/genkit';
 import {
   GenerateCryptoTriviaInput,
-  GenerateCryptoTriviaInputSchema,
+  GenerateCryptoTriviaOutput,
   GenerateCryptoTriviaOutputSchema,
 } from '@/lib/types/ai';
 import { gemini15Flash } from '@genkit-ai/googleai';
@@ -21,7 +21,7 @@ const triviaPrompt = `
       Do not output any text or formatting other than the required JSON object.
     `;
 
-export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Promise<{ questions: any[] }> {
+export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Promise<GenerateCryptoTriviaOutput> {
   console.log('Generating AI trivia with input:', input);
   try {
     const llmResponse = await generate({
@@ -31,6 +31,9 @@ export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Pr
         output: {
             schema: GenerateCryptoTriviaOutputSchema,
         },
+        config: {
+            temperature: 0.8
+        }
     });
 
     const output = llmResponse.output();

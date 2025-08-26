@@ -4,6 +4,10 @@
     "title": "Crypto Trivia Showdown",
     "subtitle": "Pon a prueba tus conocimientos sobre criptomonedas, compite contra otros y demuestra que eres un maestro de la trivia.",
     "cta": "Entrar al Juego",
+    "feature1": {
+        "title": "Trivia por IA",
+        "description": "Ponte a prueba con cuestionarios sobre cualquier tema, generados por IA."
+    },
     "feature2": {
       "title": "Modo Clásico",
       "description": "Enfréntate a nuestras preguntas clásicas y demuestra que eres un experto."

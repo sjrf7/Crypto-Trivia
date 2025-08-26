@@ -39,7 +39,11 @@ const FeatureCard = ({ icon: Icon, title, description, href }: { icon: React.Ele
     </motion.div>
   );
 
-  return href ? <Link href={href}>{cardContent}</Link> : cardContent;
+  if (href) {
+    return <Link href={href} className="flex flex-col h-full">{cardContent}</Link>;
+  }
+
+  return cardContent;
 };
 
 
@@ -88,21 +92,25 @@ export default function WelcomePage() {
             icon={Gamepad2}
             title={t('welcome.feature2.title')}
             description={t('welcome.feature2.description')}
+            href="/play"
           />
           <FeatureCard
             icon={Trophy}
             title={t('welcome.feature3.title')}
             description={t('welcome.feature3.description')}
+            href="/leaderboard"
           />
           <FeatureCard
             icon={Award}
             title={t('welcome.feature4.title')}
             description={t('welcome.feature4.description')}
+            href="/achievements"
           />
            <FeatureCard
             icon={User}
             title={t('welcome.feature5.title')}
             description={t('welcome.feature5.description')}
+            href="/profile/me"
           />
           <FeatureCard
             icon={Swords}
