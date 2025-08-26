@@ -52,7 +52,7 @@ export default function PlayPage() {
                     <Wand2 className="h-12 w-12 text-accent" />
                     <h3 className="text-xl font-headline">{t('play.ai.title')}</h3>
                     <p className="text-center text-sm text-muted-foreground flex-grow">{t('play.ai.description')}</p>
-                    <Button asChild variant="outline" className="w-full">
+                    <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
                         <Link href="/play/ai">
                              {t('play.ai.button')}
                         </Link>
