@@ -1,9 +1,11 @@
 
+'use client';
+
 import { LEADERBOARD_DATA } from '@/lib/mock-data';
 import { LeaderboardTable } from '@/components/leaderboard/LeaderboardTable';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Trophy } from 'lucide-react';
-import { I18nProvider, useI18n } from '@/hooks/use-i18n';
+import { useI18n } from '@/hooks/use-i18n';
 
 function LeaderboardContent() {
   const { t } = useI18n();
@@ -32,8 +34,6 @@ function LeaderboardContent() {
 
 export default function LeaderboardPage() {
   return (
-    <I18nProvider>
       <LeaderboardContent />
-    </I18nProvider>
   )
 }
