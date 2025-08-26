@@ -10,6 +10,7 @@ import { AITriviaGame } from '@/lib/types/ai';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useI18n } from '@/hooks/use-i18n';
 
 export default function AiPlayPage() {
   const [game, setGame] = useState<AITriviaGame | null>(null);
@@ -17,6 +18,7 @@ export default function AiPlayPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { language } = useI18n();
 
   const handleGameStart = async (topic: string, numQuestions: number, difficulty: string) => {
     setIsLoading(true);
@@ -27,7 +29,7 @@ export default function AiPlayPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ topic, numQuestions, difficulty }),
+        body: JSON.stringify({ topic, numQuestions, difficulty, language }),
       });
 
       if (!response.ok) {

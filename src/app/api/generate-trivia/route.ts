@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { topic, numQuestions, difficulty } = await req.json();
+    const { topic, numQuestions, difficulty, language } = await req.json();
 
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required.' }, { status: 400 });
@@ -22,6 +22,9 @@ export async function POST(req: NextRequest) {
     }
     if (!difficulty) {
       return NextResponse.json({ error: 'Difficulty is required.' }, { status: 400 });
+    }
+    if (!language) {
+      return NextResponse.json({ error: 'Language is required.' }, { status: 400 });
     }
 
 
@@ -53,8 +56,10 @@ export async function POST(req: NextRequest) {
       The game should have a clear topic and a set of questions. Each question must have exactly 4 options, and one of them must be the correct answer.
 
       The difficulty of the questions should be: ${difficulty}.
+      
+      The entire game, including all questions, answers, and options, must be in the following language: ${language}.
 
-      It is absolutely crucial that you generate EXACTLY ${numQuestions} questions. Do not generate more or fewer than ${numQuestions}.
+      It is absolutely crucial that you generate EXACTLY ${numQuestions} questions. Do not generate more or fewer than ${numQuestions}. This is a strict requirement.
       
       Your output MUST be a valid JSON object that strictly conforms to the following Zod schema:
       
