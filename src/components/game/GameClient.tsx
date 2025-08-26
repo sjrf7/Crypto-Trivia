@@ -9,10 +9,9 @@ import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gamepad2, Wand2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
-import Link from 'next/link';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -22,8 +21,6 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
     onRestart?: () => void;
-    isAiGame?: boolean;
-    aiGameTopic?: string;
 }
 
 const screenVariants = {
@@ -43,9 +40,7 @@ export function GameClient({
     scoreToBeat, 
     wager, 
     challenger, 
-    onRestart,
-    isAiGame = false,
-    aiGameTopic
+    onRestart
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -149,29 +144,6 @@ export function GameClient({
   );
 
   const renderGameContent = () => {
-    if (isAiGame) {
-      if (gameStatus === 'playing') {
-        return <GameScreen 
-                  questions={questions} 
-                  onGameEnd={handleGameEnd} 
-                  isChallenge={false}
-                  isAiGame={true}
-                  aiGameTopic={aiGameTopic}
-               />;
-      }
-      if (gameStatus === 'summary') {
-        return <SummaryScreen 
-                  score={finalScore} 
-                  questionsAnswered={questionsAnswered} 
-                  onRestart={handleRestart} 
-                  questions={questions}
-                  isAiGame={true}
-                  aiGameTopic={aiGameTopic}
-               />;
-      }
-    }
-    
-    // Non-AI Game Logic (Classic, Challenge)
     switch (gameStatus) {
       case 'setup':
         return renderWelcomeScreen();

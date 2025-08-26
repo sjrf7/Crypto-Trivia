@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { QuestionCard } from './QuestionCard';
 import { Progress } from '@/components/ui/progress';
-import { Timer, Trophy, Target, Hourglass, Loader, Swords, Wand2 } from 'lucide-react';
+import { Timer, Trophy, Target, Hourglass, Loader, Swords } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
@@ -17,8 +17,6 @@ interface GameScreenProps {
   onGameEnd: (score: number, questionsAnswered: number) => void;
   scoreToBeat?: number;
   isChallenge?: boolean;
-  isAiGame?: boolean;
-  aiGameTopic?: string;
 }
 
 export function GameScreen({ 
@@ -26,8 +24,6 @@ export function GameScreen({
     onGameEnd, 
     scoreToBeat, 
     isChallenge = false,
-    isAiGame = false,
-    aiGameTopic
 }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -58,8 +54,8 @@ export function GameScreen({
       
       const optionsShuffled = shuffleOptions(questions);
 
-      // Only shuffle the order of questions if it's NOT a challenge or an AI game
-      if (isChallenge || isAiGame) {
+      // Only shuffle the order of questions if it's NOT a challenge
+      if (isChallenge) {
         setShuffledQuestions(optionsShuffled);
       } else {
         setShuffledQuestions([...optionsShuffled].sort(() => Math.random() - 0.5));
@@ -67,7 +63,7 @@ export function GameScreen({
     } else {
         setShuffledQuestions([]);
     }
-  }, [questions, isChallenge, isAiGame]);
+  }, [questions, isChallenge]);
 
 
   useEffect(() => {
@@ -190,17 +186,6 @@ export function GameScreen({
                 >
                     <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Swords className="h-5 w-5 text-primary"/>{t('game.screen.challenge_mode.title')}</h3>
                     <p className="text-muted-foreground">{t('game.screen.challenge_mode.description')} <span className="font-bold text-accent">{scoreToBeat}</span>!</p>
-                </motion.div>
-            )}
-             {isAiGame && aiGameTopic && (
-                <motion.div 
-                    className="text-center bg-card p-3 rounded-lg border-2 border-primary"
-                    initial={{y: -20, opacity: 0}}
-                    animate={{y: 0, opacity: 1}}
-                    exit={{y: -20, opacity: 0}}
-                >
-                    <h3 className="font-headline text-lg flex items-center justify-center gap-2"><Wand2 className="h-5 w-5 text-primary"/>{t('game.screen.ai_mode.title')}</h3>
-                    <p className="text-muted-foreground">{t('game.screen.ai_mode.description')} <span className="font-bold text-accent">{aiGameTopic}</span></p>
                 </motion.div>
             )}
         </AnimatePresence>
