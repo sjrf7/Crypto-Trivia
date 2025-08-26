@@ -54,8 +54,8 @@ export function GameSetup({ onGameStart, isLoading }: GameSetupProps) {
     >
       <Card>
         <CardHeader className="text-center">
-          <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-fit">
-            <Wand2 className="h-10 w-10 text-primary drop-shadow-glow-primary" />
+          <div className="mx-auto bg-accent/10 p-4 rounded-full mb-4 w-fit">
+            <Wand2 className="h-10 w-10 text-accent drop-shadow-glow-accent" />
           </div>
           <CardTitle className="font-headline text-3xl">{t('ai_setup.title')}</CardTitle>
           <CardDescription>{t('ai_setup.description')}</CardDescription>
