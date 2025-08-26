@@ -21,6 +21,11 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
     onRestart?: () => void;
+    // New props for AI Game Mode
+    isAiGame?: boolean;
+    aiQuestions?: TriviaQuestion[];
+    aiTopic?: string;
+    onStartAiMode?: () => void;
 }
 
 const screenVariants = {
@@ -41,6 +46,10 @@ export function GameClient({
     wager, 
     challenger, 
     onRestart, 
+    isAiGame = false,
+    aiQuestions = [],
+    aiTopic = '',
+    onStartAiMode,
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -52,18 +61,20 @@ export function GameClient({
   const classicQuestions = t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[];
 
   useEffect(() => {
-    if (challengeQuestions) {
-        if (challengeQuestions.length > 0) {
-            setIsChallenge(!!scoreToBeat);
-            setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
-             if (wager && wager > 0 && challenger) {
-                setGameStatus('wager');
-            } else {
-                setGameStatus('playing');
-            }
-        }
+    if (isAiGame && aiQuestions.length > 0) {
+      setQuestions(aiQuestions);
+      setGameStatus('playing');
+      setIsChallenge(false);
+    } else if (challengeQuestions && challengeQuestions.length > 0) {
+      setIsChallenge(!!scoreToBeat);
+      setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
+       if (wager && wager > 0 && challenger) {
+          setGameStatus('wager');
+      } else {
+          setGameStatus('playing');
+      }
     }
-  }, [challengeQuestions, scoreToBeat, wager, challenger])
+  }, [challengeQuestions, scoreToBeat, wager, challenger, isAiGame, aiQuestions]);
 
   const handleStartClassic = () => {
     const shuffled = [...classicQuestions]
@@ -135,11 +146,16 @@ export function GameClient({
           {t('game.client.description')}
         </motion.p>
         <motion.div
+          className="flex flex-col sm:flex-row gap-4"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
           <Button onClick={handleStartClassic} size="lg">{t('game.client.start_classic_button')}</Button>
+          <Button onClick={onStartAiMode} size="lg" variant="secondary">
+            <Wand2 className="mr-2 h-5 w-5" />
+            AI-Generated Trivia
+          </Button>
         </motion.div>
     </motion.div>
   );
@@ -163,6 +179,8 @@ export function GameClient({
                   onGameEnd={handleGameEnd} 
                   scoreToBeat={scoreToBeat} 
                   isChallenge={isChallenge}
+                  isAiGame={isAiGame}
+                  aiTopic={aiTopic}
                />;
       case 'summary':
         return <SummaryScreen 
