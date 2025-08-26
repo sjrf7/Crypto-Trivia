@@ -4,10 +4,6 @@
     "title": "Crypto Trivia Showdown",
     "subtitle": "Pon a prueba tus conocimientos sobre criptomonedas, compite contra otros y demuestra que eres un maestro de la trivia.",
     "cta": "Entrar al Juego",
-    "feature1": {
-      "title": "Trivia con IA",
-      "description": "Genera cuestionarios únicos sobre cualquier tema de cripto, blockchain o web3 al instante."
-    },
     "feature2": {
       "title": "Modo Clásico",
       "description": "Enfréntate a nuestras preguntas clásicas y demuestra que eres un experto."
@@ -29,59 +25,17 @@
       "description": "Reta a tus amigos a superar tu puntuación con las mismas preguntas."
     }
   },
-  "play": {
-    "generating_trivia": "Generando tu trivia...",
-    "toast": {
-      "invalid_topic": {
-        "title": "Tema Inválido",
-        "description": "Por favor, introduce un tema relacionado con crypto, blockchain o web3. La IA no pudo generar preguntas para ese tema."
-      },
-      "error": {
-        "title": "Error al Generar Trivia",
-        "description": "Hubo un problema al generar las preguntas. Por favor, intenta de nuevo o con un tema diferente."
-      },
-      "partial_success": {
-        "title": "Se Generaron Menos Preguntas",
-        "description": "La IA generó {generated} de {requested} preguntas. ¡Iniciando el juego con las que tenemos!"
-      }
-    }
-  },
   "game": {
     "client": {
         "title": "Crypto Trivia Showdown",
-        "description": "¡Pon a prueba tus conocimientos de cripto con nuestras preguntas de trivia clásicas o genera un nuevo cuestionario con IA!",
+        "description": "¡Pon a prueba tus conocimientos de cripto con nuestras preguntas de trivia clásicas!",
         "start_classic_button": "Iniciar Juego Clásico"
-    },
-    "setup": {
-      "title": "Configuración de Trivia con IA",
-      "description": "Personaliza tu juego de trivia.",
-      "topic": {
-        "label": "Tema de Cripto",
-        "placeholder": "ej., Ethereum, NFTs, DeFi"
-      },
-      "num_questions": {
-        "label": "Número de Preguntas",
-        "placeholder": "Selecciona el número de preguntas"
-      },
-      "difficulty": {
-        "label": "Dificultad",
-        "placeholder": "Selecciona la dificultad",
-        "easy": "Fácil",
-        "medium": "Medio",
-        "hard": "Difícil"
-      },
-      "start_button": "Iniciar Juego",
-      "loading_button": "Generando Preguntas..."
     },
     "screen": {
         "loading": "Cargando partida...",
         "challenge_mode": {
             "title": "Modo Desafío",
             "description": "¡Supera una puntuación de"
-        },
-        "ai_trivia": {
-            "title": "Trivia con IA",
-            "topic": "Tema"
         }
     },
     "question": {

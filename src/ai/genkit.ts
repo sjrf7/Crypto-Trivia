@@ -1,7 +1,8 @@
+'use server';
 
 import {genkit, Plugin} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
-import {dotprompt} from 'genkit/dotprompt';
+import {dotprompt} from '@genkit-ai/dotprompt';
 import {googleCloud} from '@genkit-ai/google-cloud';
 
 const plugins: Plugin[] = [

@@ -4,10 +4,6 @@
     "title": "Crypto Trivia Showdown",
     "subtitle": "Test your crypto knowledge, compete against others, and prove you're a trivia master.",
     "cta": "Enter Game",
-    "feature1": {
-      "title": "AI-Powered Trivia",
-      "description": "Instantly generate unique quizzes on any crypto, blockchain, or web3 topic."
-    },
     "feature2": {
       "title": "Classic Mode",
       "description": "Take on our classic questions and prove you're an expert."
@@ -29,59 +25,17 @@
       "description": "Challenge your friends to beat your score on the same set of questions."
     }
   },
-  "play": {
-    "generating_trivia": "Generating your trivia...",
-    "toast": {
-      "invalid_topic": {
-        "title": "Invalid Topic",
-        "description": "Please enter a topic related to crypto, blockchain, or web3. The AI couldn't generate questions for that."
-      },
-      "error": {
-        "title": "Error Generating Trivia",
-        "description": "There was a problem generating the questions. Please try again or with a different topic."
-      },
-      "partial_success": {
-        "title": "Generated Fewer Questions",
-        "description": "The AI generated {generated} out of {requested} questions. Starting game with what we have!"
-      }
-    }
-  },
   "game": {
     "client": {
         "title": "Crypto Trivia Showdown",
-        "description": "Test your crypto knowledge with our classic trivia questions, or generate a new quiz with AI!",
+        "description": "Test your crypto knowledge with our classic trivia questions.",
         "start_classic_button": "Start Classic Game"
-    },
-    "setup": {
-      "title": "AI Trivia Setup",
-      "description": "Customize your trivia game.",
-      "topic": {
-        "label": "Crypto Topic",
-        "placeholder": "e.g., Ethereum, NFTs, DeFi"
-      },
-      "num_questions": {
-        "label": "Number of Questions",
-        "placeholder": "Select number of questions"
-      },
-      "difficulty": {
-        "label": "Difficulty",
-        "placeholder": "Select difficulty",
-        "easy": "Easy",
-        "medium": "Medium",
-        "hard": "Hard"
-      },
-      "start_button": "Start Game",
-      "loading_button": "Generating Questions..."
     },
     "screen": {
         "loading": "Loading game...",
         "challenge_mode": {
             "title": "Challenge Mode",
             "description": "Beat a score of"
-        },
-        "ai_trivia": {
-            "title": "AI Trivia",
-            "topic": "Topic"
         }
     },
     "question": {

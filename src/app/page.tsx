@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { BrainCircuit, Gamepad2, Trophy, User, Swords, Award } from 'lucide-react';
+import { Gamepad2, Trophy, User, Swords, Award } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/hooks/use-i18n';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -80,11 +80,6 @@ export default function WelcomePage() {
 
         <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <FeatureCard
-            icon={BrainCircuit}
-            title={t('welcome.feature1.title')}
-            description={t('welcome.feature1.description')}
-          />
-           <FeatureCard
             icon={Gamepad2}
             title={t('welcome.feature2.title')}
             description={t('welcome.feature2.description')}

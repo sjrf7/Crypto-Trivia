@@ -9,7 +9,7 @@ import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gamepad2, Wand2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 
@@ -21,11 +21,6 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
     onRestart?: () => void;
-    // New props for AI Game Mode
-    isAiGame?: boolean;
-    aiQuestions?: TriviaQuestion[];
-    aiTopic?: string;
-    onStartAiMode?: () => void;
 }
 
 const screenVariants = {
@@ -46,10 +41,6 @@ export function GameClient({
     wager, 
     challenger, 
     onRestart, 
-    isAiGame = false,
-    aiQuestions = [],
-    aiTopic = '',
-    onStartAiMode,
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -61,11 +52,7 @@ export function GameClient({
   const classicQuestions = t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[];
 
   useEffect(() => {
-    if (isAiGame && aiQuestions.length > 0) {
-      setQuestions(aiQuestions);
-      setGameStatus('playing');
-      setIsChallenge(false);
-    } else if (challengeQuestions && challengeQuestions.length > 0) {
+    if (challengeQuestions && challengeQuestions.length > 0) {
       setIsChallenge(!!scoreToBeat);
       setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
        if (wager && wager > 0 && challenger) {
@@ -74,7 +61,7 @@ export function GameClient({
           setGameStatus('playing');
       }
     }
-  }, [challengeQuestions, scoreToBeat, wager, challenger, isAiGame, aiQuestions]);
+  }, [challengeQuestions, scoreToBeat, wager, challenger]);
 
   const handleStartClassic = () => {
     const shuffled = [...classicQuestions]
@@ -152,10 +139,6 @@ export function GameClient({
           transition={{ delay: 0.4 }}
         >
           <Button onClick={handleStartClassic} size="lg">{t('game.client.start_classic_button')}</Button>
-          <Button onClick={onStartAiMode} size="lg" variant="secondary">
-            <Wand2 className="mr-2 h-5 w-5" />
-            AI-Generated Trivia
-          </Button>
         </motion.div>
     </motion.div>
   );
@@ -179,8 +162,6 @@ export function GameClient({
                   onGameEnd={handleGameEnd} 
                   scoreToBeat={scoreToBeat} 
                   isChallenge={isChallenge}
-                  isAiGame={isAiGame}
-                  aiTopic={aiTopic}
                />;
       case 'summary':
         return <SummaryScreen 
