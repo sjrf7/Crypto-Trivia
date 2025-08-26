@@ -52,8 +52,9 @@ export async function POST(req: NextRequest) {
 
       The game should have a clear topic and a set of questions. Each question must have exactly 4 options, and one of them must be the correct answer.
 
-      Please generate a game with exactly ${numQuestions} questions.
       The difficulty of the questions should be: ${difficulty}.
+
+      It is absolutely crucial that you generate EXACTLY ${numQuestions} questions. Do not generate more or fewer than ${numQuestions}.
       
       Your output MUST be a valid JSON object that strictly conforms to the following Zod schema:
       
