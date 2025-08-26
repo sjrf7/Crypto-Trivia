@@ -124,7 +124,7 @@ export function GameSetup({ onGameStart, isLoading }: GameSetupProps) {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading}>
                 {isLoading ? <Loader className="animate-spin" /> : t('ai_setup.button')}
               </Button>
             </form>
