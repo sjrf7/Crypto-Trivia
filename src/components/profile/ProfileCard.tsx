@@ -7,6 +7,7 @@ import { ACHIEVEMENTS } from '@/lib/mock-data';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useI18n } from '@/hooks/use-i18n';
 
 interface ProfileCardProps {
   player: Player;
@@ -40,6 +41,7 @@ const StatItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label
 )
 
 export function ProfileCard({ player }: ProfileCardProps) {
+  const { t } = useI18n();
   const unlockedAchievements = player.achievements ? ACHIEVEMENTS.filter(ach => player.achievements.includes(ach.id)) : [];
 
   if (!player) {
@@ -79,7 +81,7 @@ export function ProfileCard({ player }: ProfileCardProps) {
             <CardTitle className="font-headline text-4xl">{player.name}</CardTitle>
         </motion.div>
         <motion.div variants={itemVariants} transition={{delay: 0.1}}>
-            <CardDescription>Crypto Trivia Enthusiast</CardDescription>
+            <CardDescription>{t('profile.card.subtitle')}</CardDescription>
         </motion.div>
       </CardHeader>
       <CardContent>
@@ -87,16 +89,16 @@ export function ProfileCard({ player }: ProfileCardProps) {
             className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6"
             variants={containerVariants}
         >
-            <StatItem icon={Award} label="Top Rank" value={player.stats.topRank} />
-            <StatItem icon={Star} label="Total Score" value={player.stats.totalScore.toLocaleString('en-US')} />
-            <StatItem icon={Gamepad2} label="Games Played" value={player.stats.gamesPlayed} />
-            <StatItem icon={Target} label="Questions Answered" value={player.stats.questionsAnswered} />
-            <StatItem icon={Percent} label="Accuracy" value={player.stats.accuracy} />
+            <StatItem icon={Award} label={t('profile.stats.top_rank')} value={player.stats.topRank} />
+            <StatItem icon={Star} label={t('profile.stats.total_score')} value={player.stats.totalScore.toLocaleString('en-US')} />
+            <StatItem icon={Gamepad2} label={t('profile.stats.games_played')} value={player.stats.gamesPlayed} />
+            <StatItem icon={Target} label={t('profile.stats.questions_answered')} value={player.stats.questionsAnswered} />
+            <StatItem icon={Percent} label={t('profile.stats.accuracy')} value={player.stats.accuracy} />
         </motion.div>
       </CardContent>
       {unlockedAchievements.length > 0 && (
         <CardFooter className="flex-col items-start gap-4 pt-6">
-            <motion.h3 className="font-headline text-2xl" variants={itemVariants}>Achievements</motion.h3>
+            <motion.h3 className="font-headline text-2xl" variants={itemVariants}>{t('profile.achievements_title')}</motion.h3>
             <motion.div className="flex flex-wrap gap-4" variants={containerVariants}>
             <TooltipProvider>
                 {unlockedAchievements.map((ach) => (
@@ -109,8 +111,8 @@ export function ProfileCard({ player }: ProfileCardProps) {
                            </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p className="font-bold">{ach.name}</p>
-                            <p>{ach.description}</p>
+                            <p className="font-bold">{t(`achievements.items.${ach.id}.name`)}</p>
+                            <p>{t(`achievements.items.${ach.id}.description`)}</p>
                         </TooltipContent>
                     </Tooltip>
                 ))}
@@ -122,4 +124,3 @@ export function ProfileCard({ player }: ProfileCardProps) {
     </motion.div>
   );
 }
-

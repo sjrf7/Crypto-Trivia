@@ -9,6 +9,7 @@ import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useI18n } from '@/hooks/use-i18n';
 
 type SortKey = 'rank' | 'totalScore' | 'accuracy';
 
@@ -32,6 +33,7 @@ const rowVariants = {
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const { t } = useI18n();
 
   const sortedData = useMemo(() => {
     return [...data].sort((a, b) => {
@@ -85,10 +87,10 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableHeader tkey="rank" label="Rank" />
-            <TableHead>Player</TableHead>
-            <SortableHeader tkey="totalScore" label="Score" />
-            <SortableHeader tkey="accuracy" label="Accuracy" />
+            <SortableHeader tkey="rank" label={t('leaderboard.table.rank')} />
+            <TableHead>{t('leaderboard.table.player')}</TableHead>
+            <SortableHeader tkey="totalScore" label={t('leaderboard.table.score')} />
+            <SortableHeader tkey="accuracy" label={t('leaderboard.table.accuracy')} />
           </TableRow>
         </TableHeader>
         <TableBody>

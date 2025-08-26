@@ -18,7 +18,7 @@ export default function AiPlayPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { language } = useI18n();
+  const { language, t } = useI18n();
 
   const handleGameStart = async (topic: string, numQuestions: number, difficulty: string) => {
     setIsLoading(true);
@@ -45,7 +45,7 @@ export default function AiPlayPage() {
       setError(errorMessage);
       toast({
         variant: 'destructive',
-        title: 'Error Generating Game',
+        title: t('ai_page.error_toast.title'),
         description: errorMessage,
       });
     } finally {
@@ -66,7 +66,7 @@ export default function AiPlayPage() {
         <div className="flex justify-center items-center h-full">
             <Alert variant="destructive" className="max-w-lg">
                 <Terminal className="h-4 w-4" />
-                <AlertTitle>AI Feature Error</AlertTitle>
+                <AlertTitle>{t('ai_page.error_alert.title')}</AlertTitle>
                 <AlertDescription>
                    {error}
                 </AlertDescription>

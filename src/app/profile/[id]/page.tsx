@@ -10,14 +10,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useProfile } from '@farcaster/auth-kit';
 import { SignInButton } from '@/components/profile/SignInButton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
+import { useI18n } from '@/hooks/use-i18n';
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
   
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
   const { isAuthenticated, profile: user, loading: isUserLoading } = useProfile();
+  const { t } = useI18n();
 
   useEffect(() => {
     // This effect's job is to figure out which player to display.
@@ -88,8 +90,8 @@ export default function ProfilePage() {
     return (
       <UICard className="w-full max-w-md mx-auto text-center">
         <UICardContent className="pt-6">
-            <h2 className="text-2xl font-headline mb-4">View Your Profile</h2>
-            <p className="text-muted-foreground mb-6">Sign in with Farcaster to track your stats, view achievements, and more.</p>
+            <h2 className="text-2xl font-headline mb-4">{t('profile.sign_in.title')}</h2>
+            <p className="text-muted-foreground mb-6">{t('profile.sign_in.description')}</p>
             <SignInButton />
         </UICardContent>
       </UICard>
@@ -114,9 +116,15 @@ export default function ProfilePage() {
   return null;
 }
 
+export default function ProfilePage() {
+  // We can wrap the content component with the provider
+  // if we need i18n but the page itself is a server component.
+  // In this case, the whole page is a client component, so it's okay.
+  return <ProfilePageContent />;
+}
+
 
 // Helper components for skeleton loading, assuming they are defined elsewhere or defined here
 const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
-

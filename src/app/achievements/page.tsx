@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { useI18n } from '@/hooks/use-i18n';
 
 const MotionDiv = dynamic(() => import('framer-motion').then(mod => mod.motion.div), { ssr: false });
 
@@ -30,6 +31,7 @@ const itemVariants = {
 export default function AchievementsPage() {
   const [minting, setMinting] = useState<string | null>(null);
   const [minted, setMinted] = useState<string[]>([]);
+  const { t } = useI18n();
 
   // This is a placeholder for actual user data.
   // In a real app, you would fetch this from a user profile or onchain data.
@@ -51,8 +53,8 @@ export default function AchievementsPage() {
           <div className="flex items-center gap-4">
             <Award className="h-8 w-8 text-primary drop-shadow-glow-primary" />
             <div>
-              <CardTitle className="font-headline text-3xl">Achievements</CardTitle>
-              <CardDescription>Mint your unlocked achievements as onchain Soul-Bound Tokens (SBTs) on Base.</CardDescription>
+              <CardTitle className="font-headline text-3xl">{t('achievements.title')}</CardTitle>
+              <CardDescription>{t('achievements.description')}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -82,23 +84,23 @@ export default function AchievementsPage() {
                       <div className={`p-4 rounded-full mb-2 ${isUnlocked ? 'bg-primary/10' : 'bg-secondary'}`}>
                         <achievement.icon className={`h-12 w-12 ${isUnlocked ? 'text-primary' : 'text-muted-foreground'}`} />
                       </div>
-                      <CardTitle className="text-xl font-headline">{achievement.name}</CardTitle>
+                      <CardTitle className="text-xl font-headline">{t(`achievements.items.${achievement.id}.name`)}</CardTitle>
                     </CardHeader>
                     <CardContent className="text-center text-sm text-muted-foreground flex-grow">
-                      {achievement.description}
+                      {t(`achievements.items.${achievement.id}.description`)}
                     </CardContent>
                     <CardContent className="mt-auto">
                       {isUnlocked && (
                         isMinted ? (
                           <Button variant="outline" className="w-full" asChild>
                             <Link href="https://sepolia.basescan.org/" target="_blank">
-                              View on BaseScan
+                              {t('achievements.view_on_basescan')}
                             </Link>
                           </Button>
                         ) : (
                           <Button className="w-full" onClick={() => handleMint(achievement.id)} disabled={isMinting}>
                             {isMinting ? <Loader className="animate-spin mr-2" /> : null}
-                            {isMinting ? 'Minting...' : 'Mint NFT'}
+                            {isMinting ? t('achievements.minting') : t('achievements.mint_nft')}
                           </Button>
                         )
                       )}
