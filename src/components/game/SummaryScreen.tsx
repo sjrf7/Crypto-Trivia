@@ -4,7 +4,7 @@
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, RotateCw, BarChart2, Share2, ClipboardCheck } from 'lucide-react';
+import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/types';
 import {
@@ -30,9 +30,11 @@ interface SummaryScreenProps {
   questionsAnswered: number;
   onRestart: () => void;
   questions: TriviaQuestion[];
+  isAiGame?: boolean;
+  aiGameTopic?: string;
 }
 
-export function SummaryScreen({ score, questionsAnswered, onRestart, questions }: SummaryScreenProps) {
+export function SummaryScreen({ score, questionsAnswered, onRestart, questions, isAiGame = false, aiGameTopic }: SummaryScreenProps) {
     const { t } = useI18n();
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
@@ -84,7 +86,11 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
              <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
           </motion.div>
           <CardTitle className="font-headline text-4xl">{t('summary.title')}</CardTitle>
-          <CardDescription>{t('summary.description')}</CardDescription>
+          {isAiGame && aiGameTopic ? (
+             <CardDescription>{t('summary.ai_description', { topic: aiGameTopic })}</CardDescription>
+          ) : (
+            <CardDescription>{t('summary.description')}</CardDescription>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="text-6xl font-bold text-primary">
@@ -113,60 +119,62 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                     </Link>
                 </Button>
             </motion.div>
-            <motion.div 
-                className="w-full"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-            >
-              <AlertDialog onOpenChange={(open) => {
-                  // Generate link when dialog opens
-                  if (open) generateChallenge();
-              }}>
-                <AlertDialogTrigger asChild>
-                  <Button variant="secondary" className="w-full">
-                      <Share2 className="mr-2 h-4 w-4" />
-                      {t('summary.challenge.button')}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t('summary.challenge.title')}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t('summary.challenge.description')}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                          <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
-                          <Input 
-                              id="wager"
-                              type="number"
-                              placeholder={t('summary.challenge.wager.placeholder')}
-                              value={wager}
-                              onChange={(e) => {
-                                  setWager(e.target.value);
-                                  // Regenerate link on wager change
-                                  setTimeout(generateChallenge, 100);
-                              }}
-                          />
-                      </div>
-                      <div className="space-y-2">
-                          <Label>{t('summary.challenge.link.label')}</Label>
-                          <div className="flex items-center space-x-2">
-                              <Input value={challengeUrl} readOnly />
-                              <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl}>
-                                  <ClipboardCheck className="h-4 w-4" />
-                              </Button>
+            
+            {/* Only show challenge button for classic mode */}
+            {!isAiGame && (
+                <motion.div 
+                    className="w-full"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
+                  <AlertDialog onOpenChange={(open) => {
+                      if (open) generateChallenge();
+                  }}>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="secondary" className="w-full">
+                          <Share2 className="mr-2 h-4 w-4" />
+                          {t('summary.challenge.button')}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t('summary.challenge.title')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t('summary.challenge.description')}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                              <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
+                              <Input 
+                                  id="wager"
+                                  type="number"
+                                  placeholder={t('summary.challenge.wager.placeholder')}
+                                  value={wager}
+                                  onChange={(e) => {
+                                      setWager(e.target.value);
+                                      setTimeout(generateChallenge, 100);
+                                  }}
+                              />
+                          </div>
+                          <div className="space-y-2">
+                              <Label>{t('summary.challenge.link.label')}</Label>
+                              <div className="flex items-center space-x-2">
+                                  <Input value={challengeUrl} readOnly />
+                                  <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl}>
+                                      <ClipboardCheck className="h-4 w-4" />
+                                  </Button>
+                              </div>
                           </div>
                       </div>
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t('summary.challenge.close_button')}</AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </motion.div>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t('summary.challenge.close_button')}</AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </motion.div>
+            )}
         </CardFooter>
       </Card>
     </motion.div>

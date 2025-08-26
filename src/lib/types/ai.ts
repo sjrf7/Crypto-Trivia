@@ -9,7 +9,7 @@ export const AITriviaQuestionSchema = z.object({
 
 export const AITriviaGameSchema = z.object({
   topic: z.string().describe('The overall topic of the trivia game.'),
-  questions: z.array(AITriviaQuestionSchema).min(5).max(20).describe('An array of 5 to 20 trivia questions.'),
+  questions: z.array(AITriviaQuestionSchema).min(5).max(10).describe('An array of 5 to 10 trivia questions.'),
 });
 
 export type AITriviaGame = z.infer<typeof AITriviaGameSchema>;

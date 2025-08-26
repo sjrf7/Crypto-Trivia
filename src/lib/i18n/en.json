@@ -32,7 +32,7 @@
   "game": {
     "client": {
         "title": "Crypto Trivia Showdown",
-        "description": "Test your crypto knowledge with our classic trivia questions.",
+        "description": "Test your crypto knowledge with our classic trivia questions or generate a custom game with AI!",
         "start_classic_button": "Start Classic Game"
     },
     "screen": {
@@ -40,6 +40,10 @@
         "challenge_mode": {
             "title": "Challenge Mode",
             "description": "Beat a score of"
+        },
+        "ai_mode": {
+            "title": "AI Trivia",
+            "description": "Topic:"
         }
     },
     "question": {
@@ -50,7 +54,8 @@
   },
   "summary": {
     "title": "Game Over!",
-    "description": "Here's how you did.",
+    "description": "Here's how you did in the classic trivia.",
+    "ai_description": "Here's how you did on the {topic} trivia.",
     "final_score": "Final Score",
     "questions_answered": "You answered {count} questions.",
     "play_again_button": "Play Again",

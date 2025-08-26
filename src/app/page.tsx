@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Gamepad2, Trophy, User, Swords, Award } from 'lucide-react';
+import { Gamepad2, Trophy, User, Swords, Award, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/hooks/use-i18n';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
@@ -87,7 +87,7 @@ export default function WelcomePage() {
           </Button>
         </motion.div>
 
-        <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
           <FeatureCard
             icon={Gamepad2}
             title={t('welcome.feature2.title')}

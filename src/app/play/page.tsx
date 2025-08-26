@@ -25,6 +25,7 @@ export default function PlayPage() {
             <GameClient
               key={gameKey}
               onRestart={handleRestart}
+              isAiGame={false}
             />
           </motion.div>
       </AnimatePresence>

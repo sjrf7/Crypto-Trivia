@@ -32,7 +32,7 @@
   "game": {
     "client": {
         "title": "Crypto Trivia Showdown",
-        "description": "¡Pon a prueba tus conocimientos de cripto con nuestras preguntas de trivia clásicas!",
+        "description": "¡Pon a prueba tus conocimientos de cripto con nuestras preguntas de trivia clásicas o genera un juego personalizado con IA!",
         "start_classic_button": "Iniciar Juego Clásico"
     },
     "screen": {
@@ -40,6 +40,10 @@
         "challenge_mode": {
             "title": "Modo Desafío",
             "description": "¡Supera una puntuación de"
+        },
+        "ai_mode": {
+            "title": "Trivia con IA",
+            "description": "Tema:"
         }
     },
     "question": {
@@ -50,7 +54,8 @@
   },
   "summary": {
     "title": "¡Fin del Juego!",
-    "description": "Así te fue.",
+    "description": "Así te fue en la trivia clásica.",
+    "ai_description": "Así te fue en la trivia de {topic}.",
     "final_score": "Puntuación Final",
     "questions_answered": "Respondiste {count} preguntas.",
     "play_again_button": "Jugar de Nuevo",

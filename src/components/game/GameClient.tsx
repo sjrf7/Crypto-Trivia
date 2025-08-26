@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { TriviaQuestion } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -9,9 +9,10 @@ import { GameScreen } from './GameScreen';
 import { SummaryScreen } from './SummaryScreen';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gamepad2 } from 'lucide-react';
+import { Gamepad2, Wand2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
+import Link from 'next/link';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -21,6 +22,8 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
     onRestart?: () => void;
+    isAiGame?: boolean;
+    aiGameTopic?: string;
 }
 
 const screenVariants = {
@@ -41,6 +44,8 @@ export function GameClient({
     wager, 
     challenger, 
     onRestart,
+    isAiGame = false,
+    aiGameTopic
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -49,7 +54,7 @@ export function GameClient({
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
 
-  const classicQuestions = t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[];
+  const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
   useEffect(() => {
     if (challengeQuestions && challengeQuestions.length > 0) {
@@ -68,7 +73,7 @@ export function GameClient({
       .map((q, i) => ({ ...q, originalIndex: i }))
       .sort(() => 0.5 - Math.random());
     
-    const selectedQuestions = shuffled.slice(0, 20);
+    const selectedQuestions = shuffled.slice(0, 10);
 
     setQuestions(selectedQuestions);
     setGameStatus('playing');
@@ -138,17 +143,38 @@ export function GameClient({
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <Button onClick={handleStartClassic} size="lg">{t('game.client.start_classic_button')}</Button>
+          <Button onClick={handleStartClassic} size="lg"><Gamepad2/>{t('game.client.start_classic_button')}</Button>
         </motion.div>
     </motion.div>
   );
 
   const renderGameContent = () => {
-    if (questions.length === 0 && (gameStatus === 'playing' || gameStatus === 'wager')) {
-        return renderWelcomeScreen();
+    if (isAiGame) {
+      if (gameStatus === 'playing') {
+        return <GameScreen 
+                  questions={questions} 
+                  onGameEnd={handleGameEnd} 
+                  isChallenge={false}
+                  isAiGame={true}
+                  aiGameTopic={aiGameTopic}
+               />;
+      }
+      if (gameStatus === 'summary') {
+        return <SummaryScreen 
+                  score={finalScore} 
+                  questionsAnswered={questionsAnswered} 
+                  onRestart={handleRestart} 
+                  questions={questions}
+                  isAiGame={true}
+                  aiGameTopic={aiGameTopic}
+               />;
+      }
     }
     
+    // Non-AI Game Logic (Classic, Challenge)
     switch (gameStatus) {
+      case 'setup':
+        return renderWelcomeScreen();
       case 'wager':
         return <WagerCard 
                     wager={wager!} 
@@ -170,15 +196,14 @@ export function GameClient({
                   onRestart={handleRestart} 
                   questions={questions} 
                />;
-      case 'setup':
       default:
         return renderWelcomeScreen();
     }
   };
 
   return (
-    <Card className="h-full min-h-[500px]">
-      <CardContent className="h-full flex flex-col justify-center">
+    <Card className="h-full min-h-[600px] flex flex-col">
+      <CardContent className="h-full flex flex-col justify-center flex-grow">
         <AnimatePresence mode="wait">
           {renderGameContent()}
         </AnimatePresence>
