@@ -77,15 +77,33 @@ const generateCryptoTriviaFlow = ai.defineFlow(
     outputSchema: GenerateCryptoTriviaOutputSchema,
   },
   async (input) => {
-    const { output } = await triviaPrompt(input);
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    // Add robust validation to ensure the output is usable.
-    if (!output || !output.questions || output.questions.length === 0) {
-        console.error('AI model returned empty or invalid questions for topic:', input.topic);
-        throw new Error('The AI model could not generate questions for the given topic. Please try a different one.');
+    while (attempts < maxAttempts) {
+        attempts++;
+        try {
+            const { output } = await triviaPrompt(input);
+            
+            // Add robust validation to ensure the output is usable.
+            if (output && output.questions && output.questions.length > 0) {
+                return output; // Success
+            }
+            
+            console.warn(`Attempt ${attempts}: AI model returned empty or invalid questions for topic:`, input.topic);
+
+        } catch (e) {
+            console.error(`Attempt ${attempts} failed with an error:`, e);
+        }
+        
+        if (attempts < maxAttempts) {
+            // Wait for a short period before retrying
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
     }
-    
-    return output;
+
+    // If all attempts fail, throw an error.
+    throw new Error('The AI model could not generate questions for the given topic after multiple attempts. Please try a different one.');
   }
 );
 
