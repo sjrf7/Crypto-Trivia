@@ -83,9 +83,19 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableHeader tkey="rank" label={t('leaderboard.table.rank')} className="w-[80px] px-2" />
+            <TableHead className="w-[80px] px-2 text-center">
+                <Button variant="ghost" onClick={() => handleSort('rank')}>
+                    {t('leaderboard.table.rank')}
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            </TableHead>
             <TableHead className="px-2">{t('leaderboard.table.player')}</TableHead>
-            <SortableHeader tkey="totalScore" label={t('leaderboard.table.score')} />
+            <TableHead className="text-center">
+                 <Button variant="ghost" onClick={() => handleSort('totalScore')}>
+                    {t('leaderboard.table.score')}
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -98,7 +108,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="py-2 px-4 font-medium text-lg text-center">{entry.rank}</TableCell>
+              <TableCell className="py-2 px-2 text-center font-medium text-lg">{entry.rank}</TableCell>
               <TableCell className="py-2 px-2">
                 <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-3 group">
                   <Avatar className="h-8 w-8">
@@ -108,7 +118,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                   <span className="font-medium group-hover:text-primary transition-colors">{entry.player.name}</span>
                 </Link>
               </TableCell>
-              <TableCell className="py-2 px-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
+              <TableCell className="py-2 px-2 font-bold text-primary text-center">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
