@@ -32,21 +32,22 @@ const rowVariants = {
 };
 
 const RankCell = ({ rank }: { rank: number }) => {
-  if (rank <= 5) {
-    const medalColor = 
-      rank === 1 ? 'text-yellow-400' :
-      rank === 2 ? 'text-slate-300' :
-      rank === 3 ? 'text-amber-600' :
-      'text-sky-500';
-    
-    return (
-      <div className="flex items-center justify-center gap-1">
-        <span className="font-medium text-lg">{rank}</span>
+  const medalColor = 
+    rank === 1 ? 'text-yellow-400' :
+    rank === 2 ? 'text-slate-400' :
+    rank === 3 ? 'text-amber-700' :
+    'text-sky-500';
+  
+  return (
+    <div className="flex items-center justify-center gap-1">
+      <span className="font-medium text-lg w-6 text-center">{rank}</span>
+      {rank <= 5 ? (
         <Medal className={cn('h-5 w-5', medalColor)} />
-      </div>
-    );
-  }
-  return <div className="text-center font-medium text-lg">{rank}</div>;
+      ) : (
+        <div className="h-5 w-5" /> // Placeholder to maintain alignment
+      )}
+    </div>
+  );
 }
 
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
@@ -127,7 +128,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="p-2 text-center">
+              <TableCell className="p-0 text-center">
                   <RankCell rank={entry.rank} />
               </TableCell>
               <TableCell className="p-2">
