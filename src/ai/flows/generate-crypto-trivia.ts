@@ -87,7 +87,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             if (output && Array.isArray(output.questions)) {
                 // If the topic is not crypto-related, the model should return an empty array.
                 // We pass this along to the frontend to handle.
-                if (output.questions.length === 0 && input.numQuestions > 0) {
+                if (output.questions.length === 0) {
                   return output;
                 }
               
@@ -101,13 +101,11 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                     q.options.includes(q.answer)
                 );
                 
-                if (allQuestionsValid && output.questions.length > 0) {
-                  // Add the original topic back to each question for context if needed by the frontend.
-                  const questionsWithTopic = output.questions.map(q => ({...q, topic: input.topic}));
-                  return { questions: questionsWithTopic }; // Success
+                if (allQuestionsValid) {
+                  return output; // Success
                 }
                 
-                console.warn(`Attempt ${attempts}: AI model returned malformed or empty questions for topic:`, input.topic);
+                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic);
             } else {
                 console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, output);
             }
