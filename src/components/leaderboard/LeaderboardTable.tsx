@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 
-type SortKey = 'rank' | 'totalScore' | 'accuracy';
+type SortKey = 'rank' | 'totalScore';
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[];
@@ -48,10 +48,6 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
           valA = a.player.stats.totalScore;
           valB = b.player.stats.totalScore;
           break;
-        case 'accuracy':
-            valA = parseFloat(a.player.stats.accuracy);
-            valB = parseFloat(b.player.stats.accuracy);
-            break;
         default:
           return 0;
       }
@@ -59,7 +55,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       if (sortDirection === 'asc') {
         return valA - valB;
       } else {
-        return valB - a.player.stats.totalScore;
+        return valB - valA;
       }
     });
   }, [data, sortKey, sortDirection]);
@@ -87,10 +83,9 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableHeader tkey="rank" label={t('leaderboard.table.rank')} className="w-[80px]" />
-            <TableHead>{t('leaderboard.table.player')}</TableHead>
+            <SortableHeader tkey="rank" label={t('leaderboard.table.rank')} className="w-[80px] px-2" />
+            <TableHead className="px-2">{t('leaderboard.table.player')}</TableHead>
             <SortableHeader tkey="totalScore" label={t('leaderboard.table.score')} />
-            <SortableHeader tkey="accuracy" label={t('leaderboard.table.accuracy')} />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -114,7 +109,6 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 </Link>
               </TableCell>
               <TableCell className="py-2 px-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
-              <TableCell className="py-2 px-2 text-accent">{entry.player.stats.accuracy}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
