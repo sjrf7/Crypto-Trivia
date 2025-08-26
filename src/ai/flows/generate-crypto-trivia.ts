@@ -62,3 +62,4 @@ export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Pr
     throw new Error('The AI model could not generate valid questions for the given topic. Please try a different one.');
   }
 }
+
