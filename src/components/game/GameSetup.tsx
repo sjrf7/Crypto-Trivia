@@ -11,7 +11,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader, Wand2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 const FormSchema = z.object({
   topic: z.string().min(3, 'Topic must be at least 3 characters long.'),
@@ -21,11 +20,10 @@ type FormValues = z.infer<typeof FormSchema>;
 
 interface GameSetupProps {
   onGameStart: (topic: string) => Promise<void>;
+  isLoading: boolean;
 }
 
-export function GameSetup({ onGameStart }: GameSetupProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function GameSetup({ onGameStart, isLoading }: GameSetupProps) {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -35,16 +33,7 @@ export function GameSetup({ onGameStart }: GameSetupProps) {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await onGameStart(data.topic);
-    } catch (err) {
-      console.error(err);
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
-      setError(`Failed to generate trivia. ${errorMessage}`);
-      setIsLoading(false);
-    }
+    await onGameStart(data.topic);
   };
 
   return (
@@ -84,21 +73,6 @@ export function GameSetup({ onGameStart }: GameSetupProps) {
               </Button>
             </form>
           </Form>
-           <AnimatePresence>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="mt-4"
-              >
-                <Alert variant="destructive">
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </CardContent>
       </Card>
     </motion.div>
