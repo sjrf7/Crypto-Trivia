@@ -36,9 +36,7 @@ const GenerateCryptoTriviaInputSchema = z.object({
 export type GenerateCryptoTriviaInput = z.infer<typeof GenerateCryptoTriviaInputSchema>;
 
 // Define the output schema for the trivia generation flow.
-const GenerateCryptoTriviaOutputSchema = z.object({
-    questions: z.array(TriviaQuestionSchema),
-});
+const GenerateCryptoTriviaOutputSchema = z.array(TriviaQuestionSchema);
 export type GenerateCryptoTriviaOutput = z.infer<typeof GenerateCryptoTriviaOutputSchema>;
 
 // Define the prompt for the AI model.
@@ -54,7 +52,7 @@ const triviaPrompt = ai.definePrompt({
     Your task is to generate a set of trivia questions based on the user's request.
 
     It is very important that you ONLY generate questions about topics related to cryptocurrency, blockchain, or web3.
-    If the user provides a topic that is NOT related to these subjects, you MUST return an empty list of questions.
+    If the user provides a topic that is NOT related to these subjects, you MUST return an empty array.
 
     Please generate exactly {{numQuestions}} trivia questions about the topic: "{{topic}}".
     The questions should be in the language specified by the code: {{language}}.
@@ -66,7 +64,7 @@ const triviaPrompt = ai.definePrompt({
     3. The correct answer, which must be one of the 4 options.
 
     Ensure the questions are accurate, interesting, and cover specific aspects of the topic.
-    Format the output as a valid JSON object that adheres to the defined schema.
+    Format the output as a valid array of JSON objects that adheres to the defined schema.
   `,
 });
 
@@ -87,15 +85,15 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             const { output } = await triviaPrompt(input);
             
             // Add robust validation to ensure the output is usable.
-            if (output && Array.isArray(output.questions)) {
+            if (output && Array.isArray(output)) {
                 // If the topic is not crypto-related, the model should return an empty array.
                 // We pass this along to the frontend to handle.
-                if (output.questions.length === 0) {
+                if (output.length === 0) {
                   return output;
                 }
               
                 // Further validation to prevent malformed questions from crashing the app
-                const allQuestionsValid = output.questions.every(q => 
+                const allQuestionsValid = output.every(q => 
                     q &&
                     typeof q.question === 'string' && 
                     q.options && 
@@ -130,6 +128,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
 );
 
 // Export an async wrapper function to be called from the client.
-export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Promise<GenerateCryptoTriviaOutput> {
-  return generateCryptoTriviaFlow(input);
+export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Promise<{ questions: GenerateCryptoTriviaOutput }> {
+  const questions = await generateCryptoTriviaFlow(input);
+  return { questions };
 }
