@@ -113,6 +113,76 @@ export const PLAYERS: Player[] = [
     },
     achievements: ['first-game']
   },
+  {
+    id: 'brian',
+    name: 'brian_armstrong',
+    avatar: 'https://i.imgur.com/Q2UXp3D.jpeg',
+    stats: {
+      totalScore: 7500,
+      gamesPlayed: 19,
+      questionsAnswered: 190,
+      correctAnswers: 165,
+      accuracy: '86.84%',
+      topRank: 6,
+    },
+    achievements: ['first-game', 'novice-quizzer']
+  },
+  {
+    id: 'gavin',
+    name: 'GavinWood',
+    avatar: 'https://i.imgur.com/tQEbTgf.jpeg',
+    stats: {
+      totalScore: 7200,
+      gamesPlayed: 16,
+      questionsAnswered: 160,
+      correctAnswers: 140,
+      accuracy: '87.50%',
+      topRank: 7,
+    },
+    achievements: ['first-game', 'novice-quizzer']
+  },
+  {
+    id: 'anatoly',
+    name: 'aeyakovenko',
+    avatar: 'https://i.imgur.com/vj4J4hJ.jpeg',
+    stats: {
+      totalScore: 6900,
+      gamesPlayed: 22,
+      questionsAnswered: 220,
+      correctAnswers: 180,
+      accuracy: '81.82%',
+      topRank: 8,
+    },
+    achievements: ['first-game', 'novice-quizzer']
+  },
+  {
+    id: 'raoul',
+    name: 'RaoulGMI',
+    avatar: 'https://i.imgur.com/2s34gG7.jpeg',
+    stats: {
+      totalScore: 6500,
+      gamesPlayed: 30,
+      questionsAnswered: 300,
+      correctAnswers: 225,
+      accuracy: '75.00%',
+      topRank: 9,
+    },
+    achievements: ['first-game']
+  },
+  {
+    id: 'saylor',
+    name: 'saylor',
+    avatar: 'https://i.imgur.com/S2tM65A.jpeg',
+    stats: {
+      totalScore: 6100,
+      gamesPlayed: 10,
+      questionsAnswered: 100,
+      correctAnswers: 85,
+      accuracy: '85.00%',
+      topRank: 10,
+    },
+    achievements: ['first-game']
+  },
 ];
 
 export const LEADERBOARD_DATA: LeaderboardEntry[] = PLAYERS.map(
