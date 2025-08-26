@@ -40,7 +40,7 @@ const RankCell = ({ rank }: { rank: number }) => {
       'text-sky-500';
     
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex flex-col items-center justify-center">
         <span className="font-medium text-lg">{rank}</span>
         <Medal className={cn('h-5 w-5', medalColor)} />
       </div>
