@@ -30,9 +30,18 @@ interface SummaryScreenProps {
   questionsAnswered: number;
   onRestart: () => void;
   questions: TriviaQuestion[];
+  isAiGame?: boolean;
+  aiGameTopic?: string;
 }
 
-export function SummaryScreen({ score, questionsAnswered, onRestart, questions }: SummaryScreenProps) {
+export function SummaryScreen({ 
+  score, 
+  questionsAnswered, 
+  onRestart, 
+  questions,
+  isAiGame = false,
+  aiGameTopic = ''
+}: SummaryScreenProps) {
     const { t } = useI18n();
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
@@ -64,6 +73,10 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
         });
     }
 
+    const description = isAiGame 
+      ? t('summary.ai_description', { topic: aiGameTopic })
+      : t('summary.description');
+
   return (
     <motion.div 
         className="flex justify-center items-center h-full"
@@ -84,7 +97,7 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
              <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
           </motion.div>
           <CardTitle className="font-headline text-4xl">{t('summary.title')}</CardTitle>
-          <CardDescription>{t('summary.description')}</CardDescription>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="text-6xl font-bold text-primary">
@@ -124,7 +137,7 @@ export function SummaryScreen({ score, questionsAnswered, onRestart, questions }
                   if (open) generateChallenge();
               }}>
                 <AlertDialogTrigger asChild>
-                  <Button variant="secondary" className="w-full">
+                  <Button variant="secondary" className="w-full" disabled={isAiGame}>
                       <Share2 className="mr-2 h-4 w-4" />
                       {t('summary.challenge.button')}
                   </Button>

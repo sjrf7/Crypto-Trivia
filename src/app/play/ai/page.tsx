@@ -7,38 +7,37 @@ import { GameSetup } from '@/components/game/GameSetup';
 import { TriviaQuestion } from '@/lib/types';
 import { AnimatePresence } from 'framer-motion';
 import { generateCryptoTrivia } from '@/ai/flows/generate-crypto-trivia';
+import { AITriviaGame } from '@/lib/types/ai';
 
 export default function AiPlayPage() {
-  const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
-  const [gameTopic, setGameTopic] = useState<string>('');
+  const [game, setGame] = useState<AITriviaGame | null>(null);
   const [gameKey, setGameKey] = useState(0);
 
   const handleGameStart = async (topic: string) => {
     const aiGame = await generateCryptoTrivia(topic);
-    const formattedQuestions = aiGame.questions.map((q, i) => ({ ...q, originalIndex: i }));
-    setGameTopic(aiGame.topic);
-    setQuestions(formattedQuestions);
+    setGame(aiGame);
   };
 
   const handleRestart = () => {
-    setQuestions([]);
-    setGameTopic('');
+    setGame(null);
     setGameKey(prev => prev + 1);
   };
+
+  const formattedQuestions: TriviaQuestion[] | undefined = game?.questions.map((q, i) => ({ ...q, originalIndex: i }));
 
   return (
     <div className="flex justify-center items-center h-full">
       <AnimatePresence mode="wait">
-        {questions.length === 0 ? (
+        {!game ? (
           <GameSetup key="setup" onGameStart={handleGameStart} />
         ) : (
           <div className="w-full lg:w-4/5">
              <GameClient
                 key={gameKey}
-                challengeQuestions={questions}
+                challengeQuestions={formattedQuestions}
                 onRestart={handleRestart}
                 isAiGame={true}
-                aiGameTopic={gameTopic}
+                aiGameTopic={game.topic}
             />
           </div>
         )}

@@ -21,6 +21,8 @@ interface GameClientProps {
     wager?: number;
     challenger?: string;
     onRestart?: () => void;
+    isAiGame?: boolean;
+    aiGameTopic?: string;
 }
 
 const screenVariants = {
@@ -40,7 +42,9 @@ export function GameClient({
     scoreToBeat, 
     wager, 
     challenger, 
-    onRestart
+    onRestart,
+    isAiGame = false,
+    aiGameTopic = ''
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -52,6 +56,9 @@ export function GameClient({
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
   useEffect(() => {
+    // This effect determines which questions to load and what the initial game state is.
+    
+    // Case 1: It's an AI game or a challenge
     if (challengeQuestions && challengeQuestions.length > 0) {
       setIsChallenge(!!scoreToBeat);
       setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
@@ -60,8 +67,14 @@ export function GameClient({
       } else {
           setGameStatus('playing');
       }
+    } 
+    // Case 2: It's a classic game started from the /play page (no props passed)
+    else if (!isAiGame) {
+      handleStartClassic();
     }
-  }, [challengeQuestions, scoreToBeat, wager, challenger]);
+    // AiGame without challenge questions will be handled by its own page logic, not here.
+
+  }, [challengeQuestions, scoreToBeat, wager, challenger, isAiGame]);
 
   const handleStartClassic = () => {
     const shuffled = [...classicQuestions]
@@ -85,6 +98,8 @@ export function GameClient({
     if (onRestart) {
         onRestart();
     } else {
+        // This logic is for non-classic games that are restarted from the summary.
+        // It resets the state to show the welcome screen again.
         setGameStatus('setup');
         setFinalScore(0);
         setQuestionsAnswered(0);
@@ -146,6 +161,9 @@ export function GameClient({
   const renderGameContent = () => {
     switch (gameStatus) {
       case 'setup':
+        // This welcome screen is now primarily for challenge links that are invalid,
+        // or for direct navigation to GameClient without params.
+        // The main game mode selection happens on /play page.
         return renderWelcomeScreen();
       case 'wager':
         return <WagerCard 
@@ -160,6 +178,8 @@ export function GameClient({
                   onGameEnd={handleGameEnd} 
                   scoreToBeat={scoreToBeat} 
                   isChallenge={isChallenge}
+                  isAiGame={isAiGame}
+                  aiGameTopic={aiGameTopic}
                />;
       case 'summary':
         return <SummaryScreen 
@@ -167,6 +187,8 @@ export function GameClient({
                   questionsAnswered={questionsAnswered} 
                   onRestart={handleRestart} 
                   questions={questions} 
+                  isAiGame={isAiGame}
+                  aiGameTopic={aiGameTopic}
                />;
       default:
         return renderWelcomeScreen();
