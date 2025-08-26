@@ -34,10 +34,10 @@ const rowVariants = {
 const RankCell = ({ rank }: { rank: number }) => {
   if (rank <= 5) {
     const medalColor = 
-      rank === 1 ? 'text-yellow-500' :
-      rank === 2 ? 'text-gray-400' :
-      rank === 3 ? 'text-yellow-700' :
-      'text-muted-foreground/70';
+      rank === 1 ? 'text-yellow-400' :
+      rank === 2 ? 'text-slate-300' :
+      rank === 3 ? 'text-amber-600' :
+      'text-sky-500';
     
     return (
       <div className="flex items-center justify-center gap-2">
