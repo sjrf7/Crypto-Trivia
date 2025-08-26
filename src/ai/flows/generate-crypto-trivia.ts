@@ -47,6 +47,7 @@ const triviaPrompt = ai.definePrompt({
   name: 'cryptoTriviaPrompt',
   input: { schema: GenerateCryptoTriviaInputSchema },
   output: { schema: GenerateCryptoTriviaOutputSchema },
+  model: 'googleai/gemini-1.5-flash',
   prompt: `
     You are an expert in cryptocurrency, blockchain, and web3 technology. 
     Your task is to generate a set of trivia questions based on the user's request.
@@ -86,7 +87,13 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             const { output } = await triviaPrompt(input);
             
             // Add robust validation to ensure the output is usable.
-            if (output && output.questions && output.questions.length > 0) {
+            if (output && Array.isArray(output.questions)) {
+                // If the topic is not crypto-related, the model should return an empty array.
+                // We pass this along to the frontend to handle.
+                if (output.questions.length === 0 && attempts === 1) {
+                  return output;
+                }
+              
                 // Further validation to prevent malformed questions from crashing the app
                 const allQuestionsValid = output.questions.every(q => 
                     q.question && 
@@ -96,13 +103,13 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                     q.options.includes(q.answer)
                 );
                 
-                if (allQuestionsValid) {
+                if (allQuestionsValid && output.questions.length > 0) {
                   return output; // Success
                 }
                 
-                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic);
+                console.warn(`Attempt ${attempts}: AI model returned malformed or empty questions for topic:`, input.topic);
             } else {
-                console.warn(`Attempt ${attempts}: AI model returned empty or invalid questions for topic:`, input.topic);
+                console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, output);
             }
 
         } catch (e) {
