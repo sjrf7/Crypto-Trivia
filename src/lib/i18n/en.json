@@ -204,7 +204,8 @@
     }
   },
   "language_switcher": {
-    "tooltip": "Change language"
+    "tooltip": "Change language",
+    "title": "Language"
   },
   "classic_questions": [
     {
