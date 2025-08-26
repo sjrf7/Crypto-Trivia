@@ -89,7 +89,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             </TableHead>
-            <TableHead className="px-2">{t('leaderboard.table.player')}</TableHead>
+            <TableHead className="text-center">{t('leaderboard.table.player')}</TableHead>
             <TableHead className="text-center">
                  <Button variant="ghost" onClick={() => handleSort('totalScore')}>
                     {t('leaderboard.table.score')}
@@ -110,7 +110,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
             >
               <TableCell className="py-2 px-2 text-center font-medium text-lg">{entry.rank}</TableCell>
               <TableCell className="py-2 px-2">
-                <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-3 group">
+                <Link href={`/profile/${entry.player.id}`} className="flex items-center justify-center gap-3 group">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={entry.player.avatar} alt={entry.player.name} data-ai-hint="profile picture" />
                     <AvatarFallback>{entry.player.name.substring(0, 2)}</AvatarFallback>
