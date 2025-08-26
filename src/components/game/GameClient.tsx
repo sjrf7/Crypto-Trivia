@@ -50,6 +50,7 @@ export function GameClient({
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [finalScore, setFinalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
 
@@ -88,9 +89,10 @@ export function GameClient({
     setIsChallenge(false);
   };
 
-  const handleGameEnd = (score: number, numAnswered: number) => {
+  const handleGameEnd = (score: number, numAnswered: number, numCorrect: number) => {
     setFinalScore(score);
     setQuestionsAnswered(numAnswered);
+    setCorrectAnswers(numCorrect);
     setGameStatus('summary');
   };
 
@@ -103,6 +105,7 @@ export function GameClient({
         setGameStatus('setup');
         setFinalScore(0);
         setQuestionsAnswered(0);
+        setCorrectAnswers(0);
         setIsChallenge(false);
         setQuestions([]);
     }
@@ -184,7 +187,8 @@ export function GameClient({
       case 'summary':
         return <SummaryScreen 
                   score={finalScore} 
-                  questionsAnswered={questionsAnswered} 
+                  questionsAnswered={questionsAnswered}
+                  correctAnswers={correctAnswers}
                   onRestart={handleRestart} 
                   questions={questions} 
                   isAiGame={isAiGame}

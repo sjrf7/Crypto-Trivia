@@ -14,7 +14,7 @@ const GAME_TIME_SECONDS = 120;
 
 interface GameScreenProps {
   questions: TriviaQuestion[];
-  onGameEnd: (score: number, questionsAnswered: number) => void;
+  onGameEnd: (score: number, questionsAnswered: number, correctAnswers: number) => void;
   scoreToBeat?: number;
   isChallenge?: boolean;
   isAiGame?: boolean;
@@ -31,6 +31,7 @@ export function GameScreen({
 }: GameScreenProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME_SECONDS);
   const [shuffledQuestions, setShuffledQuestions] = useState<TriviaQuestion[]>([]);
   const { t } = useI18n();
@@ -77,7 +78,7 @@ export function GameScreen({
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
-          onGameEnd(score, currentQuestionIndex);
+          onGameEnd(score, currentQuestionIndex, correctAnswers);
           return 0;
         }
         if (prevTime === 11) { // Play sound at 10 seconds left
@@ -88,7 +89,7 @@ export function GameScreen({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onGameEnd, score, currentQuestionIndex, shuffledQuestions.length]);
+  }, [onGameEnd, score, currentQuestionIndex, correctAnswers, shuffledQuestions.length]);
 
 
   const handleNextQuestion = () => {
@@ -96,7 +97,7 @@ export function GameScreen({
     if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
-        onGameEnd(score, currentQuestionIndex + 1);
+        onGameEnd(score, currentQuestionIndex + 1, correctAnswers);
     }
   };
 
@@ -104,6 +105,7 @@ export function GameScreen({
     if (isCorrect) {
       const points = 100;
       setScore((prevScore) => prevScore + points);
+      setCorrectAnswers((prev) => prev + 1);
       correctSoundRef.current?.play().catch(console.error);
     } else {
       incorrectSoundRef.current?.play().catch(console.error);
@@ -117,7 +119,8 @@ export function GameScreen({
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       } else {
         const finalScore = score + (isCorrect ? 100 : 0);
-        onGameEnd(finalScore, currentQuestionIndex + 1);
+        const finalCorrect = correctAnswers + (isCorrect ? 1 : 0);
+        onGameEnd(finalScore, currentQuestionIndex + 1, finalCorrect);
       }
     }, 1500);
   };

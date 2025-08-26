@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Award, RotateCw, BarChart2, Share2, ClipboardCheck } from 'lucide-react';
@@ -24,10 +24,12 @@ import { motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
+import { useUserStats } from '@/hooks/use-user-stats';
 
 interface SummaryScreenProps {
   score: number;
   questionsAnswered: number;
+  correctAnswers: number;
   onRestart: () => void;
   questions: TriviaQuestion[];
   isAiGame?: boolean;
@@ -37,6 +39,7 @@ interface SummaryScreenProps {
 export function SummaryScreen({ 
   score, 
   questionsAnswered, 
+  correctAnswers,
   onRestart, 
   questions,
   isAiGame = false,
@@ -46,7 +49,18 @@ export function SummaryScreen({
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
-    const { profile: user } = useProfile();
+    const { profile: user, isAuthenticated } = useProfile();
+    const { addGameResult } = useUserStats(user?.fid.toString());
+
+    useEffect(() => {
+      if (isAuthenticated) {
+        addGameResult({
+          score,
+          questionsAnswered,
+          correctAnswers
+        });
+      }
+    }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers]);
     
     const generateChallenge = useCallback(() => {
         const challenger = user?.displayName || 'A friend';

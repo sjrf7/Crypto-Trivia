@@ -11,6 +11,7 @@ import { useProfile } from '@farcaster/auth-kit';
 import { SignInButton } from '@/components/profile/SignInButton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
+import { useUserStats } from '@/hooks/use-user-stats';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -20,6 +21,7 @@ function ProfilePageContent() {
 
   const { isAuthenticated, profile: user, loading: isUserLoading } = useProfile();
   const { t } = useI18n();
+  const { stats: userStats } = useUserStats(user?.fid.toString());
 
   useEffect(() => {
     // This effect's job is to figure out which player to display.
@@ -37,15 +39,8 @@ function ProfilePageContent() {
           id: user.username || `fid-${user.fid}`,
           name: user.displayName || user.username || `User ${user.fid}`,
           avatar: user.pfpUrl || `https://placehold.co/128x128.png`,
-          stats: { // Default stats for a new user, or could be fetched from a DB
-            totalScore: 0,
-            gamesPlayed: 0,
-            questionsAnswered: 0,
-            correctAnswers: 0,
-            accuracy: '0%',
-            topRank: null,
-          },
-          achievements: [],
+          stats: userStats, // Use stats from our hook
+          achievements: [], // TODO: This could also come from the hook
         });
       } else {
         // The user is not logged in and trying to see their own profile.
@@ -59,7 +54,7 @@ function ProfilePageContent() {
       setPlayer(foundPlayer || null);
     }
 
-  }, [id, user, isAuthenticated, isUserLoading]);
+  }, [id, user, isAuthenticated, isUserLoading, userStats]);
 
 
   if (isUserLoading) {

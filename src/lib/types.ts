@@ -16,18 +16,20 @@ export interface Achievement {
   icon: React.ElementType;
 }
 
+export interface PlayerStats {
+  totalScore: number;
+  gamesPlayed: number;
+  questionsAnswered: number;
+  correctAnswers: number;
+  accuracy: string;
+  topRank: number | null;
+}
+
 export interface Player {
   id: string;
   name: string;
   avatar: string;
-  stats: {
-    totalScore: number;
-    gamesPlayed: number;
-    questionsAnswered: number;
-    correctAnswers: number;
-    accuracy: string;
-    topRank: number | null;
-  };
+  stats: PlayerStats;
   achievements: string[]; // Array of achievement IDs
 }
 
