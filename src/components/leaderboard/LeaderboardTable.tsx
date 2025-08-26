@@ -5,11 +5,12 @@ import { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LeaderboardEntry } from '@/lib/types';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Medal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
+import { cn } from '@/lib/utils';
 
 type SortKey = 'rank' | 'totalScore';
 
@@ -29,6 +30,24 @@ const rowVariants = {
     },
   }),
 };
+
+const RankCell = ({ rank }: { rank: number }) => {
+  if (rank <= 5) {
+    const medalColor = 
+      rank === 1 ? 'text-yellow-500' :
+      rank === 2 ? 'text-gray-400' :
+      rank === 3 ? 'text-yellow-700' :
+      'text-muted-foreground/70';
+    
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="font-medium text-lg">{rank}</span>
+        <Medal className={cn('h-5 w-5', medalColor)} />
+      </div>
+    );
+  }
+  return <span className="font-medium text-lg">{rank}</span>;
+}
 
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('rank');
@@ -83,7 +102,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[80px] px-2 text-center">
+            <TableHead className="w-[80px] text-center px-2">
                 <Button variant="ghost" onClick={() => handleSort('rank')}>
                     {t('leaderboard.table.rank')}
                     <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -108,7 +127,9 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="py-2 px-2 text-center font-medium text-lg">{entry.rank}</TableCell>
+              <TableCell className="py-2 px-2 text-center">
+                  <RankCell rank={entry.rank} />
+              </TableCell>
               <TableCell className="py-2 px-2">
                 <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-3 group">
                   <Avatar className="h-8 w-8">
