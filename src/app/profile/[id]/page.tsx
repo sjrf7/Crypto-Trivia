@@ -21,7 +21,7 @@ function ProfilePageContent() {
 
   const { isAuthenticated, profile: user, loading: isUserLoading } = useProfile();
   const { t } = useI18n();
-  const { stats: userStats } = useUserStats(user?.fid.toString());
+  const { stats: userStats } = useUserStats(user?.fid?.toString());
 
   useEffect(() => {
     // This effect's job is to figure out which player to display.
