@@ -110,16 +110,16 @@ export function SummaryScreen({
         </CardContent>
         <CardFooter className="flex-col gap-4">
             <motion.div 
-                className="flex justify-center gap-4"
+                className="flex flex-col sm:flex-row justify-center gap-4 w-full"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
             >
-                <Button onClick={onRestart} variant="outline">
+                <Button onClick={onRestart} variant="outline" className="w-full sm:w-auto">
                     <RotateCw className="mr-2 h-4 w-4" />
                     {t('summary.play_again_button')}
                 </Button>
-                <Button asChild>
+                <Button asChild className="w-full sm:w-auto">
                     <Link href="/leaderboard">
                         <BarChart2 className="mr-2 h-4 w-4" />
                         {t('summary.leaderboard_button')}
