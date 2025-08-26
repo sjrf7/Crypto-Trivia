@@ -75,12 +75,12 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                     q.options.includes(q.answer)
                 );
                 
-                // Validate that the number of questions matches the request.
-                if (allQuestionsValid && questions.length === input.numQuestions) {
+                // If questions are valid, even if fewer than requested, return them.
+                if (allQuestionsValid && questions.length > 0) {
                   return questions; // Success, valid questions received.
                 }
                 
-                console.warn(`Attempt ${attempts}: AI model returned malformed questions or incorrect count for topic:`, input.topic, JSON.stringify(questions, null, 2));
+                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic, JSON.stringify(questions, null, 2));
             } else {
                 console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, questions);
             }
