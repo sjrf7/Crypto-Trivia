@@ -18,6 +18,9 @@ import {
 } from '@/lib/types/ai';
 
 // Define the prompt for the AI model.
+// By providing an output schema, Genkit will automatically handle the JSON parsing and validation.
+// If the model's output doesn't conform to the schema, Genkit will throw an error,
+// which will be caught by the calling function.
 const triviaPrompt = ai.definePrompt({
   name: 'cryptoTriviaPrompt',
   input: { schema: GenerateCryptoTriviaInputSchema },
@@ -62,4 +65,3 @@ export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Pr
     throw new Error('The AI model could not generate valid questions for the given topic. Please try a different one.');
   }
 }
-
