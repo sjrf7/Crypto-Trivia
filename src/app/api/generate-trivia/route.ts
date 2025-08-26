@@ -61,10 +61,30 @@ export async function POST(req: NextRequest) {
 
       It is absolutely crucial that you generate EXACTLY ${numQuestions} questions. Do not generate more or fewer than ${numQuestions}. This is a strict requirement.
       
-      Your output MUST be a valid JSON object that strictly conforms to the following Zod schema:
-      
+      Your output MUST be a valid JSON object that strictly conforms to the following Zod schema. Do not add any extra text or markdown formatting around the JSON.
+
+      Schema:
       \`\`\`json
       ${JSON.stringify(AITriviaGameSchema.shape, null, 2)}
+      \`\`\`
+
+      Here is an example of the desired JSON output structure:
+      \`\`\`json
+      {
+        "topic": "Example Topic",
+        "questions": [
+          {
+            "question": "This is an example question?",
+            "answer": "This is the correct answer",
+            "options": [
+              "This is the correct answer",
+              "Incorrect answer 1",
+              "Incorrect answer 2",
+              "Incorrect answer 3"
+            ]
+          }
+        ]
+      }
       \`\`\`
     `;
 
