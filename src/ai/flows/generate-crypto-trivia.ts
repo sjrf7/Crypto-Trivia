@@ -55,7 +55,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
     while (attempts < maxAttempts) {
         attempts++;
         try {
-            const { output } = await triviaPrompt(input);
+            const output = await triviaPrompt(input);
             
             if (output && Array.isArray(output)) {
                 // Case 1: Topic is not crypto-related, model correctly returns an empty array.
