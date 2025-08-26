@@ -151,7 +151,7 @@ export function SummaryScreen({
                   if (open) generateChallenge();
               }}>
                 <AlertDialogTrigger asChild>
-                  <Button variant="secondary" className="w-full" disabled={isAiGame}>
+                  <Button variant="secondary" className="w-full">
                       <Share2 className="mr-2 h-4 w-4" />
                       {t('summary.challenge.button')}
                   </Button>
