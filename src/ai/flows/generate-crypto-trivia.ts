@@ -55,16 +55,17 @@ const generateCryptoTriviaFlow = ai.defineFlow(
     while (attempts < maxAttempts) {
         attempts++;
         try {
-            const output = await triviaPrompt(input);
+            const questions = await triviaPrompt(input);
             
-            if (output && Array.isArray(output)) {
-                // Case 1: Topic is not crypto-related, model correctly returns an empty array.
-                if (output.length === 0 && input.numQuestions > 0) {
-                  return output;
+            // Case 1: Model returns a valid array.
+            if (Array.isArray(questions)) {
+                // An empty array is a valid response for non-crypto topics.
+                if (questions.length === 0 && input.numQuestions > 0) {
+                  return [];
                 }
               
-                // Case 2: Validate that all questions in the array are well-formed.
-                const allQuestionsValid = output.every(q => 
+                // Validate that all questions in the array are well-formed.
+                const allQuestionsValid = questions.every(q => 
                     q &&
                     typeof q.question === 'string' && q.question.length > 0 &&
                     Array.isArray(q.options) &&
@@ -74,13 +75,14 @@ const generateCryptoTriviaFlow = ai.defineFlow(
                     q.options.includes(q.answer)
                 );
                 
-                if (allQuestionsValid && output.length === input.numQuestions) {
-                  return output; // Success, valid questions received.
+                // Validate that the number of questions matches the request.
+                if (allQuestionsValid && questions.length === input.numQuestions) {
+                  return questions; // Success, valid questions received.
                 }
                 
-                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic, JSON.stringify(output, null, 2));
+                console.warn(`Attempt ${attempts}: AI model returned malformed questions or incorrect count for topic:`, input.topic, JSON.stringify(questions, null, 2));
             } else {
-                console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, output);
+                console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, questions);
             }
 
         } catch (e) {
