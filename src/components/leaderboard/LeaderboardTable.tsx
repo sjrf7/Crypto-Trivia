@@ -103,8 +103,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="font-medium text-lg">{entry.rank}</TableCell>
-              <TableCell>
+              <TableCell className="p-2 font-medium text-lg">{entry.rank}</TableCell>
+              <TableCell className="p-2">
                 <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-4 group">
                   <Avatar>
                     <AvatarImage src={entry.player.avatar} alt={entry.player.name} data-ai-hint="profile picture" />
@@ -113,8 +113,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                   <span className="font-medium group-hover:text-primary transition-colors">{entry.player.name}</span>
                 </Link>
               </TableCell>
-              <TableCell className="font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
-              <TableCell className="text-accent">{entry.player.stats.accuracy}</TableCell>
+              <TableCell className="p-2 font-bold text-primary">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
+              <TableCell className="p-2 text-accent">{entry.player.stats.accuracy}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
