@@ -46,7 +46,7 @@ const RankCell = ({ rank }: { rank: number }) => {
       </div>
     );
   }
-  return <span className="font-medium text-lg">{rank}</span>;
+  return <div className="text-center font-medium text-lg">{rank}</div>;
 }
 
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
@@ -127,10 +127,10 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               variants={rowVariants}
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
-              <TableCell className="py-2 px-2 text-center">
+              <TableCell className="p-2 text-center">
                   <RankCell rank={entry.rank} />
               </TableCell>
-              <TableCell className="py-2 px-2">
+              <TableCell className="p-2">
                 <Link href={`/profile/${entry.player.id}`} className="flex items-center gap-3 group">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={entry.player.avatar} alt={entry.player.name} data-ai-hint="profile picture" />
@@ -139,7 +139,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                   <span className="font-medium group-hover:text-primary transition-colors">{entry.player.name}</span>
                 </Link>
               </TableCell>
-              <TableCell className="py-2 px-2 font-bold text-primary text-center">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
+              <TableCell className="p-2 font-bold text-primary text-center">{entry.player.stats.totalScore.toLocaleString('en-US')}</TableCell>
             </motion.tr>
           ))}
         </TableBody>
