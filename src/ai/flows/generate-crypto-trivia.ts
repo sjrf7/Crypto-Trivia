@@ -88,26 +88,27 @@ const generateCryptoTriviaFlow = ai.defineFlow(
             if (output && Array.isArray(output)) {
                 // If the topic is not crypto-related, the model should return an empty array.
                 // We pass this along to the frontend to handle.
-                if (output.length === 0) {
+                if (output.length === 0 && input.numQuestions > 0) {
+                  // This case handles non-crypto topics, which is a valid response.
                   return output;
                 }
               
                 // Further validation to prevent malformed questions from crashing the app
                 const allQuestionsValid = output.every(q => 
                     q &&
-                    typeof q.question === 'string' && 
-                    q.options && 
+                    typeof q.question === 'string' && q.question.length > 0 &&
                     Array.isArray(q.options) &&
                     q.options.length === 4 && 
-                    typeof q.answer === 'string' && 
+                    q.options.every(opt => typeof opt === 'string' && opt.length > 0) &&
+                    typeof q.answer === 'string' && q.answer.length > 0 &&
                     q.options.includes(q.answer)
                 );
                 
-                if (allQuestionsValid) {
+                if (allQuestionsValid && output.length === input.numQuestions) {
                   return output; // Success
                 }
                 
-                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic);
+                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic, JSON.stringify(output, null, 2));
             } else {
                 console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, output);
             }
@@ -123,7 +124,7 @@ const generateCryptoTriviaFlow = ai.defineFlow(
     }
 
     // If all attempts fail, throw an error.
-    throw new Error('The AI model could not generate questions for the given topic after multiple attempts. Please try a different one.');
+    throw new Error('The AI model could not generate valid questions for the given topic after multiple attempts. Please try a different one.');
   }
 );
 
