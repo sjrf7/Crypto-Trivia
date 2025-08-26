@@ -10,7 +10,12 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { GenerateCryptoTriviaInputSchema, GenerateCryptoTriviaInput, GenerateCryptoTriviaOutputSchema, GenerateCryptoTriviaOutput } from '@/lib/types/ai';
+import { 
+  GenerateCryptoTriviaInputSchema, 
+  GenerateCryptoTriviaInput, 
+  GenerateCryptoTriviaOutputSchema, 
+  GenerateCryptoTriviaOutput 
+} from '@/lib/types/ai';
 
 // Define the prompt for the AI model.
 const triviaPrompt = ai.definePrompt({
