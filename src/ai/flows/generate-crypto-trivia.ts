@@ -132,3 +132,4 @@ export async function generateCryptoTrivia(input: GenerateCryptoTriviaInput): Pr
   const questions = await generateCryptoTriviaFlow(input);
   return { questions };
 }
+
