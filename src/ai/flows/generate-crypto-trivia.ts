@@ -41,12 +41,12 @@ const triviaPrompt = ai.definePrompt({
     2. A list of exactly 4 answer options.
     3. The correct answer, which must be one of the 4 options.
 
-    Ensure the questions are accurate, interesting, and cover specific aspects of the topic.
     Format the output as a valid array of JSON objects that adheres to the defined schema.
   `,
 });
 
 // Define the main flow for generating crypto trivia.
+// This flow simply calls the prompt. Genkit handles the validation against the output schema automatically.
 const generateCryptoTriviaFlow = ai.defineFlow(
   {
     name: 'generateCryptoTriviaFlow',
@@ -54,53 +54,22 @@ const generateCryptoTriviaFlow = ai.defineFlow(
     outputSchema: GenerateCryptoTriviaOutputSchema,
   },
   async (input) => {
-    let attempts = 0;
-    const maxAttempts = 3;
-
-    while (attempts < maxAttempts) {
-        attempts++;
-        try {
-            const questions = await triviaPrompt(input);
-            
-            // Case 1: Model returns a valid array.
-            if (Array.isArray(questions)) {
-                // An empty array is a valid response for non-crypto topics.
-                if (questions.length === 0) {
-                  return [];
-                }
-              
-                // Validate that all questions in the array are well-formed.
-                const allQuestionsValid = questions.every(q => 
-                    q &&
-                    typeof q.question === 'string' && q.question.length > 0 &&
-                    Array.isArray(q.options) &&
-                    q.options.length === 4 && 
-                    q.options.every(opt => typeof opt === 'string' && opt.length > 0) &&
-                    typeof q.answer === 'string' && q.answer.length > 0 &&
-                    q.options.includes(q.answer)
-                );
-                
-                // If questions are valid, even if fewer than requested, return them.
-                if (allQuestionsValid && questions.length > 0) {
-                  return questions; // Success, valid questions received.
-                }
-                
-                console.warn(`Attempt ${attempts}: AI model returned malformed questions for topic:`, input.topic, JSON.stringify(questions, null, 2));
-            } else {
-                console.warn(`Attempt ${attempts}: AI model returned invalid data structure for topic:`, input.topic, questions);
-            }
-
-        } catch (e) {
-            console.error(`Attempt ${attempts} failed with an error:`, e);
-        }
+    try {
+        const questions = await triviaPrompt(input);
         
-        if (attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+        // Basic validation in case the model returns something unexpected but parsable.
+        if (!Array.isArray(questions)) {
+            console.error('AI model returned a non-array response:', questions);
+            throw new Error('AI model did not return an array of questions.');
         }
-    }
 
-    // If all attempts fail, throw an error.
-    throw new Error('The AI model could not generate valid questions for the given topic after multiple attempts. Please try a different one.');
+        return questions;
+
+    } catch (e) {
+        console.error(`Failed to generate trivia for topic "${input.topic}":`, e);
+        // Throw a user-friendly error after a failure.
+        throw new Error('The AI model could not generate valid questions for the given topic. Please try a different one.');
+    }
   }
 );
 
