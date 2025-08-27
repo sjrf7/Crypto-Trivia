@@ -2,7 +2,7 @@
 'use client';
 
 import { GameClient } from '@/components/game/GameClient';
-import { TRIVIA_QUESTIONS } from '@/lib/mock-data';
+import { AITriviaGame } from '@/lib/types/ai';
 import { TriviaQuestion } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import { useI18n } from '@/hooks/use-i18n';
@@ -21,25 +21,65 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
   try {
     const decodedData = atob(params.data);
-    const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = decodedData.split('|');
+    const parts = decodedData.split('|');
+    const type = parts[0];
 
-    if (!questionIndicesStr || !scoreToBeatStr) {
-        // Data is malformed
-        notFound();
+    if (type === 'classic') {
+        const [_, questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
+
+        if (!questionIndicesStr || !scoreToBeatStr) {
+            notFound();
+        }
+        
+        const questionIndices = questionIndicesStr.split(',').map(Number);
+        const scoreToBeat = parseInt(scoreToBeatStr, 10);
+        const wager = wagerStr ? parseFloat(wagerStr) : 0;
+        
+        const challengeQuestions: TriviaQuestion[] = questionIndices.map(index => classicQuestions[index]);
+
+        return <GameClient 
+            challengeQuestions={challengeQuestions} 
+            scoreToBeat={scoreToBeat} 
+            wager={wager}
+            challenger={challenger}
+        />;
+    } else if (type === 'ai') {
+        const [_, gameDataStr, scoreToBeatStr, wagerStr, challenger] = parts;
+        
+        if (!gameDataStr || !scoreToBeatStr) {
+            notFound();
+        }
+
+        const gameData: { topic: string, questions: TriviaQuestion[] } = JSON.parse(gameDataStr);
+        const scoreToBeat = parseInt(scoreToBeatStr, 10);
+        const wager = wagerStr ? parseFloat(wagerStr) : 0;
+
+        return <GameClient 
+            challengeQuestions={gameData.questions} 
+            scoreToBeat={scoreToBeat} 
+            wager={wager}
+            challenger={challenger}
+            isAiGame={true}
+            aiGameTopic={gameData.topic}
+        />;
+    } else {
+        // Fallback for old format without type
+        const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
+        if (!questionIndicesStr || !scoreToBeatStr) {
+            notFound();
+        }
+        const questionIndices = questionIndicesStr.split(',').map(Number);
+        const scoreToBeat = parseInt(scoreToBeatStr, 10);
+        const wager = wagerStr ? parseFloat(wagerStr) : 0;
+        const challengeQuestions: TriviaQuestion[] = questionIndices.map(index => classicQuestions[index]);
+        
+        return <GameClient 
+            challengeQuestions={challengeQuestions} 
+            scoreToBeat={scoreToBeat} 
+            wager={wager}
+            challenger={challenger}
+        />;
     }
-    
-    const questionIndices = questionIndicesStr.split(',').map(Number);
-    const scoreToBeat = parseInt(scoreToBeatStr, 10);
-    const wager = wagerStr ? parseFloat(wagerStr) : 0;
-
-    const challengeQuestions: TriviaQuestion[] = questionIndices.map(index => classicQuestions[index]);
-    
-    return <GameClient 
-                challengeQuestions={challengeQuestions} 
-                scoreToBeat={scoreToBeat} 
-                wager={wager}
-                challenger={challenger}
-            />;
 
   } catch (error) {
     console.error('Failed to decode challenge data:', error);

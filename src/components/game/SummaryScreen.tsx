@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -66,20 +65,28 @@ export function SummaryScreen({
     
     const generateChallenge = useCallback(() => {
         const challenger = user?.displayName || 'A friend';
-        // Get original indices from the questions actually played
-        const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
-        
-        if (!questionIndices) {
-            console.error("Could not generate challenge: No original indices found on questions.");
-            setChallengeUrl('');
-            return;
-        }
+        let data = '';
 
-        const data = `${questionIndices}|${score}|${wager}|${challenger}`;
+        if (isAiGame) {
+            const gameData = {
+                topic: aiGameTopic,
+                questions: questions,
+            };
+            data = `ai|${JSON.stringify(gameData)}|${score}|${wager}|${challenger}`;
+        } else {
+            const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
+            if (!questionIndices) {
+                console.error("Could not generate challenge: No original indices found on questions.");
+                setChallengeUrl('');
+                return;
+            }
+            data = `classic|${questionIndices}|${score}|${wager}|${challenger}`;
+        }
+        
         const encodedData = btoa(data); 
         const url = `${window.location.origin}/challenge/${encodedData}`;
         setChallengeUrl(url);
-    }, [questions, score, wager, user]);
+    }, [questions, score, wager, user, isAiGame, aiGameTopic]);
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(challengeUrl);
