@@ -8,10 +8,7 @@ import { Award, CheckCircle, Loader, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
 import { useI18n } from '@/hooks/use-i18n';
-
-const MotionDiv = dynamic(() => import('framer-motion').then(mod => mod.motion.div), { ssr: false });
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,7 +56,7 @@ export default function AchievementsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <MotionDiv 
+          <motion.div 
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             variants={containerVariants}
             initial="hidden"
@@ -109,7 +106,7 @@ export default function AchievementsPage() {
                 </motion.div>
               );
             })}
-          </MotionDiv>
+          </motion.div>
         </CardContent>
       </Card>
     </div>
