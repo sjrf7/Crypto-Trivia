@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -69,8 +68,8 @@ export function SummaryScreen({
     }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers]);
     
     const generateChallenge = useCallback(() => {
-        const challenger = user?.displayName || 'A friend';
-        let data = '';
+        const challengerName = user?.displayName || 'A friend';
+        let dataSegment = '';
 
         if (isAiGame) {
             const aiChallengeData = {
@@ -79,7 +78,9 @@ export function SummaryScreen({
             };
             const challengeJson = JSON.stringify(aiChallengeData);
             const compressed = pako.deflate(challengeJson);
-            data = `ai|${Buffer.from(compressed).toString('base64')}|${score}|${wager}|${challenger}`;
+            const compressedBase64 = Buffer.from(compressed).toString('base64');
+            dataSegment = `ai|${compressedBase64}|${score}|${wager || 0}|${challengerName}`;
+
         } else {
             const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
             if (!questionIndices) {
@@ -87,11 +88,11 @@ export function SummaryScreen({
                 setChallengeUrl('');
                 return;
             }
-            data = `classic|${questionIndices}|${score}|${wager}|${challenger}`;
+            dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}`;
         }
         
         try {
-            const encodedData = btoa(data); 
+            const encodedData = btoa(dataSegment); 
             const url = `${window.location.origin}/challenge/${encodedData}`;
             setChallengeUrl(url);
         } catch (error) {

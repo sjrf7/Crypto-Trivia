@@ -1,4 +1,3 @@
-
 'use client';
 
 import { GameClient } from '@/components/game/GameClient';
@@ -23,12 +22,11 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
   try {
     const decodedData = atob(params.data);
-    const type = decodedData.substring(0, decodedData.indexOf('|'));
-    const restOfData = decodedData.substring(decodedData.indexOf('|') + 1);
+    const parts = decodedData.split('|');
+    const type = parts[0];
 
     if (type === 'classic') {
-        const parts = restOfData.split('|');
-        const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
+        const [_, questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
 
         if (!questionIndicesStr || !scoreToBeatStr) {
             notFound();
@@ -48,8 +46,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
         />;
     } else if (type === 'ai') {
         // For AI challenges, the structure is ai|{compressedGameData}|{score}|{wager}|{challenger}
-        const parts = restOfData.split('|');
-        const [compressedGameData, scoreToBeatStr, wagerStr, challenger] = parts;
+        const [_, compressedGameData, scoreToBeatStr, wagerStr, challenger] = parts;
 
         if (!compressedGameData || !scoreToBeatStr) {
             notFound();
@@ -76,23 +73,8 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             aiGameTopic={gameData.topic}
         />;
     } else {
-       // Fallback for old format without type (pre-AI challenges)
-        const parts = decodedData.split('|');
-        const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
-        if (!questionIndicesStr || !scoreToBeatStr) {
-            notFound();
-        }
-        const questionIndices = questionIndicesStr.split(',').map(Number);
-        const scoreToBeat = parseInt(scoreToBeatStr, 10);
-        const wager = wagerStr ? parseFloat(wagerStr) : 0;
-        const challengeQuestions: TriviaQuestion[] = questionIndices.map(index => classicQuestions[index]);
-        
-        return <GameClient 
-            challengeQuestions={challengeQuestions} 
-            scoreToBeat={scoreToBeat} 
-            wager={wager}
-            challenger={challenger}
-        />;
+        console.error('Invalid challenge type or old format');
+        notFound();
     }
 
   } catch (error) {
