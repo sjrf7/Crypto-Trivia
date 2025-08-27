@@ -1,3 +1,4 @@
+
 'use client';
 
 import { GameClient } from '@/components/game/GameClient';
@@ -5,7 +6,6 @@ import { AITriviaGame } from '@/lib/types/ai';
 import { TriviaQuestion } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import { useI18n } from '@/hooks/use-i18n';
-import { getChallenge } from '@/lib/challenge-store';
 
 interface ChallengePageProps {
   params: {
@@ -21,11 +21,12 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
   try {
     const decodedData = atob(params.data);
-    const parts = decodedData.split('|');
-    const type = parts[0];
+    const type = decodedData.substring(0, decodedData.indexOf('|'));
+    const restOfData = decodedData.substring(decodedData.indexOf('|') + 1);
 
     if (type === 'classic') {
-        const [_, questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
+        const parts = restOfData.split('|');
+        const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
 
         if (!questionIndicesStr || !scoreToBeatStr) {
             notFound();
@@ -44,16 +45,25 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             challenger={challenger}
         />;
     } else if (type === 'ai') {
-        const [_, challengeId, scoreToBeatStr, wagerStr, challenger] = parts;
-        
-        if (!challengeId || !scoreToBeatStr) {
+        // For AI challenges, the structure is ai|{gameJson}|{score}|{wager}|{challenger}
+        // We need to parse this carefully as the JSON can contain '|'
+        const scoreToBeatIndex = restOfData.lastIndexOf('|');
+        const wagerIndex = restOfData.lastIndexOf('|', scoreToBeatIndex - 1);
+        const challengerIndex = restOfData.lastIndexOf('|', wagerIndex - 1);
+
+        const gameJson = restOfData.substring(0, challengerIndex);
+        const scoreToBeatStr = restOfData.substring(challengerIndex + 1, wagerIndex);
+        const wagerStr = restOfData.substring(wagerIndex + 1, scoreToBeatIndex);
+        const challenger = restOfData.substring(scoreToBeatIndex + 1);
+
+        if (!gameJson || !scoreToBeatStr) {
             notFound();
         }
         
-        const gameData = getChallenge(challengeId);
+        const gameData = JSON.parse(gameJson) as AITriviaGame;
         
         if (!gameData) {
-            console.error(`AI Challenge with id ${challengeId} not found in storage.`);
+            console.error(`AI Challenge data could not be parsed.`);
             notFound();
         }
 
@@ -67,10 +77,10 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             challenger={challenger}
             isAiGame={true}
             aiGameTopic={gameData.topic}
-            challengeId={challengeId}
         />;
     } else {
-        // Fallback for old format without type
+       // Fallback for old format without type (pre-AI challenges)
+        const parts = decodedData.split('|');
         const [questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
         if (!questionIndicesStr || !scoreToBeatStr) {
             notFound();

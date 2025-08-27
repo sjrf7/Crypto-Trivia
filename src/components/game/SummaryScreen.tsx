@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -24,7 +25,6 @@ import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { storeChallenge, clearChallenge } from '@/lib/challenge-store';
 
 interface SummaryScreenProps {
   score: number;
@@ -54,13 +54,6 @@ export function SummaryScreen({
     const { profile: user, isAuthenticated } = useProfile();
     const { addGameResult } = useUserStats(user?.fid?.toString());
 
-    // If this was a challenge, clear the stored data from localStorage
-    useEffect(() => {
-        if (challengeId) {
-            clearChallenge(challengeId);
-        }
-    }, [challengeId]);
-
     useEffect(() => {
       // Only add game results if the user is authenticated and the hook function is available.
       if (isAuthenticated && addGameResult) {
@@ -82,8 +75,8 @@ export function SummaryScreen({
                 topic: aiGameTopic,
                 questions: questions.map(({ question, answer, options, originalIndex }) => ({ question, answer, options, originalIndex })),
             };
-            const challengeId = storeChallenge(aiChallengeData);
-            data = `ai|${challengeId}|${score}|${wager}|${challenger}`;
+            const challengeJson = JSON.stringify(aiChallengeData);
+            data = `ai|${challengeJson}|${score}|${wager}|${challenger}`;
         } else {
             const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
             if (!questionIndices) {
@@ -94,10 +87,20 @@ export function SummaryScreen({
             data = `classic|${questionIndices}|${score}|${wager}|${challenger}`;
         }
         
-        const encodedData = btoa(data); 
-        const url = `${window.location.origin}/challenge/${encodedData}`;
-        setChallengeUrl(url);
-    }, [questions, score, wager, user, isAiGame, aiGameTopic]);
+        try {
+            const encodedData = btoa(data); 
+            const url = `${window.location.origin}/challenge/${encodedData}`;
+            setChallengeUrl(url);
+        } catch (error) {
+            console.error("Error encoding challenge data:", error);
+            setChallengeUrl('');
+            toast({
+                variant: "destructive",
+                title: "Error creating challenge",
+                description: "Could not create the challenge link due to its length. Try a game with fewer questions.",
+            });
+        }
+    }, [questions, score, wager, user, isAiGame, aiGameTopic, toast]);
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(challengeUrl);
