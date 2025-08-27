@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -70,9 +71,11 @@ export function SummaryScreen({
         if (isAiGame) {
             const gameData = {
                 topic: aiGameTopic,
-                questions: questions,
+                questions: questions.map(({ question, answer, options, originalIndex }) => ({ question, answer, options, originalIndex })),
             };
-            data = `ai|${JSON.stringify(gameData)}|${score}|${wager}|${challenger}`;
+            const gameDataStr = JSON.stringify(gameData);
+            const remainingParts = [score, wager, challenger].join('|');
+            data = `ai|${gameDataStr}|${remainingParts}`;
         } else {
             const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
             if (!questionIndices) {

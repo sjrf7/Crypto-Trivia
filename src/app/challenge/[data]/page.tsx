@@ -44,7 +44,11 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             challenger={challenger}
         />;
     } else if (type === 'ai') {
-        const [_, gameDataStr, scoreToBeatStr, wagerStr, challenger] = parts;
+        // Re-join the parts that might have been split by the JSON content
+        const dataStartIndex = decodedData.indexOf('|') + 1;
+        const gameDataStr = decodedData.substring(dataStartIndex, decodedData.lastIndexOf('|'));
+        const rest = decodedData.substring(decodedData.lastIndexOf('|') + 1).split('|');
+        const [scoreToBeatStr, wagerStr, challenger] = rest;
         
         if (!gameDataStr || !scoreToBeatStr) {
             notFound();
