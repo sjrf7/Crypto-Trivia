@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -24,8 +25,7 @@ import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
-import pako from 'pako';
-import { Buffer } from 'buffer';
+import { AITriviaGame } from '@/lib/types/ai';
 
 interface SummaryScreenProps {
   score: number;
@@ -54,6 +54,7 @@ export function SummaryScreen({
     const [wager, setWager] = useState('');
     const { profile: user, isAuthenticated } = useProfile();
     const { addGameResult } = useUserStats(user?.fid?.toString());
+    const [isGenerating, setIsGenerating] = useState(false);
 
     useEffect(() => {
       // Only add game results if the user is authenticated and the hook function is available.
@@ -67,46 +68,65 @@ export function SummaryScreen({
       // The dependency array correctly lists all external values that the effect depends on.
     }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers]);
     
-    const generateChallenge = useCallback(() => {
+    const generateChallenge = useCallback(async () => {
+      if(isGenerating) return;
+      setIsGenerating(true);
+      setChallengeUrl(''); // Reset previous URL
+
+      try {
         const challengerName = user?.displayName || 'A friend';
-        let dataSegment = '';
 
         if (isAiGame) {
-            const aiChallengeData = {
-                topic: aiGameTopic,
-                questions: questions.map(({ question, answer, options, originalIndex }) => ({ question, answer, options, originalIndex })),
+            const aiGameData: AITriviaGame = {
+                topic: aiGameTopic!,
+                questions: questions,
             };
-            const challengeJson = JSON.stringify(aiChallengeData);
-            const compressed = pako.deflate(challengeJson);
-            const compressedBase64 = Buffer.from(compressed).toString('base64');
-            dataSegment = `ai|${compressedBase64}|${score}|${wager || 0}|${challengerName}`;
+
+            const response = await fetch('/api/challenge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game: aiGameData, scoreToBeat: score, wager: wager || 0, challenger: challengerName })
+            });
+
+            if (!response.ok) throw new Error('Failed to create AI challenge.');
+            
+            const { challengeId } = await response.json();
+            const url = `${window.location.origin}/challenge/ai/${challengeId}`;
+            setChallengeUrl(url);
 
         } else {
             const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
-            if (!questionIndices) {
-                console.error("Could not generate challenge: No original indices found on questions.");
-                setChallengeUrl('');
-                return;
-            }
-            dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}`;
-        }
-        
-        try {
+            if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
+            
+            const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}`;
             const encodedData = btoa(dataSegment); 
-            const url = `${window.location.origin}/challenge/${encodedData}`;
+            const url = `${window.location.origin}/challenge/classic/${encodedData}`;
             setChallengeUrl(url);
-        } catch (error) {
-            console.error("Error encoding challenge data:", error);
-            setChallengeUrl('');
-            toast({
-                variant: "destructive",
-                title: "Error creating challenge",
-                description: "Could not create the challenge link due to its length. Try a game with fewer questions.",
-            });
         }
-    }, [questions, score, wager, user, isAiGame, aiGameTopic, toast]);
+
+      } catch (error) {
+          console.error("Error creating challenge:", error);
+          toast({
+              variant: "destructive",
+              title: "Error creating challenge",
+              description: error instanceof Error ? error.message : "An unknown error occurred.",
+          });
+      } finally {
+        setIsGenerating(false);
+      }
+    }, [questions, score, wager, user, isAiGame, aiGameTopic, toast, isGenerating]);
+
+
+    // Effect to regenerate the link when the wager changes
+    useEffect(() => {
+        // Only regenerate if the dialog is open and a URL was already created.
+        if (challengeUrl) {
+            generateChallenge();
+        }
+    }, [wager, challengeUrl, generateChallenge]);
 
     const copyToClipboard = () => {
+        if (!challengeUrl) return;
         navigator.clipboard.writeText(challengeUrl);
         toast({
             title: t('summary.toast.copied.title'),
@@ -175,7 +195,13 @@ export function SummaryScreen({
                 transition={{ delay: 0.4 }}
             >
               <AlertDialog onOpenChange={(open) => {
-                  if (open) generateChallenge();
+                  // When opening the dialog, generate the initial link
+                  if (open) {
+                    generateChallenge();
+                  } else {
+                    // When closing, clear the url
+                    setChallengeUrl('');
+                  }
               }}>
                 <AlertDialogTrigger asChild>
                   <Button variant="secondary" className="w-full">
@@ -198,17 +224,15 @@ export function SummaryScreen({
                               type="number"
                               placeholder={t('summary.challenge.wager.placeholder')}
                               value={wager}
-                              onChange={(e) => {
-                                  setWager(e.target.value);
-                                  setTimeout(generateChallenge, 100);
-                              }}
+                              onChange={(e) => setWager(e.target.value)}
+                              disabled={isGenerating}
                           />
                       </div>
                       <div className="space-y-2">
                           <Label>{t('summary.challenge.link.label')}</Label>
                           <div className="flex items-center space-x-2">
-                              <Input value={challengeUrl} readOnly />
-                              <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl}>
+                              <Input value={challengeUrl || (isGenerating ? 'Generating...' : '')} readOnly />
+                              <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
                                   <ClipboardCheck className="h-4 w-4" />
                               </Button>
                           </div>
@@ -225,3 +249,5 @@ export function SummaryScreen({
     </motion.div>
   );
 }
+
+    
