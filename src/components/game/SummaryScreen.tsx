@@ -25,6 +25,8 @@ import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
+import pako from 'pako';
+import { Buffer } from 'buffer';
 
 interface SummaryScreenProps {
   score: number;
@@ -76,7 +78,8 @@ export function SummaryScreen({
                 questions: questions.map(({ question, answer, options, originalIndex }) => ({ question, answer, options, originalIndex })),
             };
             const challengeJson = JSON.stringify(aiChallengeData);
-            data = `ai|${challengeJson}|${score}|${wager}|${challenger}`;
+            const compressed = pako.deflate(challengeJson);
+            data = `ai|${Buffer.from(compressed).toString('base64')}|${score}|${wager}|${challenger}`;
         } else {
             const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
             if (!questionIndices) {

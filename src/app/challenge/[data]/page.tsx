@@ -6,6 +6,8 @@ import { AITriviaGame } from '@/lib/types/ai';
 import { TriviaQuestion } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import { useI18n } from '@/hooks/use-i18n';
+import pako from 'pako';
+import { Buffer } from 'buffer';
 
 interface ChallengePageProps {
   params: {
@@ -45,22 +47,17 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             challenger={challenger}
         />;
     } else if (type === 'ai') {
-        // For AI challenges, the structure is ai|{gameJson}|{score}|{wager}|{challenger}
-        // We need to parse this carefully as the JSON can contain '|'
-        const scoreToBeatIndex = restOfData.lastIndexOf('|');
-        const wagerIndex = restOfData.lastIndexOf('|', scoreToBeatIndex - 1);
-        const challengerIndex = restOfData.lastIndexOf('|', wagerIndex - 1);
+        // For AI challenges, the structure is ai|{compressedGameData}|{score}|{wager}|{challenger}
+        const parts = restOfData.split('|');
+        const [compressedGameData, scoreToBeatStr, wagerStr, challenger] = parts;
 
-        const gameJson = restOfData.substring(0, challengerIndex);
-        const scoreToBeatStr = restOfData.substring(challengerIndex + 1, wagerIndex);
-        const wagerStr = restOfData.substring(wagerIndex + 1, scoreToBeatIndex);
-        const challenger = restOfData.substring(scoreToBeatIndex + 1);
-
-        if (!gameJson || !scoreToBeatStr) {
+        if (!compressedGameData || !scoreToBeatStr) {
             notFound();
         }
-        
-        const gameData = JSON.parse(gameJson) as AITriviaGame;
+
+        const compressedBuffer = Buffer.from(compressedGameData, 'base64');
+        const decompressed = pako.inflate(compressedBuffer, { to: 'string' });
+        const gameData = JSON.parse(decompressed) as AITriviaGame;
         
         if (!gameData) {
             console.error(`AI Challenge data could not be parsed.`);
