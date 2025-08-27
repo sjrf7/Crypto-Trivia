@@ -84,10 +84,13 @@ export async function POST(req: NextRequest) {
     const result = await model.generateContent(prompt);
     
     const response = result.response;
-    // Extract text, remove markdown, and parse
-    const text = response.text();
-    const cleanedText = text.replace(/```json/g, '').replace(/```/g, '');
-    const gameData = JSON.parse(cleanedText);
+    // Extract text, remove markdown, and clean up potential JSON errors
+    let text = response.text();
+    text = text.replace(/```json/g, '').replace(/```/g, '');
+    // Clean trailing commas which can cause JSON.parse to fail
+    text = text.replace(/,\s*([}\]])/g, '$1');
+
+    const gameData = JSON.parse(text);
 
     // Validate the parsed data against the schema
     const validationResult = AITriviaGameSchema.safeParse(gameData);
