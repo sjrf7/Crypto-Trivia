@@ -33,15 +33,9 @@ export async function POST(req: NextRequest) {
       model: MODEL_NAME,
       generationConfig: {
         responseMimeType: "application/json",
+        responseSchema: AITriviaGameSchema,
       },
     });
-
-    const generationConfig = {
-      temperature: 1,
-      topK: 64,
-      topP: 0.95,
-      maxOutputTokens: 8192,
-    };
 
     const safetySettings = [
       { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
@@ -60,45 +54,12 @@ export async function POST(req: NextRequest) {
       The entire game, including all questions, answers, and options, must be in the following language: ${language}.
 
       It is absolutely crucial that you generate EXACTLY ${numQuestions} questions. Do not generate more or fewer than ${numQuestions}. This is a strict requirement.
-      
-      Your output MUST be a valid JSON object that strictly conforms to the following Zod schema. Do not add any extra text or markdown formatting around the JSON.
-
-      Schema:
-      \`\`\`json
-      ${JSON.stringify(AITriviaGameSchema.shape, null, 2)}
-      \`\`\`
-
-      Here is an example of the desired JSON output structure:
-      \`\`\`json
-      {
-        "topic": "Example Topic",
-        "questions": [
-          {
-            "question": "This is an example question?",
-            "answer": "This is the correct answer",
-            "options": [
-              "This is the correct answer",
-              "Incorrect answer 1",
-              "Incorrect answer 2",
-              "Incorrect answer 3"
-            ]
-          }
-        ]
-      }
-      \`\`\`
     `;
 
-    const result = await model.generateContentStream([prompt]);
+    const result = await model.generateContent(prompt);
     
-    let text = '';
-    for await (const chunk of result.stream) {
-      text += chunk.text();
-    }
-    
-    // Clean the response to ensure it's a valid JSON string
-    const cleanedJsonString = text.replace(/```json\n|```/g, '').trim();
-
-    const gameData = JSON.parse(cleanedJsonString);
+    const response = result.response;
+    const gameData = response.candidates?.[0]?.content?.parts?.[0]?.data;
 
     // Validate the parsed data against the schema
     const validationResult = AITriviaGameSchema.safeParse(gameData);
@@ -112,6 +73,12 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('Error generating trivia:', error);
-    return NextResponse.json({ error: error.message || 'An unexpected error occurred.' }, { status: 500 });
+    // Extract a more specific error message if available from the AI response
+    const errorMessage = error?.response?.candidates?.[0]?.finishReason || error.message || 'An unexpected error occurred.';
+    if (error?.response?.candidates?.[0]?.finishReason === 'SAFETY') {
+        return NextResponse.json({ error: 'The generated content was blocked due to safety settings. Please try a different topic.' }, { status: 400 });
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
