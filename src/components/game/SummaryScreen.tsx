@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -25,6 +24,7 @@ import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
+import { storeChallenge, clearChallenge } from '@/lib/challenge-store';
 
 interface SummaryScreenProps {
   score: number;
@@ -34,6 +34,7 @@ interface SummaryScreenProps {
   questions: TriviaQuestion[];
   isAiGame?: boolean;
   aiGameTopic?: string;
+  challengeId?: string;
 }
 
 export function SummaryScreen({ 
@@ -43,7 +44,8 @@ export function SummaryScreen({
   onRestart, 
   questions,
   isAiGame = false,
-  aiGameTopic = ''
+  aiGameTopic = '',
+  challengeId
 }: SummaryScreenProps) {
     const { t } = useI18n();
     const { toast } = useToast();
@@ -51,6 +53,13 @@ export function SummaryScreen({
     const [wager, setWager] = useState('');
     const { profile: user, isAuthenticated } = useProfile();
     const { addGameResult } = useUserStats(user?.fid?.toString());
+
+    // If this was a challenge, clear the stored data from localStorage
+    useEffect(() => {
+        if (challengeId) {
+            clearChallenge(challengeId);
+        }
+    }, [challengeId]);
 
     useEffect(() => {
       // Only add game results if the user is authenticated and the hook function is available.
@@ -69,13 +78,12 @@ export function SummaryScreen({
         let data = '';
 
         if (isAiGame) {
-            const gameData = {
+            const aiChallengeData = {
                 topic: aiGameTopic,
                 questions: questions.map(({ question, answer, options, originalIndex }) => ({ question, answer, options, originalIndex })),
             };
-            const gameDataStr = JSON.stringify(gameData);
-            const remainingParts = [score, wager, challenger].join('|');
-            data = `ai|${gameDataStr}|${remainingParts}`;
+            const challengeId = storeChallenge(aiChallengeData);
+            data = `ai|${challengeId}|${score}|${wager}|${challenger}`;
         } else {
             const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
             if (!questionIndices) {

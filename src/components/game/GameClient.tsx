@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -23,6 +22,7 @@ interface GameClientProps {
     onRestart?: () => void;
     isAiGame?: boolean;
     aiGameTopic?: string;
+    challengeId?: string;
 }
 
 const screenVariants = {
@@ -44,7 +44,8 @@ export function GameClient({
     challenger, 
     onRestart,
     isAiGame = false,
-    aiGameTopic = ''
+    aiGameTopic = '',
+    challengeId,
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -193,6 +194,7 @@ export function GameClient({
                   questions={questions} 
                   isAiGame={isAiGame}
                   aiGameTopic={aiGameTopic}
+                  challengeId={challengeId}
                />;
       default:
         return renderWelcomeScreen();

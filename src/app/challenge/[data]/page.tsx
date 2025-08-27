@@ -1,4 +1,3 @@
-
 'use client';
 
 import { GameClient } from '@/components/game/GameClient';
@@ -6,6 +5,7 @@ import { AITriviaGame } from '@/lib/types/ai';
 import { TriviaQuestion } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import { useI18n } from '@/hooks/use-i18n';
+import { getChallenge } from '@/lib/challenge-store';
 
 interface ChallengePageProps {
   params: {
@@ -44,17 +44,19 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             challenger={challenger}
         />;
     } else if (type === 'ai') {
-        // Re-join the parts that might have been split by the JSON content
-        const dataStartIndex = decodedData.indexOf('|') + 1;
-        const gameDataStr = decodedData.substring(dataStartIndex, decodedData.lastIndexOf('|'));
-        const rest = decodedData.substring(decodedData.lastIndexOf('|') + 1).split('|');
-        const [scoreToBeatStr, wagerStr, challenger] = rest;
+        const [_, challengeId, scoreToBeatStr, wagerStr, challenger] = parts;
         
-        if (!gameDataStr || !scoreToBeatStr) {
+        if (!challengeId || !scoreToBeatStr) {
+            notFound();
+        }
+        
+        const gameData = getChallenge(challengeId);
+        
+        if (!gameData) {
+            console.error(`AI Challenge with id ${challengeId} not found in storage.`);
             notFound();
         }
 
-        const gameData: { topic: string, questions: TriviaQuestion[] } = JSON.parse(gameDataStr);
         const scoreToBeat = parseInt(scoreToBeatStr, 10);
         const wager = wagerStr ? parseFloat(wagerStr) : 0;
 
@@ -65,6 +67,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             challenger={challenger}
             isAiGame={true}
             aiGameTopic={gameData.topic}
+            challengeId={challengeId}
         />;
     } else {
         // Fallback for old format without type
