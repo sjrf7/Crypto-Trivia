@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
       model: MODEL_NAME,
       generationConfig: {
         responseMimeType: "application/json",
-        responseSchema: AITriviaGameSchema,
       },
     });
 
@@ -54,12 +53,41 @@ export async function POST(req: NextRequest) {
       The entire game, including all questions, answers, and options, must be in the following language: ${language}.
 
       It is absolutely crucial that you generate EXACTLY ${numQuestions} questions. Do not generate more or fewer than ${numQuestions}. This is a strict requirement.
+
+      Your response MUST be a valid JSON object that conforms to the following schema:
+      {
+        "type": "object",
+        "properties": {
+          "topic": { "type": "string" },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": { "type": "string" },
+                "answer": { "type": "string" },
+                "options": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "minItems": 4,
+                  "maxItems": 4
+                }
+              },
+              "required": ["question", "answer", "options"]
+            }
+          }
+        },
+        "required": ["topic", "questions"]
+      }
     `;
 
     const result = await model.generateContent(prompt);
     
     const response = result.response;
-    const gameData = response.candidates?.[0]?.content?.parts?.[0]?.data;
+    // Extract text, remove markdown, and parse
+    const text = response.text();
+    const cleanedText = text.replace(/```json/g, '').replace(/```/g, '');
+    const gameData = JSON.parse(cleanedText);
 
     // Validate the parsed data against the schema
     const validationResult = AITriviaGameSchema.safeParse(gameData);
