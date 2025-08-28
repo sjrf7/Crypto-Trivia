@@ -110,6 +110,8 @@
     "title": "Game Over!",
     "description": "Here's how you did in the classic trivia.",
     "ai_description": "Here's how you did on the {topic} trivia.",
+    "challenge_win_description": "You won the challenge!",
+    "challenge_loss_description": "You lost the challenge. Better luck next time!",
     "final_score": "Final Score",
     "questions_answered": "You answered {count} questions.",
     "play_again_button": "Play Again",
@@ -153,6 +155,7 @@
   "achievements": {
     "title": "Achievements",
     "description": "Here are all the achievements you've unlocked on your journey.",
+    "sign_in_prompt": "Sign in to view and unlock your achievements.",
     "items": {
       "first-game": {
         "name": "First Game",
@@ -228,6 +231,10 @@
   "language_switcher": {
     "tooltip": "Change language",
     "title": "Language"
+  },
+  "achievement_unlocked": {
+    "title": "Achievement Unlocked!",
+    "description": "You've earned: {achievement}"
   },
   "classic_questions": [
     {

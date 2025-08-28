@@ -40,7 +40,7 @@ function ProfilePageContent() {
           name: user.displayName || user.username || `User ${user.fid}`,
           avatar: user.pfpUrl || `https://placehold.co/128x128.png`,
           stats: userStats, // Use stats from our hook
-          achievements: [], // TODO: This could also come from the hook
+          achievements: userStats.unlockedAchievements,
         });
       } else {
         // The user is not logged in and trying to see their own profile.

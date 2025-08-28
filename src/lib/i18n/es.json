@@ -110,6 +110,8 @@
     "title": "¡Fin del Juego!",
     "description": "Así te fue en la trivia clásica.",
     "ai_description": "Así te fue en la trivia de {topic}.",
+    "challenge_win_description": "¡Ganaste el desafío!",
+    "challenge_loss_description": "Perdiste el desafío. ¡Mejor suerte la próxima vez!",
     "final_score": "Puntuación Final",
     "questions_answered": "Respondiste {count} preguntas.",
     "play_again_button": "Jugar de Nuevo",
@@ -153,6 +155,7 @@
   "achievements": {
     "title": "Logros",
     "description": "Estos son todos los logros que has desbloqueado en tu viaje.",
+    "sign_in_prompt": "Inicia sesión para ver y desbloquear tus logros.",
     "items": {
       "first-game": {
         "name": "Primer Juego",
@@ -228,6 +231,10 @@
   "language_switcher": {
     "tooltip": "Cambiar idioma",
     "title": "Idioma"
+  },
+  "achievement_unlocked": {
+    "title": "¡Logro Desbloqueado!",
+    "description": "Has ganado: {achievement}"
   },
   "classic_questions": [
     {

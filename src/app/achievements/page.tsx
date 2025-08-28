@@ -8,6 +8,9 @@ import { Award, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
+import { useUserStats } from '@/hooks/use-user-stats';
+import { useProfile } from '@farcaster/auth-kit';
+import { SignInButton } from '@/components/profile/SignInButton';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,15 +27,24 @@ const itemVariants = {
   visible: { y: 0, opacity: 1 },
 };
 
-export default function AchievementsPage() {
+function AchievementsContent() {
   const { t } = useI18n();
+  const { profile: user, isAuthenticated } = useProfile();
+  const { stats } = useUserStats(user?.fid?.toString());
 
-  // This is a placeholder for actual user data.
-  // In a real app, you would fetch this from a user profile.
-  const unlockedAchievementIds = ['first-game', 'novice-quizzer', 'crypto-enthusiast'];
-
+  if (!isAuthenticated) {
+    return (
+        <Card className="w-full max-w-md mx-auto text-center">
+            <CardContent className="pt-6">
+                <h2 className="text-2xl font-headline mb-4">{t('profile.sign_in.title')}</h2>
+                <p className="text-muted-foreground mb-6">{t('achievements.sign_in_prompt')}</p>
+                <SignInButton />
+            </CardContent>
+        </Card>
+    )
+  }
+  
   return (
-    <div>
       <Card>
         <CardHeader>
           <div className="flex items-center gap-4">
@@ -51,7 +63,7 @@ export default function AchievementsPage() {
             animate="visible"
           >
             {ACHIEVEMENTS.map((achievement) => {
-              const isUnlocked = unlockedAchievementIds.includes(achievement.id);
+              const isUnlocked = stats.unlockedAchievements.includes(achievement.id);
 
               return (
                 <motion.div key={achievement.id} variants={itemVariants}>
@@ -88,6 +100,13 @@ export default function AchievementsPage() {
           </motion.div>
         </CardContent>
       </Card>
+  )
+}
+
+export default function AchievementsPage() {
+  return (
+    <div>
+      <AchievementsContent />
     </div>
   );
 }

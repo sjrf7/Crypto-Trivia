@@ -25,7 +25,6 @@ import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { AITriviaGame } from '@/lib/types/ai';
 
 interface SummaryScreenProps {
   score: number;
@@ -36,6 +35,10 @@ interface SummaryScreenProps {
   isAiGame?: boolean;
   aiGameTopic?: string;
   challengeId?: string;
+  consecutiveCorrect: number;
+  powerupsUsed: number;
+  wonChallenge: boolean;
+  isChallenge: boolean;
 }
 
 export function SummaryScreen({ 
@@ -46,7 +49,11 @@ export function SummaryScreen({
   questions,
   isAiGame = false,
   aiGameTopic = '',
-  challengeId
+  challengeId,
+  consecutiveCorrect,
+  powerupsUsed,
+  wonChallenge,
+  isChallenge,
 }: SummaryScreenProps) {
     const { t } = useI18n();
     const { toast } = useToast();
@@ -62,11 +69,15 @@ export function SummaryScreen({
         addGameResult({
           score,
           questionsAnswered,
-          correctAnswers
+          correctAnswers,
+          isAiGame,
+          consecutiveCorrect,
+          powerupsUsed,
+          wonChallenge,
         });
       }
       // The dependency array correctly lists all external values that the effect depends on.
-    }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers]);
+    }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers, isAiGame, consecutiveCorrect, powerupsUsed, wonChallenge]);
     
     const generateChallenge = useCallback(async () => {
       if(isGenerating) return;
@@ -76,33 +87,18 @@ export function SummaryScreen({
       try {
         const challengerName = user?.displayName || 'A friend';
 
+        // AI Game challenges are disabled for now
         if (isAiGame) {
-            const aiGameData: AITriviaGame = {
-                topic: aiGameTopic!,
-                questions: questions,
-            };
-
-            const response = await fetch('/api/challenge', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ game: aiGameData, scoreToBeat: score, wager: wager || 0, challenger: challengerName })
-            });
-
-            if (!response.ok) throw new Error('Failed to create AI challenge.');
-            
-            const { challengeId } = await response.json();
-            const url = `${window.location.origin}/challenge/ai/${challengeId}`;
-            setChallengeUrl(url);
-
-        } else {
-            const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
-            if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
-            
-            const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}`;
-            const encodedData = btoa(dataSegment); 
-            const url = `${window.location.origin}/challenge/classic/${encodedData}`;
-            setChallengeUrl(url);
-        }
+           return;
+        } 
+        
+        const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
+        if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
+        
+        const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}`;
+        const encodedData = btoa(dataSegment); 
+        const url = `${window.location.origin}/challenge/classic/${encodedData}`;
+        setChallengeUrl(url);
 
       } catch (error) {
           console.error("Error creating challenge:", error);
@@ -114,7 +110,7 @@ export function SummaryScreen({
       } finally {
         setIsGenerating(false);
       }
-    }, [questions, score, wager, user, isAiGame, aiGameTopic, toast, isGenerating]);
+    }, [questions, score, wager, user, isAiGame, toast, isGenerating]);
 
 
     // Effect to regenerate the link when the wager changes
@@ -134,9 +130,14 @@ export function SummaryScreen({
         });
     }
 
-    const description = isAiGame 
-      ? t('summary.ai_description', { topic: aiGameTopic })
-      : t('summary.description');
+    const getSummaryDescription = () => {
+        if(isChallenge && score > 0) {
+            return wonChallenge ? t('summary.challenge_win_description') : t('summary.challenge_loss_description');
+        }
+        return isAiGame 
+            ? t('summary.ai_description', { topic: aiGameTopic })
+            : t('summary.description');
+    }
 
   return (
     <motion.div 
@@ -158,7 +159,7 @@ export function SummaryScreen({
              <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
           </motion.div>
           <CardTitle className="font-headline text-4xl">{t('summary.title')}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardDescription>{getSummaryDescription()}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="text-6xl font-bold text-primary">
@@ -188,7 +189,7 @@ export function SummaryScreen({
                 </Button>
             </motion.div>
             
-            {!isAiGame && (
+            {!isAiGame && !isChallenge && (
                 <motion.div 
                     className="w-full"
                     initial={{ y: 20, opacity: 0 }}

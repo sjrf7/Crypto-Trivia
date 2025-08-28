@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -25,6 +26,15 @@ interface GameClientProps {
     challengeId?: string;
 }
 
+interface GameResult {
+  score: number;
+  questionsAnswered: number;
+  correctAnswers: number;
+  consecutiveCorrect: number;
+  powerupsUsed: number;
+  wonChallenge: boolean;
+}
+
 const screenVariants = {
   initial: { opacity: 0, scale: 0.95 },
   in: { opacity: 1, scale: 1 },
@@ -49,9 +59,7 @@ export function GameClient({
 }: GameClientProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('setup');
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
-  const [finalScore, setFinalScore] = useState(0);
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
 
@@ -90,10 +98,8 @@ export function GameClient({
     setIsChallenge(false);
   };
 
-  const handleGameEnd = (score: number, numAnswered: number, numCorrect: number) => {
-    setFinalScore(score);
-    setQuestionsAnswered(numAnswered);
-    setCorrectAnswers(numCorrect);
+  const handleGameEnd = (result: GameResult) => {
+    setGameResult(result);
     setGameStatus('summary');
   };
 
@@ -104,9 +110,7 @@ export function GameClient({
         // This logic is for non-classic games that are restarted from the summary.
         // It resets the state to show the welcome screen again.
         setGameStatus('setup');
-        setFinalScore(0);
-        setQuestionsAnswered(0);
-        setCorrectAnswers(0);
+        setGameResult(null);
         setIsChallenge(false);
         setQuestions([]);
     }
@@ -187,14 +191,13 @@ export function GameClient({
                />;
       case 'summary':
         return <SummaryScreen 
-                  score={finalScore} 
-                  questionsAnswered={questionsAnswered}
-                  correctAnswers={correctAnswers}
+                  {...gameResult!}
                   onRestart={handleRestart} 
                   questions={questions} 
                   isAiGame={isAiGame}
                   aiGameTopic={aiGameTopic}
                   challengeId={challengeId}
+                  isChallenge={isChallenge}
                />;
       default:
         return renderWelcomeScreen();

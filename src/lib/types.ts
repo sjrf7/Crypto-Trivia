@@ -25,6 +25,12 @@ export interface PlayerStats {
   topRank: number | null;
   level: number;
   xp: number;
+  unlockedAchievements: string[]; // Array of achievement IDs
+  // Internal tracking properties, prefixed with _
+  _consecutiveCorrectAnswers?: number;
+  _aiGamesPlayed?: number;
+  _powerupsUsed?: number;
+  _challengesWon?: number;
 }
 
 export interface Player {
