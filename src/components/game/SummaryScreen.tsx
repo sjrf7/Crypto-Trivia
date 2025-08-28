@@ -188,66 +188,66 @@ export function SummaryScreen({
                 </Button>
             </motion.div>
             
-            <motion.div 
-                className="w-full"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-            >
-              <AlertDialog onOpenChange={(open) => {
-                  // When opening the dialog, generate the initial link
-                  if (open) {
-                    generateChallenge();
-                  } else {
-                    // When closing, clear the url
-                    setChallengeUrl('');
-                  }
-              }}>
-                <AlertDialogTrigger asChild>
-                  <Button variant="secondary" className="w-full">
-                      <Share2 className="mr-2 h-4 w-4" />
-                      {t('summary.challenge.button')}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t('summary.challenge.title')}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t('summary.challenge.description')}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                          <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
-                          <Input 
-                              id="wager"
-                              type="number"
-                              placeholder={t('summary.challenge.wager.placeholder')}
-                              value={wager}
-                              onChange={(e) => setWager(e.target.value)}
-                              disabled={isGenerating}
-                          />
-                      </div>
-                      <div className="space-y-2">
-                          <Label>{t('summary.challenge.link.label')}</Label>
-                          <div className="flex items-center space-x-2">
-                              <Input value={challengeUrl || (isGenerating ? 'Generating...' : '')} readOnly />
-                              <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
-                                  <ClipboardCheck className="h-4 w-4" />
-                              </Button>
-                          </div>
-                      </div>
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t('summary.challenge.close_button')}</AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </motion.div>
+            {!isAiGame && (
+                <motion.div 
+                    className="w-full"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
+                <AlertDialog onOpenChange={(open) => {
+                    // When opening the dialog, generate the initial link
+                    if (open) {
+                        generateChallenge();
+                    } else {
+                        // When closing, clear the url
+                        setChallengeUrl('');
+                    }
+                }}>
+                    <AlertDialogTrigger asChild>
+                    <Button variant="secondary" className="w-full">
+                        <Share2 className="mr-2 h-4 w-4" />
+                        {t('summary.challenge.button')}
+                    </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t('summary.challenge.title')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                        {t('summary.challenge.description')}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
+                            <Input 
+                                id="wager"
+                                type="number"
+                                placeholder={t('summary.challenge.wager.placeholder')}
+                                value={wager}
+                                onChange={(e) => setWager(e.target.value)}
+                                disabled={isGenerating}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>{t('summary.challenge.link.label')}</Label>
+                            <div className="flex items-center space-x-2">
+                                <Input value={challengeUrl || (isGenerating ? 'Generating...' : '')} readOnly />
+                                <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
+                                    <ClipboardCheck className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>{t('summary.challenge.close_button')}</AlertDialogCancel>
+                    </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+                </motion.div>
+            )}
         </CardFooter>
       </Card>
     </motion.div>
   );
 }
-
-    
