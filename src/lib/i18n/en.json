@@ -77,9 +77,11 @@
   "wager": {
     "title": "A Duel is Proposed!",
     "description": "{challenger} has challenged you to a trivia showdown.",
+    "default_message": "Think you can beat my score? Let's see it!",
     "wager_is": "The proposed wager is:",
+    "for_glory": "For Glory!",
     "on_testnet": "(On Base Sepolia Testnet)",
-    "accept_button": "Accept Wager & Play",
+    "accept_button": "Accept & Play",
     "decline_button": "Decline & Go Home",
     "escrow_notice": "Funds will be held in a secure escrow contract."
   },
@@ -120,12 +122,20 @@
       "button": "Challenge a Friend",
       "title": "Share Your Challenge",
       "description": "Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.",
+      "message": {
+        "label": "Challenge Message (Optional)",
+        "placeholder": "e.g. 'Beat this score, if you can!'"
+      },
       "wager": {
         "label": "Wager (ETH on Base Sepolia)",
-        "placeholder": "e.g., 0.01"
+        "placeholder": "e.g., 0.01 (Leave blank for no wager)"
       },
       "link": {
         "label": "Challenge Link"
+      },
+      "not_logged_in": {
+          "title": "Please Sign In",
+          "description": "You must be signed in with Farcaster to challenge a friend."
       },
       "close_button": "Close"
     },
@@ -1262,3 +1272,4 @@
     }
   ]
 }
+

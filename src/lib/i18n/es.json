@@ -77,9 +77,11 @@
   "wager": {
     "title": "¡Se Propone un Duelo!",
     "description": "{challenger} te ha desafiado a un enfrentamiento de trivia.",
+    "default_message": "¿Crees que puedes superar mi puntuación? ¡A ver si es cierto!",
     "wager_is": "La apuesta propuesta es:",
+    "for_glory": "¡Por la Gloria!",
     "on_testnet": "(En la Testnet de Base Sepolia)",
-    "accept_button": "Aceptar Apuesta y Jugar",
+    "accept_button": "Aceptar y Jugar",
     "decline_button": "Rechazar e Ir a Inicio",
     "escrow_notice": "Los fondos se mantendrán en un contrato de depósito seguro."
   },
@@ -120,12 +122,20 @@
       "button": "Desafiar a un Amigo",
       "title": "Comparte tu Desafío",
       "description": "Envía este enlace a un amigo. ¡Jugarán con las mismas preguntas e intentarán superar tu puntuación! Añade una apuesta opcional para más diversión.",
+       "message": {
+        "label": "Mensaje de Desafío (Opcional)",
+        "placeholder": "Ej: '¡Supera esta puntuación, si puedes!'"
+      },
       "wager": {
         "label": "Apuesta (ETH en Base Sepolia)",
-        "placeholder": "ej., 0.01"
+        "placeholder": "ej., 0.01 (dejar en blanco para no apostar)"
       },
       "link": {
         "label": "Enlace del Desafío"
+      },
+      "not_logged_in": {
+          "title": "Por favor, inicia sesión",
+          "description": "Debes iniciar sesión con Farcaster para desafiar a un amigo."
       },
       "close_button": "Cerrar"
     },
@@ -1262,3 +1272,4 @@
     }
   ]
 }
+

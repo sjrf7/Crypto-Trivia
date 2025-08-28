@@ -27,7 +27,7 @@ export default function ClassicChallengePage({ params }: ClassicChallengePagePro
         notFound();
     }
 
-    const [_, questionIndicesStr, scoreToBeatStr, wagerStr, challenger] = parts;
+    const [_, questionIndicesStr, scoreToBeatStr, wagerStr, challenger, encodedMessage] = parts;
 
     if (!questionIndicesStr || !scoreToBeatStr) {
         notFound();
@@ -36,6 +36,7 @@ export default function ClassicChallengePage({ params }: ClassicChallengePagePro
     const questionIndices = questionIndicesStr.split(',').map(Number);
     const scoreToBeat = parseInt(scoreToBeatStr, 10);
     const wager = wagerStr ? parseFloat(wagerStr) : 0;
+    const challengeMessage = encodedMessage ? decodeURIComponent(encodedMessage) : '';
     
     const challengeQuestions: TriviaQuestion[] = questionIndices.map(index => classicQuestions[index]);
 
@@ -49,6 +50,7 @@ export default function ClassicChallengePage({ params }: ClassicChallengePagePro
         scoreToBeat={scoreToBeat} 
         wager={wager}
         challenger={challenger}
+        challengeMessage={challengeMessage}
     />;
 
   } catch (error) {
@@ -57,4 +59,3 @@ export default function ClassicChallengePage({ params }: ClassicChallengePagePro
   }
 }
 
-    

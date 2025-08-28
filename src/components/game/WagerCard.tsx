@@ -4,17 +4,23 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
-import { Shield, Swords } from 'lucide-react';
+import { Shield, Swords, LogIn } from 'lucide-react';
+import { useProfile } from '@farcaster/auth-kit';
+import { SignInButton } from '../profile/SignInButton';
 
 interface WagerCardProps {
   challenger: string;
   wager: number;
+  message?: string;
   onAccept: () => void;
   onDecline: () => void;
 }
 
-export function WagerCard({ challenger, wager, onAccept, onDecline }: WagerCardProps) {
+export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
+  const { isAuthenticated } = useProfile();
+
+  const defaultMessage = t('wager.default_message');
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -29,14 +35,21 @@ export function WagerCard({ challenger, wager, onAccept, onDecline }: WagerCardP
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                <p className="text-lg">{t('wager.wager_is')}</p>
-                <div className="text-4xl font-bold text-primary">{wager} ETH</div>
-                <p className="text-xs text-muted-foreground">{t('wager.on_testnet')}</p>
+                <div className="bg-secondary p-4 rounded-lg italic">
+                  <p>"{message || defaultMessage}"</p>
+                </div>
+                <p className="text-lg pt-4">{t('wager.wager_is')}</p>
+                <div className="text-4xl font-bold text-primary">{wager > 0 ? `${wager} ETH` : t('wager.for_glory')}</div>
+                {wager > 0 && <p className="text-xs text-muted-foreground">{t('wager.on_testnet')}</p>}
             </CardContent>
             <CardFooter className="flex-col gap-4">
-                <Button onClick={onAccept} className="w-full" size="lg">
-                  {t('wager.accept_button')}
-                </Button>
+                {isAuthenticated ? (
+                  <Button onClick={onAccept} className="w-full" size="lg">
+                    {t('wager.accept_button')}
+                  </Button>
+                ) : (
+                  <SignInButton />
+                )}
                 <Button onClick={onDecline} variant="ghost" className="w-full">
                   {t('wager.decline_button')}
                 </Button>
@@ -49,3 +62,4 @@ export function WagerCard({ challenger, wager, onAccept, onDecline }: WagerCardP
     </div>
   );
 }
+

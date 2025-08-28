@@ -25,6 +25,7 @@ import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
+import { Textarea } from '../ui/textarea';
 
 interface SummaryScreenProps {
   score: number;
@@ -59,6 +60,7 @@ export function SummaryScreen({
     const { toast } = useToast();
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
+    const [challengeMessage, setChallengeMessage] = useState('');
     const { profile: user, isAuthenticated } = useProfile();
     const { addGameResult } = useUserStats(user?.fid?.toString());
     const [isGenerating, setIsGenerating] = useState(false);
@@ -85,6 +87,15 @@ export function SummaryScreen({
       setChallengeUrl(''); // Reset previous URL
 
       try {
+        if (!isAuthenticated) {
+            toast({
+                variant: "destructive",
+                title: t('summary.challenge.not_logged_in.title'),
+                description: t('summary.challenge.not_logged_in.description'),
+            });
+            return;
+        }
+
         const challengerName = user?.displayName || 'A friend';
 
         // AI Game challenges are disabled for now
@@ -95,7 +106,7 @@ export function SummaryScreen({
         const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
         if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
         
-        const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}`;
+        const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}|${encodeURIComponent(challengeMessage)}`;
         const encodedData = btoa(dataSegment); 
         const url = `${window.location.origin}/challenge/classic/${encodedData}`;
         setChallengeUrl(url);
@@ -110,16 +121,16 @@ export function SummaryScreen({
       } finally {
         setIsGenerating(false);
       }
-    }, [questions, score, wager, user, isAiGame, toast, isGenerating]);
+    }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, toast, isGenerating, t]);
 
 
-    // Effect to regenerate the link when the wager changes
+    // Effect to regenerate the link when the wager or message changes
     useEffect(() => {
         // Only regenerate if the dialog is open and a URL was already created.
         if (challengeUrl) {
             generateChallenge();
         }
-    }, [wager, challengeUrl, generateChallenge]);
+    }, [wager, challengeMessage, challengeUrl, generateChallenge]);
 
     const copyToClipboard = () => {
         if (!challengeUrl) return;
@@ -206,7 +217,7 @@ export function SummaryScreen({
                     }
                 }}>
                     <AlertDialogTrigger asChild>
-                    <Button variant="secondary" className="w-full">
+                    <Button variant="secondary" className="w-full" disabled={!isAuthenticated}>
                         <Share2 className="mr-2 h-4 w-4" />
                         {t('summary.challenge.button')}
                     </Button>
@@ -219,6 +230,17 @@ export function SummaryScreen({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="challenge-message">{t('summary.challenge.message.label')}</Label>
+                          <Textarea
+                            id="challenge-message"
+                            placeholder={t('summary.challenge.message.placeholder')}
+                            value={challengeMessage}
+                            onChange={(e) => setChallengeMessage(e.target.value)}
+                            disabled={isGenerating}
+                            maxLength={100}
+                          />
+                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
                             <Input 
@@ -252,3 +274,4 @@ export function SummaryScreen({
     </motion.div>
   );
 }
+

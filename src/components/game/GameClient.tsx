@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
+import { useProfile } from '@farcaster/auth-kit';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -20,6 +21,7 @@ interface GameClientProps {
     scoreToBeat?: number;
     wager?: number;
     challenger?: string;
+    challengeMessage?: string;
     onRestart?: () => void;
     isAiGame?: boolean;
     aiGameTopic?: string;
@@ -51,7 +53,8 @@ export function GameClient({
     challengeQuestions, 
     scoreToBeat, 
     wager, 
-    challenger, 
+    challenger,
+    challengeMessage, 
     onRestart,
     isAiGame = false,
     aiGameTopic = '',
@@ -62,6 +65,7 @@ export function GameClient({
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
+  const { isAuthenticated, loading: authLoading } = useProfile();
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
@@ -72,7 +76,7 @@ export function GameClient({
     if (challengeQuestions && challengeQuestions.length > 0) {
       setIsChallenge(!!scoreToBeat);
       setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
-       if (wager && wager > 0 && challenger) {
+       if (challenger) {
           setGameStatus('wager');
       } else {
           setGameStatus('playing');
@@ -85,6 +89,15 @@ export function GameClient({
     // AiGame without challenge questions will be handled by its own page logic, not here.
 
   }, [challengeQuestions, scoreToBeat, wager, challenger, isAiGame]);
+
+
+  useEffect(() => {
+    // When a user logs in while on the wager screen, automatically start the game.
+    if (gameStatus === 'wager' && isAuthenticated && !authLoading) {
+      handleWagerAccept();
+    }
+  }, [isAuthenticated, authLoading, gameStatus]);
+
 
   const handleStartClassic = () => {
     const shuffled = [...classicQuestions]
@@ -117,8 +130,13 @@ export function GameClient({
   };
   
   const handleWagerAccept = () => {
-    console.log('Wager accepted. Starting game.');
-    setGameStatus('playing');
+    if (isAuthenticated) {
+      console.log('Wager accepted. Starting game.');
+      setGameStatus('playing');
+    } else {
+      console.log('User must sign in to accept wager.');
+      // The SignInButton will handle the auth flow.
+    }
   }
 
   const renderWelcomeScreen = () => (
@@ -176,7 +194,8 @@ export function GameClient({
       case 'wager':
         return <WagerCard 
                     wager={wager!} 
-                    challenger={challenger!} 
+                    challenger={challenger!}
+                    message={challengeMessage} 
                     onAccept={handleWagerAccept}
                     onDecline={handleRestart}
                 />;
@@ -214,3 +233,4 @@ export function GameClient({
     </Card>
   );
 }
+
