@@ -1,6 +1,6 @@
 
 import type { Player, LeaderboardEntry, TriviaQuestion, Achievement } from './types';
-import { Award, BookOpen, BrainCircuit, FirstAid, Medal, Rocket, Sparkles, Star, TrendingUp } from 'lucide-react';
+import { Award, BookOpen, BrainCircuit, Bot, Medal, Rocket, Sparkles, Star, TrendingUp, Trophy, Dumbbell } from 'lucide-react';
 
 export const ACHIEVEMENTS: Achievement[] = [
   {
@@ -38,6 +38,36 @@ export const ACHIEVEMENTS: Achievement[] = [
     name: 'Hot Streak',
     description: 'Answered 10 questions correctly in a row.',
     icon: Rocket,
+  },
+    {
+    id: 'quiz-marathon',
+    name: 'Quiz Marathon',
+    description: 'Played 25 games.',
+    icon: Dumbbell,
+  },
+  {
+    id: 'duelist',
+    name: 'Duelist',
+    description: 'Won your first challenge against a friend.',
+    icon: Trophy,
+  },
+    {
+    id: 'ai-pioneer',
+    name: 'AI Pioneer',
+    description: 'Generated your first AI trivia game.',
+    icon: Bot,
+  },
+  {
+    id: 'near-perfect',
+    name: 'Near Perfect',
+    description: 'Achieved 95% accuracy in a game.',
+    icon: Star,
+  },
+  {
+    id: 'quiz-legend',
+    name: 'Quiz Legend',
+    description: 'Reached level 20.',
+    icon: Medal,
   },
 ];
 

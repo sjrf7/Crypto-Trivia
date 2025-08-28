@@ -177,6 +177,26 @@
       "hot-streak": {
         "name": "Racha Imparable",
         "description": "Respondiste 10 preguntas correctamente seguidas."
+      },
+      "quiz-marathon": {
+        "name": "Maratón de Trivia",
+        "description": "Jugaste 25 partidas."
+      },
+      "duelist": {
+        "name": "Duelista",
+        "description": "Ganaste tu primer desafío contra un amigo."
+      },
+      "ai-pioneer": {
+        "name": "Pionero de IA",
+        "description": "Generaste tu primera partida de trivia con IA."
+      },
+      "near-perfect": {
+        "name": "Casi Perfecto",
+        "description": "Alcanzaste un 95% de precisión en una partida."
+      },
+      "quiz-legend": {
+        "name": "Leyenda del Quiz",
+        "description": "Alcanzaste el nivel 20."
       }
     }
   },

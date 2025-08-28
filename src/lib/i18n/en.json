@@ -177,6 +177,26 @@
       "hot-streak": {
         "name": "Hot Streak",
         "description": "Answered 10 questions correctly in a row."
+      },
+      "quiz-marathon": {
+        "name": "Quiz Marathon",
+        "description": "Played 25 games."
+      },
+      "duelist": {
+        "name": "Duelist",
+        "description": "Won your first challenge against a friend."
+      },
+      "ai-pioneer": {
+        "name": "AI Pioneer",
+        "description": "Generated your first AI trivia game."
+      },
+      "near-perfect": {
+        "name": "Near Perfect",
+        "description": "Achieved 95% accuracy in a game."
+      },
+      "quiz-legend": {
+        "name": "Quiz Legend",
+        "description": "Reached level 20."
       }
     }
   },
