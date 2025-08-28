@@ -112,10 +112,13 @@
     "title": "Game Over!",
     "description": "Here's how you did in the classic trivia.",
     "ai_description": "Here's how you did on the {topic} trivia.",
-    "challenge_win_description": "You won the challenge!",
-    "challenge_loss_description": "You lost the challenge. Better luck next time!",
+    "challenge_description": "The results of the challenge are in!",
+    "challenge_win_title": "You Won!",
+    "challenge_loss_title": "You Lost!",
+    "challenge_tie_title": "It's a Tie!",
+    "your_score": "Your Score",
     "final_score": "Final Score",
-    "questions_answered": "You answered {count} questions.",
+    "questions_answered": "You answered {count} of {total} questions.",
     "play_again_button": "Play Again",
     "leaderboard_button": "Leaderboard",
     "challenge": {
@@ -136,6 +139,10 @@
       "not_logged_in": {
           "title": "Please Sign In",
           "description": "You must be signed in with Farcaster to challenge a friend."
+      },
+      "ai_disabled": {
+        "title": "Challenge Not Available",
+        "description": "Challenges are currently only available for classic mode, not AI-generated games."
       },
       "close_button": "Close"
     },
@@ -1272,4 +1279,3 @@
     }
   ]
 }
-

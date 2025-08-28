@@ -4,7 +4,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, RotateCw, BarChart2, Share2, ClipboardCheck } from 'lucide-react';
+import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/types';
 import {
@@ -40,6 +40,8 @@ interface SummaryScreenProps {
   powerupsUsed: number;
   wonChallenge: boolean;
   isChallenge: boolean;
+  scoreToBeat?: number;
+  challenger?: string;
 }
 
 export function SummaryScreen({ 
@@ -55,6 +57,8 @@ export function SummaryScreen({
   powerupsUsed,
   wonChallenge,
   isChallenge,
+  scoreToBeat,
+  challenger,
 }: SummaryScreenProps) {
     const { t } = useI18n();
     const { toast } = useToast();
@@ -98,8 +102,12 @@ export function SummaryScreen({
 
         const challengerName = user?.displayName || 'A friend';
 
-        // AI Game challenges are disabled for now
+        // AI Game challenges are disabled
         if (isAiGame) {
+           toast({
+              title: t('summary.challenge.ai_disabled.title'),
+              description: t('summary.challenge.ai_disabled.description'),
+           });
            return;
         } 
         
@@ -141,9 +149,18 @@ export function SummaryScreen({
         });
     }
 
+    const getSummaryTitle = () => {
+      if (isChallenge) {
+        if (wonChallenge) return t('summary.challenge_win_title');
+        if (score === scoreToBeat) return t('summary.challenge_tie_title');
+        return t('summary.challenge_loss_title');
+      }
+      return t('summary.title');
+    }
+
     const getSummaryDescription = () => {
-        if(isChallenge && score > 0) {
-            return wonChallenge ? t('summary.challenge_win_description') : t('summary.challenge_loss_description');
+        if (isChallenge) {
+          return t('summary.challenge_description');
         }
         return isAiGame 
             ? t('summary.ai_description', { topic: aiGameTopic })
@@ -169,16 +186,35 @@ export function SummaryScreen({
           >
              <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
           </motion.div>
-          <CardTitle className="font-headline text-4xl">{t('summary.title')}</CardTitle>
+          <CardTitle className="font-headline text-4xl">{getSummaryTitle()}</CardTitle>
           <CardDescription>{getSummaryDescription()}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="text-6xl font-bold text-primary">
-                <AnimatedScore score={score} />
-            </div>
-            <p className="text-muted-foreground">{t('summary.final_score')}</p>
-            <p className="text-lg">
-                {t('summary.questions_answered', { count: questionsAnswered })}
+            {isChallenge && scoreToBeat !== undefined ? (
+              <div className="grid grid-cols-2 gap-4 items-center bg-secondary p-4 rounded-lg">
+                <div className="text-center">
+                  <Label>{user?.displayName || t('summary.your_score')}</Label>
+                  <div className="text-4xl font-bold text-primary">
+                    <AnimatedScore score={score} />
+                  </div>
+                </div>
+                 <div className="text-center">
+                  <Label>{challenger}</Label>
+                  <div className="text-4xl font-bold text-muted-foreground">
+                    <AnimatedScore score={scoreToBeat} />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="text-6xl font-bold text-primary">
+                    <AnimatedScore score={score} />
+                </div>
+                <p className="text-muted-foreground">{t('summary.final_score')}</p>
+              </>
+            )}
+            <p className="text-lg pt-2">
+                {t('summary.questions_answered', { count: questionsAnswered, total: questions.length })}
             </p>
         </CardContent>
         <CardFooter className="flex-col gap-4">
@@ -274,4 +310,3 @@ export function SummaryScreen({
     </motion.div>
   );
 }
-

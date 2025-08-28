@@ -112,10 +112,13 @@
     "title": "¡Fin del Juego!",
     "description": "Así te fue en la trivia clásica.",
     "ai_description": "Así te fue en la trivia de {topic}.",
-    "challenge_win_description": "¡Ganaste el desafío!",
-    "challenge_loss_description": "Perdiste el desafío. ¡Mejor suerte la próxima vez!",
+    "challenge_description": "¡Los resultados del desafío están aquí!",
+    "challenge_win_title": "¡Ganaste!",
+    "challenge_loss_title": "¡Perdiste!",
+    "challenge_tie_title": "¡Es un Empate!",
+    "your_score": "Tu Puntuación",
     "final_score": "Puntuación Final",
-    "questions_answered": "Respondiste {count} preguntas.",
+    "questions_answered": "Respondiste {count} de {total} preguntas.",
     "play_again_button": "Jugar de Nuevo",
     "leaderboard_button": "Tabla de Clasificación",
     "challenge": {
@@ -136,6 +139,10 @@
       "not_logged_in": {
           "title": "Por favor, inicia sesión",
           "description": "Debes iniciar sesión con Farcaster para desafiar a un amigo."
+      },
+       "ai_disabled": {
+        "title": "Desafío no disponible",
+        "description": "Actualmente, los desafíos solo están disponibles para el modo clásico, no para los juegos generados por IA."
       },
       "close_button": "Cerrar"
     },
@@ -1272,4 +1279,3 @@
     }
   ]
 }
-

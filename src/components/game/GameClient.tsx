@@ -211,6 +211,8 @@ export function GameClient({
       case 'summary':
         return <SummaryScreen 
                   {...gameResult!}
+                  scoreToBeat={scoreToBeat}
+                  challenger={challenger}
                   onRestart={handleRestart} 
                   questions={questions} 
                   isAiGame={isAiGame}
