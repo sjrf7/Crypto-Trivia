@@ -154,8 +154,11 @@
   },
   "achievements": {
     "title": "Achievements",
-    "description": "Here are all the achievements you've unlocked on your journey.",
-    "sign_in_prompt": "Sign in to view and unlock your achievements.",
+    "description": "Here are all the achievements you can unlock on your journey.",
+    "sign_in_prompt": {
+      "title": "Unlock Your Potential!",
+      "description": "Sign in to save your progress and start earning achievements."
+    },
     "items": {
       "first-game": {
         "name": "First Game",
@@ -1149,26 +1152,26 @@
     },
     {
       "question": "What is a 'sidechain'?",
-      "answer": "A separate blockchain that is attached to a parent blockchain",
+      "answer": "Una blockchain separada que está conectada a una blockchain principal",
       "options": [
-        "A copy of the main blockchain",
-        "A temporary fork",
-        "A separate blockchain that is attached to a parent blockchain",
-        "A layer 2 solution"
+        "Una copia de la blockchain principal",
+        "Una bifurcación temporal",
+        "Una blockchain separada que está conectada a una blockchain principal",
+        "Una solución de capa 2"
       ]
     },
     {
-      "question": "What is the purpose of 'wrapped' tokens like wBTC?",
-      "answer": "To represent a cryptocurrency from another blockchain on a different network",
+      "question": "¿Cuál es el propósito de los tokens 'envueltos' como wBTC?",
+      "answer": "Representar una criptomoneda de otra blockchain en una red diferente",
       "options": [
-        "To increase a token's price",
-        "To make a token more secure",
-        "To represent a cryptocurrency from another blockchain on a different network",
-        "To reduce transaction fees"
+        "Aumentar el precio de un token",
+        "Hacer que un token sea más seguro",
+        "Representar una criptomoneda de otra blockchain en una red diferente",
+        "Reducir las tarifas de transacción"
       ]
     },
     {
-      "question": "Which of these is a popular wallet for the Solana blockchain?",
+      "question": "¿Cuál de estos es un monedero popular para la blockchain de Solana?",
       "answer": "Phantom",
       "options": [
         "MetaMask",
@@ -1178,37 +1181,37 @@
       ]
     },
     {
-      "question": "What does 'FUD' stand for in the crypto community?",
-      "answer": "Fear, Uncertainty, and Doubt",
+      "question": "¿Qué significa 'FUD' en la comunidad cripto?",
+      "answer": "Miedo, Incertidumbre y Duda",
       "options": [
-        "For Universal Distribution",
-        "Futures Under Development",
-        "Fear, Uncertainty, and Doubt",
-        "Fast Unilateral Decision"
+        "Para Distribución Universal",
+        "Futuros en Desarrollo",
+        "Miedo, Incertidumbre y Duda",
+        "Decisión Rápida Unilateral"
       ]
     },
     {
-      "question": "Which country has the highest volume of cryptocurrency trading?",
-      "answer": "United States",
+      "question": "¿Qué país tiene el mayor volumen de comercio de criptomonedas?",
+      "answer": "Estados Unidos",
       "options": [
         "China",
-        "Russia",
+        "Rusia",
         "Nigeria",
-        "United States"
+        "Estados Unidos"
       ]
     },
     {
-      "question": "What is the maximum number of transactions per second (TPS) that Bitcoin can handle?",
-      "answer": "Around 7",
+      "question": "¿Cuál es el número máximo de transacciones por segundo (TPS) que Bitcoin puede manejar?",
+      "answer": "Alrededor de 7",
       "options": [
-        "Around 7",
-        "Around 30",
-        "Around 1,000",
-        "Around 65,000"
+        "Alrededor de 7",
+        "Alrededor de 30",
+        "Alrededor de 1,000",
+        "Alrededor de 65,000"
       ]
     },
     {
-      "question": "What is the name of the stablecoin created by MakerDAO?",
+      "question": "¿Cuál es el nombre de la stablecoin creada por MakerDAO?",
       "answer": "DAI",
       "options": [
         "MKR",
@@ -1218,17 +1221,17 @@
       ]
     },
     {
-      "question": "Which of these is a type of consensus mechanism that relies on a node's reputation?",
-      "answer": "Proof of Authority (PoA)",
+      "question": "¿Cuál de estos es un tipo de mecanismo de consenso que se basa en la reputación de un nodo?",
+      "answer": "Prueba de Autoridad (PoA)",
       "options": [
-        "Proof of Work (PoW)",
-        "Proof of Stake (PoS)",
-        "Proof of Authority (PoA)",
-        "Proof of Burn (PoB)"
+        "Prueba de Trabajo (PoW)",
+        "Prueba de Participación (PoS)",
+        "Prueba de Autoridad (PoA)",
+        "Prueba de Quema (PoB)"
       ]
     },
     {
-      "question": "What year was the Bitcoin whitepaper published?",
+      "question": "¿En qué año se publicó el whitepaper de Bitcoin?",
       "answer": "2008",
       "options": [
         "2008",
@@ -1238,17 +1241,17 @@
       ]
     },
     {
-      "question": "What is the main advantage of using a hardware wallet?",
-      "answer": "It keeps your private keys offline and secure",
+      "question": "¿Cuál es la principal ventaja de usar un monedero de hardware?",
+      "answer": "Mantiene tus claves privadas offline y seguras",
       "options": [
-        "It has a user-friendly interface",
-        "It supports all cryptocurrencies",
-        "It offers high staking rewards",
-        "It keeps your private keys offline and secure"
+        "Tiene una interfaz fácil de usar",
+        "Admite todas las criptomonedas",
+        "Ofrece altas recompensas de staking",
+        "Mantiene tus claves privadas offline y seguras"
       ]
     },
     {
-      "question": "Which exchange was famously hacked in 2016, leading to a hard fork of Ethereum?",
+      "question": "¿Qué exchange fue famosamente hackeado en 2016, lo que llevó a una bifurcación dura de Ethereum?",
       "answer": "The DAO",
       "options": [
         "Mt. Gox",

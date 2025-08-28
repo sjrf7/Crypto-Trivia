@@ -154,8 +154,11 @@
   },
   "achievements": {
     "title": "Logros",
-    "description": "Estos son todos los logros que has desbloqueado en tu viaje.",
-    "sign_in_prompt": "Inicia sesión para ver y desbloquear tus logros.",
+    "description": "Estos son todos los logros que puedes desbloquear en tu viaje.",
+    "sign_in_prompt": {
+      "title": "¡Desbloquea tu Potencial!",
+      "description": "Inicia sesión para guardar tu progreso y empezar a ganar logros."
+    },
     "items": {
       "first-game": {
         "name": "Primer Juego",
