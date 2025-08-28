@@ -190,6 +190,10 @@
         "name": "Pionero de IA",
         "description": "Generaste tu primera partida de trivia con IA."
       },
+      "power-up-user": {
+        "name": "¡Con Potencia!",
+        "description": "Usaste un potenciador por primera vez."
+      },
       "near-perfect": {
         "name": "Casi Perfecto",
         "description": "Alcanzaste un 95% de precisión en una partida."

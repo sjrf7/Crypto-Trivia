@@ -1,6 +1,6 @@
 
 import type { Player, LeaderboardEntry, TriviaQuestion, Achievement } from './types';
-import { Award, BookOpen, BrainCircuit, Bot, Medal, Rocket, Sparkles, Star, TrendingUp, Trophy, Dumbbell } from 'lucide-react';
+import { Award, BookOpen, BrainCircuit, Bot, Medal, Rocket, Sparkles, Star, TrendingUp, Trophy, Dumbbell, Zap } from 'lucide-react';
 
 export const ACHIEVEMENTS: Achievement[] = [
   {
@@ -56,6 +56,12 @@ export const ACHIEVEMENTS: Achievement[] = [
     name: 'AI Pioneer',
     description: 'Generated your first AI trivia game.',
     icon: Bot,
+  },
+    {
+    id: 'power-up-user',
+    name: 'Power Up!',
+    description: 'Used a power-up for the first time.',
+    icon: Zap,
   },
   {
     id: 'near-perfect',

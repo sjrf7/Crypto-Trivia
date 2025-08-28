@@ -190,6 +190,10 @@
         "name": "AI Pioneer",
         "description": "Generated your first AI trivia game."
       },
+      "power-up-user": {
+        "name": "Power Up!",
+        "description": "Used a power-up for the first time."
+      },
       "near-perfect": {
         "name": "Near Perfect",
         "description": "Achieved 95% accuracy in a game."
