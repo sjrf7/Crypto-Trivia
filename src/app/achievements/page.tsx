@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ACHIEVEMENTS } from '@/lib/mock-data';
 import { Award, CheckCircle } from 'lucide-react';
