@@ -17,8 +17,8 @@
       "description": "Compite por el primer puesto y mira cómo te posicionas frente a los mejores."
     },
     "feature4": {
-      "title": "Logros y Recompensas",
-      "description": "Desbloquea logros por tus hitos y muéstralos en tu perfil."
+      "title": "Logros y Niveles",
+      "description": "Desbloquea logros y sube de nivel tu perfil mientras juegas."
     },
     "feature5": {
       "title": "Perfil de Farcaster",
@@ -152,10 +152,7 @@
   },
   "achievements": {
     "title": "Logros",
-    "description": "Acuña tus logros desbloqueados como Tokens Soul-Bound (SBTs) on-chain en Base.",
-    "view_on_basescan": "Ver en BaseScan",
-    "minting": "Acuñando...",
-    "mint_nft": "Acuñar NFT",
+    "description": "Estos son todos los logros que has desbloqueado en tu viaje.",
     "items": {
       "first-game": {
         "name": "Primer Juego",
@@ -192,7 +189,8 @@
       "total_score": "Puntuación Total",
       "games_played": "Partidas Jugadas",
       "questions_answered": "Preguntas Respondidas",
-      "accuracy": "Precisión"
+      "accuracy": "Precisión",
+      "level": "Nivel {level}"
     },
     "achievements_title": "Logros",
     "sign_in": {

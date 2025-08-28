@@ -17,8 +17,8 @@
       "description": "Compete for the top spot and see how you stack up against the best."
     },
     "feature4": {
-      "title": "Achievements & Rewards",
-      "description": "Unlock achievements for your milestones and show them off on your profile."
+      "title": "Achievements & Levels",
+      "description": "Unlock achievements and level up your profile as you play."
     },
     "feature5": {
       "title": "Farcaster Profile",
@@ -152,10 +152,7 @@
   },
   "achievements": {
     "title": "Achievements",
-    "description": "Mint your unlocked achievements as onchain Soul-Bound Tokens (SBTs) on Base.",
-    "view_on_basescan": "View on BaseScan",
-    "minting": "Minting...",
-    "mint_nft": "Mint NFT",
+    "description": "Here are all the achievements you've unlocked on your journey.",
     "items": {
       "first-game": {
         "name": "First Game",
@@ -192,7 +189,8 @@
       "total_score": "Total Score",
       "games_played": "Games Played",
       "questions_answered": "Questions Answered",
-      "accuracy": "Accuracy"
+      "accuracy": "Accuracy",
+      "level": "Level {level}"
     },
     "achievements_title": "Achievements",
     "sign_in": {

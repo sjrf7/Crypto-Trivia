@@ -4,6 +4,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { PlayerStats } from '@/lib/types';
 
+const XP_PER_LEVEL = 1000;
+
 const getInitialStats = (): PlayerStats => ({
   totalScore: 0,
   gamesPlayed: 0,
@@ -11,6 +13,8 @@ const getInitialStats = (): PlayerStats => ({
   correctAnswers: 0,
   accuracy: '0%',
   topRank: null,
+  level: 1,
+  xp: 0,
 });
 
 export function useUserStats(fid: string | undefined) {
@@ -29,7 +33,7 @@ export function useUserStats(fid: string | undefined) {
         const parsedStats = JSON.parse(item);
         // Basic validation to prevent corrupted data
         if (typeof parsedStats.totalScore === 'number') {
-           setStats(parsedStats);
+           setStats({ ...getInitialStats(), ...parsedStats });
         } else {
            setStats(getInitialStats());
         }
@@ -58,6 +62,14 @@ export function useUserStats(fid: string | undefined) {
         ? ((newCorrectAnswers / newQuestionsAnswered) * 100).toFixed(2) + '%'
         : '0%';
 
+      // XP and Level Calculation
+      let newXp = prevStats.xp + gameResult.score;
+      let newLevel = prevStats.level;
+      while (newXp >= XP_PER_LEVEL) {
+        newXp -= XP_PER_LEVEL;
+        newLevel += 1;
+      }
+
       const newStats: PlayerStats = {
         ...prevStats,
         gamesPlayed: newGamesPlayed,
@@ -65,6 +77,8 @@ export function useUserStats(fid: string | undefined) {
         questionsAnswered: newQuestionsAnswered,
         correctAnswers: newCorrectAnswers,
         accuracy: newAccuracy,
+        level: newLevel,
+        xp: newXp,
       };
 
       try {

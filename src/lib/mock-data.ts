@@ -54,6 +54,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 138,
       accuracy: '92.00%',
       topRank: 1,
+      level: 12,
+      xp: 450,
     },
     achievements: ['first-game', 'novice-quizzer', 'crypto-enthusiast', 'brainiac', 'top-player']
   },
@@ -68,6 +70,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 114,
       accuracy: '95.00%',
       topRank: 2,
+      level: 11,
+      xp: 800,
     },
     achievements: ['first-game', 'novice-quizzer', 'crypto-enthusiast', 'brainiac']
   },
@@ -82,6 +86,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 174,
       accuracy: '87.00%',
       topRank: 3,
+      level: 10,
+      xp: 200,
     },
     achievements: ['first-game', 'novice-quizzer', 'crypto-enthusiast']
   },
@@ -96,6 +102,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 160,
       accuracy: '88.89%',
       topRank: 4,
+      level: 9,
+      xp: 950,
     },
     achievements: ['first-game', 'novice-quizzer']
   },
@@ -110,6 +118,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 195,
       accuracy: '78.00%',
       topRank: 5,
+      level: 9,
+      xp: 100,
     },
     achievements: ['first-game']
   },
@@ -124,6 +134,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 165,
       accuracy: '86.84%',
       topRank: 6,
+      level: 8,
+      xp: 750,
     },
     achievements: ['first-game', 'novice-quizzer']
   },
@@ -138,6 +150,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 140,
       accuracy: '87.50%',
       topRank: 7,
+      level: 8,
+      xp: 200,
     },
     achievements: ['first-game', 'novice-quizzer']
   },
@@ -152,6 +166,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 180,
       accuracy: '81.82%',
       topRank: 8,
+      level: 7,
+      xp: 900,
     },
     achievements: ['first-game', 'novice-quizzer']
   },
@@ -166,6 +182,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 225,
       accuracy: '75.00%',
       topRank: 9,
+      level: 7,
+      xp: 150,
     },
     achievements: ['first-game']
   },
@@ -180,6 +198,8 @@ export const PLAYERS: Player[] = [
       correctAnswers: 85,
       accuracy: '85.00%',
       topRank: 10,
+      level: 5,
+      xp: 500,
     },
     achievements: ['first-game']
   },

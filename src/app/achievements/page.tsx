@@ -4,11 +4,10 @@
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ACHIEVEMENTS } from '@/lib/mock-data';
-import { Award, CheckCircle, Loader, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Award, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
+import { cn } from '@/lib/utils';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,22 +25,11 @@ const itemVariants = {
 };
 
 export default function AchievementsPage() {
-  const [minting, setMinting] = useState<string | null>(null);
-  const [minted, setMinted] = useState<string[]>([]);
   const { t } = useI18n();
 
   // This is a placeholder for actual user data.
-  // In a real app, you would fetch this from a user profile or onchain data.
+  // In a real app, you would fetch this from a user profile.
   const unlockedAchievementIds = ['first-game', 'novice-quizzer', 'crypto-enthusiast'];
-
-  const handleMint = (achievementId: string) => {
-    setMinting(achievementId);
-    // Simulate a blockchain transaction
-    setTimeout(() => {
-      setMinting(null);
-      setMinted((prev) => [...prev, achievementId]);
-    }, 2500);
-  };
 
   return (
     <div>
@@ -64,44 +52,35 @@ export default function AchievementsPage() {
           >
             {ACHIEVEMENTS.map((achievement) => {
               const isUnlocked = unlockedAchievementIds.includes(achievement.id);
-              const isMinted = minted.includes(achievement.id);
-              const isMinting = minting === achievement.id;
 
               return (
                 <motion.div key={achievement.id} variants={itemVariants}>
                   <Card 
-                    className={`relative overflow-hidden transition-all duration-300 flex flex-col h-full ${!isUnlocked ? 'opacity-50' : 'border-primary shadow-primary/20 hover:shadow-primary/40 hover:scale-105'}`}
+                    className={cn(
+                      'relative overflow-hidden transition-all duration-300 flex flex-col h-full items-center text-center p-6',
+                      isUnlocked 
+                        ? 'border-primary shadow-primary/20 hover:shadow-primary/40' 
+                        : 'opacity-50 bg-secondary'
+                    )}
                   >
                     {isUnlocked && (
-                      <div className={`absolute top-2 right-2 rounded-full p-1 ${isMinted ? 'bg-blue-500' : 'bg-green-500'} text-white`}>
-                        {isMinted ? <ShieldCheck className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                      <div className="absolute top-2 right-2 rounded-full p-1 bg-green-500 text-white">
+                        <CheckCircle className="h-4 w-4" />
                       </div>
                     )}
-                    <CardHeader className="items-center text-center">
-                      <div className={`p-4 rounded-full mb-2 ${isUnlocked ? 'bg-primary/10' : 'bg-secondary'}`}>
-                        <achievement.icon className={`h-12 w-12 ${isUnlocked ? 'text-primary' : 'text-muted-foreground'}`} />
-                      </div>
-                      <CardTitle className="text-xl font-headline">{t(`achievements.items.${achievement.id}.name`)}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-center text-sm text-muted-foreground flex-grow">
+                    <div className={cn(
+                      'p-4 rounded-full mb-4', 
+                      isUnlocked ? 'bg-primary/10' : 'bg-muted'
+                    )}>
+                      <achievement.icon className={cn(
+                        'h-12 w-12', 
+                        isUnlocked ? 'text-primary' : 'text-muted-foreground'
+                      )} />
+                    </div>
+                    <CardTitle className="text-xl font-headline">{t(`achievements.items.${achievement.id}.name`)}</CardTitle>
+                    <p className="text-sm text-muted-foreground flex-grow mt-2">
                       {t(`achievements.items.${achievement.id}.description`)}
-                    </CardContent>
-                    <CardContent className="mt-auto">
-                      {isUnlocked && (
-                        isMinted ? (
-                          <Button variant="outline" className="w-full" asChild>
-                            <Link href="https://sepolia.basescan.org/" target="_blank">
-                              {t('achievements.view_on_basescan')}
-                            </Link>
-                          </Button>
-                        ) : (
-                          <Button className="w-full" onClick={() => handleMint(achievement.id)} disabled={isMinting}>
-                            {isMinting ? <Loader className="animate-spin mr-2" /> : null}
-                            {isMinting ? t('achievements.minting') : t('achievements.mint_nft')}
-                          </Button>
-                        )
-                      )}
-                    </CardContent>
+                    </p>
                   </Card>
                 </motion.div>
               );

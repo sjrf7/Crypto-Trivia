@@ -23,10 +23,12 @@ export interface PlayerStats {
   correctAnswers: number;
   accuracy: string;
   topRank: number | null;
+  level: number;
+  xp: number;
 }
 
 export interface Player {
-  id: string;
+  id:string;
   name: string;
   avatar: string;
   stats: PlayerStats;
