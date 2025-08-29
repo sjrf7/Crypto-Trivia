@@ -17,7 +17,7 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
   // Set the volume as soon as the component mounts.
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.2;
+      audioRef.current.volume = 0.1;
     }
   }, []);
 
@@ -26,7 +26,7 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
     if (!audio) return;
 
     // Ensure volume is set correctly before playing.
-    audio.volume = 0.2;
+    audio.volume = 0.1;
 
     if (audio.paused) {
       audio.play().then(() => {
