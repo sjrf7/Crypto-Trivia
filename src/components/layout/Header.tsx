@@ -14,6 +14,7 @@ import { usePathname } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useMusic } from './BackgroundMusic';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { SignInButton } from '../profile/SignInButton';
 
 
 function Notifications() {
@@ -130,6 +131,7 @@ export function Header() {
                     <MusicToggle />
                     <LanguageSwitcher />
                     <Notifications />
+                    <SignInButton />
                 </div>
             </div>
         </header>

@@ -11,7 +11,6 @@ const navLinks = [
   { href: '/play', label: 'Play', icon: 'gamepad' },
   { href: '/leaderboard', label: 'Leaderboard', icon: 'trophy' },
   { href: '/achievements', label: 'Achievements', icon: 'award' },
-  { href: '/profile/me', label: 'Profile', icon: 'user' },
 ];
 
 const iconVariants = {
@@ -52,12 +51,6 @@ const icons: { [key: string]: React.ReactNode } = {
             <motion.path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" variants={iconVariants} />
         </svg>
     ),
-    user: (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <motion.path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" variants={iconVariants} />
-            <motion.circle cx="12" cy="7" r="4" variants={iconVariants} />
-        </svg>
-    ),
 };
 
 export function Dock() {
@@ -70,7 +63,7 @@ export function Dock() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-20 border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
-      <nav className="container grid grid-cols-4 items-center justify-items-center h-full text-center">
+      <nav className="container grid grid-cols-3 items-center justify-items-center h-full text-center">
           {navLinks.map((link) => (
              <Link
                 key={link.href}
