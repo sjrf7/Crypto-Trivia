@@ -73,7 +73,6 @@ export function SummaryScreen({
     const [isGenerating, setIsGenerating] = useState(false);
     const { addNotification } = useNotifications();
     const summarySoundRef = useRef<HTMLAudioElement>(null);
-    const [hasUrlChanged, setHasUrlChanged] = useState(false);
 
 
     useEffect(() => {
@@ -151,7 +150,6 @@ export function SummaryScreen({
         }
         
         setChallengeUrl(url);
-        setHasUrlChanged(false);
 
       } catch (error) {
           console.error("Error creating challenge:", error);
@@ -281,7 +279,6 @@ export function SummaryScreen({
                         generateChallenge();
                     } else if (!open) {
                         setChallengeUrl('');
-                        setHasUrlChanged(false);
                     }
                 }}>
                     <AlertDialogTrigger asChild>
@@ -298,20 +295,19 @@ export function SummaryScreen({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="challenge-message">{t('summary.challenge.message.label')}</Label>
-                          <Textarea
-                            id="challenge-message"
-                            placeholder={t('summary.challenge.message.placeholder')}
-                            value={challengeMessage}
-                            onChange={(e) => {
-                                setChallengeMessage(e.target.value);
-                                setHasUrlChanged(true);
-                            }}
-                            disabled={isGenerating}
-                            maxLength={100}
-                          />
-                        </div>
+                        {!isAiGame && (
+                            <div className="space-y-2">
+                                <Label htmlFor="challenge-message">{t('summary.challenge.message.label')}</Label>
+                                <Textarea
+                                    id="challenge-message"
+                                    placeholder={t('summary.challenge.message.placeholder')}
+                                    value={challengeMessage}
+                                    onChange={(e) => setChallengeMessage(e.target.value)}
+                                    disabled={isGenerating}
+                                    maxLength={100}
+                                />
+                            </div>
+                        )}
                         <div className="space-y-2">
                             <Label htmlFor="wager">{t('summary.challenge.wager.label')}</Label>
                             <Input 
@@ -319,25 +315,20 @@ export function SummaryScreen({
                                 type="number"
                                 placeholder={t('summary.challenge.wager.placeholder')}
                                 value={wager}
-                                onChange={(e) => {
-                                    setWager(e.target.value)
-                                    setHasUrlChanged(true);
-                                }}
+                                onChange={(e) => setWager(e.target.value)}
                                 disabled={isGenerating}
                             />
                         </div>
 
-                         {hasUrlChanged && (
-                            <Button onClick={generateChallenge} disabled={isGenerating} className="w-full">
-                                {isGenerating ? <Loader className="animate-spin" /> : <><RefreshCw className="mr-2 h-4 w-4" /> {t('summary.challenge.update_button')}</>}
-                            </Button>
-                        )}
+                         <Button onClick={generateChallenge} disabled={isGenerating} className="w-full">
+                            {isGenerating ? <Loader className="animate-spin" /> : <><RefreshCw className="mr-2 h-4 w-4" /> {t('summary.challenge.update_button')}</>}
+                        </Button>
                         
                         <div className="space-y-2">
                             <Label>{t('summary.challenge.link.label')}</Label>
                             <div className="flex items-center space-x-2">
                                 <Input value={challengeUrl || (isGenerating ? t('summary.challenge.link.generating') : '')} readOnly />
-                                <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating || hasUrlChanged}>
+                                <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
                                     <ClipboardCheck className="h-4 w-4" />
                                 </Button>
                             </div>
