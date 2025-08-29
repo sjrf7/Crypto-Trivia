@@ -7,11 +7,12 @@ import { AuthKitProvider } from '@farcaster/auth-kit';
 import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
 
 const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.base.org';
+const appDomain = process.env.NEXT_PUBLIC_APP_URL?.replace(/https?:\/\//, '') || 'crypto-trivia.vercel.app';
 
 const authKitConfig = {
   rpcUrl,
   siweEnabled: true,
-  domain: process.env.NEXT_PUBLIC_APP_URL?.replace(/https?:\/\//, '') || 'crypto-trivia.vercel.app',
+  domain: appDomain,
 };
 
 export function Providers({ children }: { children: ReactNode }) {
