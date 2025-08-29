@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -6,6 +7,7 @@ import { Providers } from './providers';
 import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
+import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 
 export const metadata: Metadata = {
   title: 'Crypto Trivia Showdown',
@@ -39,12 +41,14 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <Header />
-          <main className="flex-grow container mx-auto px-4 py-8 pb-24 relative">
-            {children}
-          </main>
-          <Dock />
-          <Toaster />
+         <BackgroundMusicProvider>
+            <Header />
+            <main className="flex-grow container mx-auto px-4 py-8 pb-24 relative">
+              {children}
+            </main>
+            <Dock />
+            <Toaster />
+          </BackgroundMusicProvider>
         </Providers>
       </body>
     </html>

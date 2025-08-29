@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Button } from '../ui/button';
-import { Bell, CheckCheck, Swords, Trophy } from 'lucide-react';
+import { Bell, CheckCheck, Swords, Trophy, Music, Music2 } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { useI18n } from '@/hooks/use-i18n';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { useMusic } from './BackgroundMusic';
 
 
 function Notifications() {
@@ -82,6 +83,21 @@ function Notifications() {
     )
 }
 
+function MusicToggle() {
+    const { isPlaying, toggleMusic } = useMusic();
+
+    return (
+        <Button variant="ghost" size="icon" onClick={toggleMusic}>
+            {isPlaying ? (
+                <Music className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />
+            ) : (
+                <Music2 className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />
+            )}
+            <span className="sr-only">Toggle Music</span>
+        </Button>
+    )
+}
+
 export function Header() {
     const pathname = usePathname();
 
@@ -99,6 +115,7 @@ export function Header() {
                     </Link>
                 </div>
                 <div className="flex flex-1 items-center justify-end gap-2">
+                    <MusicToggle />
                     <LanguageSwitcher />
                     <Notifications />
                 </div>
