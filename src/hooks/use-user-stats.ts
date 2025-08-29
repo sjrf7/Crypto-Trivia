@@ -94,10 +94,12 @@ export function useUserStats(fid: string | undefined) {
         leveledUp = true;
       }
       if(leveledUp) {
-        const title = t('notifications.level_up.title');
-        const description = t('notifications.level_up.description', { level: newLevel });
-         toast({ title, description });
-         addNotification({ type: 'achievement', title, description });
+         setTimeout(() => {
+            const title = t('notifications.level_up.title');
+            const description = t('notifications.level_up.description', { level: newLevel });
+            toast({ title, description });
+            addNotification({ type: 'achievement', title, description });
+        }, 500); // Delay to allow summary screen to render first
       }
 
 
