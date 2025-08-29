@@ -9,6 +9,7 @@ import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
 const authKitConfig = {
   api: '/api/auth',
   rpcUrl: 'https://mainnet.optimism.io',
+  siweEnabled: true,
 };
 
 export function Providers({ children }: { children: ReactNode }) {
