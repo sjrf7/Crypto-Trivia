@@ -14,15 +14,19 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // Set the volume as soon as the component mounts.
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.2; // Set volume to 20%
+      audioRef.current.volume = 0.2;
     }
   }, []);
 
   const toggleMusic = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    // Ensure volume is set correctly before playing.
+    audio.volume = 0.2;
 
     if (audio.paused) {
       audio.play().then(() => {
