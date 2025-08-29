@@ -9,10 +9,26 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://crypto-trivia.vercel.app';
+
 export const metadata: Metadata = {
   title: 'Crypto Trivia Showdown',
-  description: 'AI-Powered Crypto Trivia Game for Farcaster',
+  description: 'An AI-Powered Crypto Trivia Game for Farcaster.',
+  metadataBase: new URL(APP_URL),
+  openGraph: {
+    title: 'Crypto Trivia Showdown',
+    description: 'An AI-Powered Crypto Trivia Game for Farcaster.',
+    images: [`/splash.png`],
+  },
+  other: {
+    'fc:frame': 'vNext',
+    'fc:frame:image': `${APP_URL}/splash.png`,
+    'fc:frame:button:1': 'Start Game',
+    'fc:frame:button:1:action': 'post_redirect',
+    'fc:frame:post_url': `${APP_URL}/api/frame`,
+  },
 };
+
 
 const inter = Inter({
   subsets: ['latin'],
