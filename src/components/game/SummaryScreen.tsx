@@ -4,7 +4,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy, Swords, Loader } from 'lucide-react';
+import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy, Swords, Loader, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/types';
 import {
@@ -72,6 +72,8 @@ export function SummaryScreen({
     const [isGenerating, setIsGenerating] = useState(false);
     const { addNotification } = useNotifications();
     const summarySoundRef = useRef<HTMLAudioElement>(null);
+    const [hasUrlChanged, setHasUrlChanged] = useState(false);
+
 
     useEffect(() => {
       summarySoundRef.current?.play().catch(console.error);
@@ -149,6 +151,7 @@ export function SummaryScreen({
         }
         
         setChallengeUrl(url);
+        setHasUrlChanged(false);
 
       } catch (error) {
           console.error("Error creating challenge:", error);
@@ -161,15 +164,6 @@ export function SummaryScreen({
         setIsGenerating(false);
       }
     }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, aiGameTopic, toast, isGenerating, t]);
-
-
-    // Effect to regenerate the link when the wager or message changes
-    useEffect(() => {
-        // Only regenerate if the dialog is open and a URL was already created.
-        if (challengeUrl) {
-            generateChallenge();
-        }
-    }, [wager, challengeMessage, challengeUrl, generateChallenge]);
 
     const copyToClipboard = () => {
         if (!challengeUrl) return;
@@ -283,12 +277,11 @@ export function SummaryScreen({
                     transition={{ delay: 0.4 }}
                 >
                 <AlertDialog onOpenChange={(open) => {
-                    // When opening the dialog, generate the initial link
                     if (open) {
                         generateChallenge();
                     } else {
-                        // When closing, clear the url
                         setChallengeUrl('');
+                        setHasUrlChanged(false);
                     }
                 }}>
                     <AlertDialogTrigger asChild>
@@ -311,7 +304,10 @@ export function SummaryScreen({
                             id="challenge-message"
                             placeholder={t('summary.challenge.message.placeholder')}
                             value={challengeMessage}
-                            onChange={(e) => setChallengeMessage(e.target.value)}
+                            onChange={(e) => {
+                                setChallengeMessage(e.target.value);
+                                setHasUrlChanged(true);
+                            }}
                             disabled={isGenerating}
                             maxLength={100}
                           />
@@ -323,16 +319,26 @@ export function SummaryScreen({
                                 type="number"
                                 placeholder={t('summary.challenge.wager.placeholder')}
                                 value={wager}
-                                onChange={(e) => setWager(e.target.value)}
+                                onChange={(e) => {
+                                    setWager(e.target.value)
+                                    setHasUrlChanged(true);
+                                }}
                                 disabled={isGenerating}
                             />
                         </div>
+
+                         {hasUrlChanged && (
+                            <Button onClick={generateChallenge} disabled={isGenerating} className="w-full">
+                                {isGenerating ? <Loader className="animate-spin" /> : <><RefreshCw className="mr-2 h-4 w-4" /> {t('summary.challenge.update_button')}</>}
+                            </Button>
+                        )}
+                        
                         <div className="space-y-2">
                             <Label>{t('summary.challenge.link.label')}</Label>
                             <div className="flex items-center space-x-2">
                                 <Input value={challengeUrl || (isGenerating ? t('summary.challenge.link.generating') : '')} readOnly />
                                 <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
-                                    {isGenerating ? <Loader className="animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
+                                    <ClipboardCheck className="h-4 w-4" />
                                 </Button>
                             </div>
                         </div>

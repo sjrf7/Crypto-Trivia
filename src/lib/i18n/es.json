@@ -123,6 +123,7 @@
     "leaderboard_button": "Tabla de Clasificación",
     "challenge": {
       "button": "Desafiar a un Amigo",
+      "update_button": "Actualizar Enlace",
       "title": "Comparte tu Desafío",
       "description": "Envía este enlace a un amigo. ¡Jugarán con las mismas preguntas e intentarán superar tu puntuación! Añade una apuesta opcional para más diversión.",
        "message": {

@@ -123,6 +123,7 @@
     "leaderboard_button": "Leaderboard",
     "challenge": {
       "button": "Challenge a Friend",
+      "update_button": "Update Link",
       "title": "Share Your Challenge",
       "description": "Send this link to a friend. They will play with the same questions and try to beat your score! Add an optional wager for fun.",
       "message": {
