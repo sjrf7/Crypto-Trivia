@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Button } from '../ui/button';
-import { Bell, CheckCheck, Swords, Trophy, Music, Music2 } from 'lucide-react';
+import { Bell, CheckCheck, Swords, Trophy, Music } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { useI18n } from '@/hooks/use-i18n';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -86,12 +86,32 @@ function Notifications() {
 function MusicToggle() {
     const { isPlaying, toggleMusic } = useMusic();
 
+    const MusicOffIcon = () => (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M9 18V5l12-2v13" />
+        <circle cx="6" cy="18" r="3" />
+        <circle cx="18" cy="16" r="3" />
+        <line x1="3" y1="3" x2="21" y2="21" />
+      </svg>
+    );
+
     return (
         <Button variant="ghost" size="icon" onClick={toggleMusic}>
             {isPlaying ? (
                 <Music className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />
             ) : (
-                <Music2 className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />
+                <div className="text-destructive">
+                    <MusicOffIcon />
+                </div>
             )}
             <span className="sr-only">Toggle Music</span>
         </Button>
