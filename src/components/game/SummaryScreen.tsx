@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy, Swords } from 'lucide-react';
@@ -70,8 +70,11 @@ export function SummaryScreen({
     const { addGameResult } = useUserStats(user?.fid?.toString());
     const [isGenerating, setIsGenerating] = useState(false);
     const { addNotification } = useNotifications();
+    const summarySoundRef = useRef<HTMLAudioElement>(null);
 
     useEffect(() => {
+      summarySoundRef.current?.play().catch(console.error);
+
       // Only add game results if the user is authenticated and the hook function is available.
       if (isAuthenticated && addGameResult) {
         addGameResult({
@@ -194,6 +197,7 @@ export function SummaryScreen({
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
+      <audio ref={summarySoundRef} src="/sounds/summary.mp3" preload="auto" />
       <Card className="w-full max-w-md text-center shadow-2xl">
         <CardHeader>
           <motion.div 
