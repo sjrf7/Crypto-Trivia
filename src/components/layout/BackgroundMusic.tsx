@@ -6,22 +6,31 @@ import React, { createContext, useContext, useState, useRef, ReactNode, useCallb
 interface MusicContextType {
   isPlaying: boolean;
   toggleMusic: () => void;
+  volume: number;
+  setVolume: (volume: number) => void;
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) => {
   const [isPlaying, setIsPlaying] = useState(true);
+  const [volume, setVolumeState] = useState(0.1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  const setVolume = useCallback((newVolume: number) => {
+    setVolumeState(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  }, []);
+  
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
-      audio.volume = 0.1;
+      audio.volume = volume;
       if (isPlaying) {
         audio.play().catch(err => {
           console.error("Audio autoplay failed:", err);
-          // If autoplay fails, we set isPlaying to false so the UI is correct.
           setIsPlaying(false);
         });
       }
@@ -42,14 +51,13 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
         window.removeEventListener('click', handleFirstUserInteraction);
         window.removeEventListener('keydown', handleFirstUserInteraction);
     };
-
-  }, [isPlaying]);
+  }, []);
 
   const toggleMusic = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.volume = 0.1;
+    audio.volume = volume;
 
     if (audio.paused) {
       audio.play().then(() => {
@@ -62,10 +70,10 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
       audio.pause();
       setIsPlaying(false);
     }
-  }, []);
+  }, [volume]);
   
   return (
-    <MusicContext.Provider value={{ isPlaying, toggleMusic }}>
+    <MusicContext.Provider value={{ isPlaying, toggleMusic, volume, setVolume }}>
       <audio ref={audioRef} src="/sounds/background-music.mp3" loop preload="auto" />
       {children}
     </MusicContext.Provider>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Button } from '../ui/button';
-import { Bell, CheckCheck, Swords, Trophy, Music } from 'lucide-react';
+import { Bell, CheckCheck, Swords, Trophy, Volume1, Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { useI18n } from '@/hooks/use-i18n';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useMusic } from './BackgroundMusic';
+import { Slider } from '../ui/slider';
 
 
 function Notifications() {
@@ -84,37 +85,36 @@ function Notifications() {
 }
 
 function MusicToggle() {
-    const { isPlaying, toggleMusic } = useMusic();
+    const { isPlaying, toggleMusic, volume, setVolume } = useMusic();
 
-    const MusicOffIcon = () => (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M9 18V5l12-2v13" />
-        <circle cx="6" cy="18" r="3" />
-        <circle cx="18" cy="16" r="3" />
-        <line x1="3" y1="3" x2="21" y2="21" />
-      </svg>
-    );
+    const VolumeIcon = () => {
+        if (volume === 0 || !isPlaying) return <VolumeX className="h-5 w-5 text-destructive" />;
+        if (volume < 0.5) return <Volume1 className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />;
+        return <Volume2 className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />;
+    };
 
     return (
-        <Button variant="ghost" size="icon" onClick={toggleMusic}>
-            {isPlaying ? (
-                <Music className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />
-            ) : (
-                <div className="text-destructive">
-                    <MusicOffIcon />
+       <Popover>
+            <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <VolumeIcon />
+                    <span className="sr-only">Toggle Music</span>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56" align="end">
+                <div className="flex items-center gap-4">
+                     <Button onClick={toggleMusic} size="icon" variant="outline">
+                        {isPlaying ? <Pause className="h-4 w-4"/> : <Play className="h-4 w-4"/>}
+                     </Button>
+                    <Slider
+                        value={[volume * 100]}
+                        onValueChange={(value) => setVolume(value[0] / 100)}
+                        max={100}
+                        step={1}
+                    />
                 </div>
-            )}
-            <span className="sr-only">Toggle Music</span>
-        </Button>
+            </PopoverContent>
+        </Popover>
     )
 }
 
