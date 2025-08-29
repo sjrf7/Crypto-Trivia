@@ -62,4 +62,3 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
     </div>
   );
 }
-

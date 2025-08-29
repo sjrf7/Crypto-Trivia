@@ -58,4 +58,3 @@ export default function ClassicChallengePage({ params }: ClassicChallengePagePro
     notFound();
   }
 }
-

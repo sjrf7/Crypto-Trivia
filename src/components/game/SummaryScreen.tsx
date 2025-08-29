@@ -28,6 +28,7 @@ import { useUserStats } from '@/hooks/use-user-stats';
 import { Textarea } from '../ui/textarea';
 import { useNotifications } from '@/hooks/use-notifications';
 import { AITriviaGame } from '@/lib/types/ai';
+import { cn } from '@/lib/utils';
 
 interface SummaryScreenProps {
   score: number;
@@ -336,7 +337,7 @@ export function SummaryScreen({
                             <Label>{t('summary.challenge.link.label')}</Label>
                             <div className="flex items-center space-x-2">
                                 <Input value={challengeUrl || (isGenerating ? t('summary.challenge.link.generating') : '')} readOnly />
-                                <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
+                                <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating || hasUrlChanged}>
                                     <ClipboardCheck className="h-4 w-4" />
                                 </Button>
                             </div>
