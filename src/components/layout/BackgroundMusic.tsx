@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, useRef, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useRef, ReactNode, useCallback, useEffect } from 'react';
 
 interface MusicContextType {
   isPlaying: boolean;
@@ -14,24 +14,41 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const toggleMusic = () => {
+  const toggleMusic = useCallback(() => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        // Use a promise-based play to handle browser autoplay policies
-        audioRef.current.play().catch((error) => {
-            console.error("Audio play was prevented:", error);
-            setIsPlaying(false); // Ensure state is correct if play fails
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch((error) => {
+          console.error("Audio play was prevented:", error);
+          setIsPlaying(false);
         });
       }
-      setIsPlaying(!isPlaying);
     }
-  };
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      const handlePlay = () => setIsPlaying(true);
+      const handlePause = () => setIsPlaying(false);
+
+      audio.addEventListener('play', handlePlay);
+      audio.addEventListener('pause', handlePause);
+
+      return () => {
+        audio.removeEventListener('play', handlePlay);
+        audio.removeEventListener('pause', handlePause);
+      };
+    }
+  }, []);
   
   return (
     <MusicContext.Provider value={{ isPlaying, toggleMusic }}>
-      <audio ref={audioRef} src="/sounds/background-music.mp3" loop />
+      <audio ref={audioRef} src="/sounds/background-music.mp3" loop preload="auto" />
       {children}
     </MusicContext.Provider>
   );
