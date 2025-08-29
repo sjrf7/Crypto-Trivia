@@ -58,6 +58,7 @@ export function GameScreen({
   const correctSoundRef = useRef<HTMLAudioElement>(null);
   const incorrectSoundRef = useRef<HTMLAudioElement>(null);
   const timerSoundRef = useRef<HTMLAudioElement>(null);
+  const powerupSoundRef = useRef<HTMLAudioElement>(null);
 
   const endGame = useCallback(() => {
     const finalResult: GameResult = {
@@ -175,6 +176,7 @@ export function GameScreen({
   
   const handleUse5050 = () => {
     if (is5050Used) return;
+    powerupSoundRef.current?.play().catch(console.error);
     const currentQuestion = shuffledQuestions[currentQuestionIndex];
     const correctAnswer = currentQuestion.answer;
     const incorrectOptions = currentQuestion.options.filter(opt => opt !== correctAnswer);
@@ -196,6 +198,7 @@ export function GameScreen({
   
   const handleUseTimeBoost = () => {
       if(isTimeBoostUsed) return;
+      powerupSoundRef.current?.play().catch(console.error);
       setTimeLeft(prev => prev + 15);
       setIsTimeBoostUsed(true);
       setPowerupsUsedCount(prev => prev + 1);
@@ -258,6 +261,7 @@ export function GameScreen({
         <audio ref={correctSoundRef} src="/sounds/correct.mp3" preload="auto" />
         <audio ref={incorrectSoundRef} src="/sounds/incorrect.mp3" preload="auto" />
         <audio ref={timerSoundRef} src="/sounds/timer.mp3" preload="auto" />
+        <audio ref={powerupSoundRef} src="/sounds/powerup.mp3" preload="auto" />
 
         <AnimatePresence>
             {headerContent()}
