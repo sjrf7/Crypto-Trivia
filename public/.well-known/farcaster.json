@@ -1,0 +1,24 @@
+{
+  "name": "Crypto Trivia Showdown",
+  "iconUrl": "https://i.imgur.com/mG3uA4R.png",
+  "description": "Test your crypto knowledge with AI-generated quizzes, challenge friends, unlock achievements, and climb the leaderboard. Prove you're a trivia master in the Farcaster ecosystem.",
+  "frames": [
+    {
+      "title": "Crypto Trivia Showdown",
+      "image": "https://i.imgur.com/BmqAZr6.png",
+      "postUrl": "https://crypto-trivia.vercel.app/api/frame",
+      "buttons": [
+        {
+          "label": "Play Now",
+          "action": "post_redirect"
+        }
+      ],
+      "input": {
+        "text": "Enter a topic for AI Trivia..."
+      }
+    }
+  ],
+  "action": {
+    "type": "post"
+  }
+}
