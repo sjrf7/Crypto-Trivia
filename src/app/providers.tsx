@@ -6,10 +6,8 @@ import { I18nProvider } from '@/hooks/use-i18n';
 import { AuthKitProvider } from '@farcaster/auth-kit';
 import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
 
-const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://mainnet.base.org';
-
 const authKitConfig = {
-  rpcUrl,
+  rpcUrl: "https://mainnet.base.org",
   domain: 'crypto-trivia.vercel.app',
 };
 
