@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, useRef, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useRef, ReactNode, useCallback, useEffect } from 'react';
 
 interface MusicContextType {
   isPlaying: boolean;
@@ -11,18 +11,45 @@ interface MusicContextType {
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // The logic is simplified to directly control play/pause and state,
-  // avoiding complex useEffects and event listeners that were causing sync issues.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        // Autoplay started!
+        setIsPlaying(true);
+      }).catch(error => {
+        // Autoplay was prevented.
+        // We'll wait for user interaction.
+        setIsPlaying(false);
+      });
+    }
+
+    const handleFirstInteraction = () => {
+        if (audio.paused) {
+            audio.play().then(() => setIsPlaying(true)).catch(console.error);
+        }
+        window.removeEventListener('click', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+    };
+  }, []);
+
   const toggleMusic = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (audio.paused) {
-      audio.play().catch(e => console.error("Error playing audio:", e));
-      setIsPlaying(true);
+      audio.play().then(() => setIsPlaying(true)).catch(console.error);
     } else {
       audio.pause();
       setIsPlaying(false);
@@ -31,7 +58,6 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
   
   return (
     <MusicContext.Provider value={{ isPlaying, toggleMusic }}>
-      {/* The audio element is preloaded and ready to be played on user interaction. */}
       <audio ref={audioRef} src="/sounds/background-music.mp3" loop preload="auto" />
       {children}
     </MusicContext.Provider>
