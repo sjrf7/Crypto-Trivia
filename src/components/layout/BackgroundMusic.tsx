@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, useRef, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useRef, ReactNode, useCallback, useEffect } from 'react';
 
 interface MusicContextType {
   isPlaying: boolean;
@@ -13,6 +13,12 @@ const MusicContext = createContext<MusicContextType | undefined>(undefined);
 export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.2; // Set volume to 20%
+    }
+  }, []);
 
   const toggleMusic = useCallback(() => {
     const audio = audioRef.current;
