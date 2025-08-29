@@ -17,7 +17,9 @@ export default function ClassicChallengePage({ params }: ClassicChallengePagePro
   const classicQuestions = t('classic_questions', {}, { returnObjects: true }) as TriviaQuestion[];
 
   try {
-    const decodedData = atob(params.data);
+    // URL-safe Base64 decoding
+    const base64 = params.data.replace(/-/g, '+').replace(/_/g, '/');
+    const decodedData = atob(base64);
     const parts = decodedData.split('|');
     const type = parts[0];
 

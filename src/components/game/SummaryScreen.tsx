@@ -145,7 +145,8 @@ export function SummaryScreen({
           if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
           
           const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}|${encodeURIComponent(challengeMessage)}`;
-          const encodedData = btoa(dataSegment); 
+          // URL-safe Base64 encoding
+          const encodedData = btoa(dataSegment).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
           url = `${window.location.origin}/challenge/classic/${encodedData}`;
         }
         
@@ -275,10 +276,12 @@ export function SummaryScreen({
                     transition={{ delay: 0.4 }}
                 >
                 <AlertDialog onOpenChange={(open) => {
-                    if (open && !isGenerating && !challengeUrl) {
-                        generateChallenge();
-                    } else if (!open) {
+                    if (open) {
+                        // Reset state when opening
+                        setIsGenerating(false);
                         setChallengeUrl('');
+                        // Generate link immediately
+                        generateChallenge();
                     }
                 }}>
                     <AlertDialogTrigger asChild>
