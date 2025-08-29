@@ -52,7 +52,7 @@ export default function WelcomePage() {
 
   return (
     <div className="relative">
-       <div className="absolute top-0 right-0 z-10">
+      <div className="absolute top-0 right-0 z-10 p-4">
         <LanguageSwitcher />
       </div>
       <motion.div

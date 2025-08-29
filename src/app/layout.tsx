@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Providers } from './providers';
 import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
+import { Header } from '@/components/layout/Header';
 
 export const metadata: Metadata = {
   title: 'Crypto Trivia Showdown',
@@ -38,6 +39,7 @@ export default function RootLayout({
         )}
       >
         <Providers>
+          <Header />
           <main className="flex-grow container mx-auto px-4 py-8 pb-24 relative">
             {children}
           </main>
