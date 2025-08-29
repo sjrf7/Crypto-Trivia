@@ -134,7 +134,8 @@
         "placeholder": "e.g., 0.01 (Leave blank for no wager)"
       },
       "link": {
-        "label": "Challenge Link"
+        "label": "Challenge Link",
+        "generating": "Generating..."
       },
       "not_logged_in": {
           "title": "Please Sign In",

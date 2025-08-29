@@ -4,7 +4,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy, Swords } from 'lucide-react';
+import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy, Swords, Loader } from 'lucide-react';
 import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/types';
 import {
@@ -27,13 +27,14 @@ import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { Textarea } from '../ui/textarea';
 import { useNotifications } from '@/hooks/use-notifications';
+import { AITriviaGame } from '@/lib/types/ai';
 
 interface SummaryScreenProps {
   score: number;
   questionsAnswered: number;
   correctAnswers: number;
   onRestart: () => void;
-  questions: TriviaQuestion[];
+  questions: TriviaQuestion[] | AITriviaGame['questions'];
   isAiGame?: boolean;
   aiGameTopic?: string;
   challengeId?: string;
@@ -114,23 +115,39 @@ export function SummaryScreen({
             return;
         }
 
-        const challengerName = user?.displayName || 'A friend';
+        const challengerName = user?.displayName || user?.username || 'A friend';
+        let url = '';
 
-        // AI Game challenges are disabled
         if (isAiGame) {
-           toast({
-              title: t('summary.challenge.ai_disabled.title'),
-              description: t('summary.challenge.ai_disabled.description'),
+           const aiGame: AITriviaGame = {
+             topic: aiGameTopic,
+             questions: questions as AITriviaGame['questions'],
+           }
+           const response = await fetch('/api/challenge', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+               game: aiGame,
+               scoreToBeat: score,
+               wager: wager || 0,
+               challenger: challengerName,
+             }),
            });
-           return;
-        } 
+           if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Failed to create AI challenge");
+           }
+           const { challengeId } = await response.json();
+           url = `${window.location.origin}/challenge/ai/${challengeId}`;
+        } else {
+          const questionIndices = (questions as TriviaQuestion[]).map(q => q.originalIndex).filter(i => i !== undefined).join(',');
+          if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
+          
+          const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}|${encodeURIComponent(challengeMessage)}`;
+          const encodedData = btoa(dataSegment); 
+          url = `${window.location.origin}/challenge/classic/${encodedData}`;
+        }
         
-        const questionIndices = questions.map(q => q.originalIndex).filter(i => i !== undefined).join(',');
-        if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
-        
-        const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}|${encodeURIComponent(challengeMessage)}`;
-        const encodedData = btoa(dataSegment); 
-        const url = `${window.location.origin}/challenge/classic/${encodedData}`;
         setChallengeUrl(url);
 
       } catch (error) {
@@ -143,7 +160,7 @@ export function SummaryScreen({
       } finally {
         setIsGenerating(false);
       }
-    }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, toast, isGenerating, t]);
+    }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, aiGameTopic, toast, isGenerating, t]);
 
 
     // Effect to regenerate the link when the wager or message changes
@@ -258,7 +275,7 @@ export function SummaryScreen({
                 </Button>
             </motion.div>
             
-            {!isAiGame && !isChallenge && (
+            {!isChallenge && (
                 <motion.div 
                     className="w-full"
                     initial={{ y: 20, opacity: 0 }}
@@ -313,9 +330,9 @@ export function SummaryScreen({
                         <div className="space-y-2">
                             <Label>{t('summary.challenge.link.label')}</Label>
                             <div className="flex items-center space-x-2">
-                                <Input value={challengeUrl || (isGenerating ? 'Generating...' : '')} readOnly />
+                                <Input value={challengeUrl || (isGenerating ? t('summary.challenge.link.generating') : '')} readOnly />
                                 <Button onClick={copyToClipboard} size="icon" disabled={!challengeUrl || isGenerating}>
-                                    <ClipboardCheck className="h-4 w-4" />
+                                    {isGenerating ? <Loader className="animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
                                 </Button>
                             </div>
                         </div>

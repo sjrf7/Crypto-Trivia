@@ -134,7 +134,8 @@
         "placeholder": "ej., 0.01 (dejar en blanco para no apostar)"
       },
       "link": {
-        "label": "Enlace del Desafío"
+        "label": "Enlace del Desafío",
+        "generating": "Generando..."
       },
       "not_logged_in": {
           "title": "Por favor, inicia sesión",

@@ -13,11 +13,12 @@ import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 import { useProfile } from '@farcaster/auth-kit';
+import { AITriviaGame } from '@/lib/types/ai';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
 interface GameClientProps {
-    challengeQuestions?: TriviaQuestion[];
+    challengeQuestions?: TriviaQuestion[] | AITriviaGame['questions'];
     scoreToBeat?: number;
     wager?: number;
     challenger?: string;
@@ -235,4 +236,3 @@ export function GameClient({
     </Card>
   );
 }
-
