@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     'fc:frame': 'vNext',
     'fc:frame:image': `${APP_URL}/splash.png`,
     'fc:frame:button:1': 'Start Game',
-    'fc:frame:button:1:action': 'post_redirect',
-    'fc:frame:post_url': `${APP_URL}/api/frame`,
+    'fc:frame:button:1:action': 'link',
+    'fc:frame:button:1:target': `${APP_URL}/play`,
   },
 };
 
