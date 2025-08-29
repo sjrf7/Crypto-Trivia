@@ -6,32 +6,21 @@ import React, { createContext, useContext, useState, useRef, ReactNode, useCallb
 interface MusicContextType {
   isPlaying: boolean;
   toggleMusic: () => void;
-  volume: number;
-  setVolume: (volume: number) => void;
 }
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) => {
   const [isPlaying, setIsPlaying] = useState(true);
-  const [volume, setVolumeState] = useState(0.1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const setVolume = useCallback((newVolume: number) => {
-    setVolumeState(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
-  }, []);
-  
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
-      audio.volume = volume;
+      audio.volume = 0.1;
       if (isPlaying) {
         audio.play().catch(err => {
           console.error("Audio autoplay failed:", err);
-          setIsPlaying(false);
         });
       }
     }
@@ -57,23 +46,23 @@ export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) =
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.volume = volume;
+    audio.volume = 0.1;
 
-    if (audio.paused) {
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => {
-        console.error("Failed to play audio:", err);
-        setIsPlaying(false);
-      });
-    } else {
-      audio.pause();
-      setIsPlaying(false);
-    }
-  }, [volume]);
+    setIsPlaying(prev => {
+        if(prev) {
+            audio.pause();
+        } else {
+            audio.play().catch(err => {
+                console.error("Failed to play audio:", err);
+                return false; // Return false to not update state if play fails
+            });
+        }
+        return !prev;
+    });
+  }, []);
   
   return (
-    <MusicContext.Provider value={{ isPlaying, toggleMusic, volume, setVolume }}>
+    <MusicContext.Provider value={{ isPlaying, toggleMusic }}>
       <audio ref={audioRef} src="/sounds/background-music.mp3" loop preload="auto" />
       {children}
     </MusicContext.Provider>

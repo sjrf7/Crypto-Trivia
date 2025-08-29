@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Button } from '../ui/button';
-import { Bell, CheckCheck, Swords, Trophy, Volume1, Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { Bell, CheckCheck, Swords, Trophy, Music } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { useI18n } from '@/hooks/use-i18n';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useMusic } from './BackgroundMusic';
-import { Slider } from '../ui/slider';
 
 
 function Notifications() {
@@ -85,36 +84,20 @@ function Notifications() {
 }
 
 function MusicToggle() {
-    const { isPlaying, toggleMusic, volume, setVolume } = useMusic();
-
-    const VolumeIcon = () => {
-        if (volume === 0 || !isPlaying) return <VolumeX className="h-5 w-5 text-destructive" />;
-        if (volume < 0.5) return <Volume1 className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />;
-        return <Volume2 className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />;
-    };
+    const { isPlaying, toggleMusic } = useMusic();
 
     return (
-       <Popover>
-            <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon">
-                    <VolumeIcon />
-                    <span className="sr-only">Toggle Music</span>
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56" align="end">
-                <div className="flex items-center gap-4">
-                     <Button onClick={toggleMusic} size="icon" variant="outline">
-                        {isPlaying ? <Pause className="h-4 w-4"/> : <Play className="h-4 w-4"/>}
-                     </Button>
-                    <Slider
-                        value={[volume * 100]}
-                        onValueChange={(value) => setVolume(value[0] / 100)}
-                        max={100}
-                        step={1}
-                    />
+        <Button onClick={toggleMusic} variant="ghost" size="icon">
+            {isPlaying ? (
+                <Music className="h-5 w-5 text-foreground/60 hover:text-primary transition-colors" />
+            ) : (
+                <div className="relative">
+                    <Music className="h-5 w-5 text-destructive" />
+                    <div className="absolute top-1/2 left-1/2 h-0.5 w-full -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-destructive" />
                 </div>
-            </PopoverContent>
-        </Popover>
+            )}
+            <span className="sr-only">Toggle Music</span>
+        </Button>
     )
 }
 
