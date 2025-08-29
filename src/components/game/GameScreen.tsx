@@ -120,25 +120,6 @@ export function GameScreen({
   }, [endGame, shuffledQuestions.length]);
 
 
-  const handleNextQuestion = (answered: boolean) => {
-    const questionsAnswered = answered ? currentQuestionIndex + 1 : currentQuestionIndex;
-    const isLastQuestion = currentQuestionIndex >= shuffledQuestions.length - 1;
-
-    if (!isLastQuestion) {
-        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    } else {
-        const finalResult: GameResult = {
-            score,
-            questionsAnswered,
-            correctAnswers,
-            consecutiveCorrect: Math.max(maxConsecutive, consecutiveCorrect),
-            powerupsUsed: powerupsUsedCount,
-            wonChallenge: isChallenge && scoreToBeat !== undefined && score > scoreToBeat
-        };
-        onGameEnd(finalResult);
-    }
-  };
-
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
       const points = 100;
@@ -157,6 +138,7 @@ export function GameScreen({
       const isLastQuestion = currentQuestionIndex >= shuffledQuestions.length - 1;
       const finalScore = score + (isCorrect ? 100 : 0);
       const finalCorrect = correctAnswers + (isCorrect ? 1 : 0);
+      const finalConsecutive = isCorrect ? consecutiveCorrect + 1 : consecutiveCorrect;
 
       if (!isLastQuestion) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -165,7 +147,7 @@ export function GameScreen({
             score: finalScore,
             questionsAnswered: currentQuestionIndex + 1,
             correctAnswers: finalCorrect,
-            consecutiveCorrect: Math.max(maxConsecutive, isCorrect ? consecutiveCorrect + 1 : consecutiveCorrect),
+            consecutiveCorrect: Math.max(maxConsecutive, finalConsecutive),
             powerupsUsed: powerupsUsedCount,
             wonChallenge: isChallenge && scoreToBeat !== undefined && finalScore > scoreToBeat
         };
