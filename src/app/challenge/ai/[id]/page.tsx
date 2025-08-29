@@ -97,6 +97,7 @@ export default function AIChallengePage() {
         challenger={challengeData.challenger}
         isAiGame={true}
         aiGameTopic={challengeData.game.topic}
+        challengeId={id}
     />;
 }
 
