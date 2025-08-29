@@ -34,6 +34,10 @@ export async function POST(req: NextRequest) {
     if (!game || !game.questions || game.questions.length === 0) {
       return NextResponse.json({ error: 'Invalid game data provided.' }, { status: 400 });
     }
+    if (scoreToBeat === undefined || !challenger) {
+      return NextResponse.json({ error: 'Score to beat and challenger name are required.' }, { status: 400 });
+    }
+
 
     // Generate a simple unique ID
     const challengeId = Math.random().toString(36).substring(2, 12);
@@ -41,7 +45,7 @@ export async function POST(req: NextRequest) {
     challengeStore.set(challengeId, { 
         game, 
         scoreToBeat,
-        wager,
+        wager: wager || 0,
         challenger,
         createdAt: Date.now() 
     });

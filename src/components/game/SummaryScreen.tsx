@@ -103,7 +103,6 @@ export function SummaryScreen({
     }, []); // Run only once when the summary screen mounts.
     
     const generateChallenge = useCallback(async () => {
-      if(isGenerating) return;
       setIsGenerating(true);
       setChallengeUrl(''); // Reset previous URL
 
@@ -125,22 +124,22 @@ export function SummaryScreen({
              topic: aiGameTopic,
              questions: questions as AITriviaGame['questions'],
            }
-           const response = await fetch('/api/challenge', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({
-               game: aiGame,
-               scoreToBeat: score,
-               wager: wager || 0,
-               challenger: challengerName,
-             }),
-           });
-           if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || "Failed to create AI challenge");
-           }
-           const { challengeId } = await response.json();
-           url = `${window.location.origin}/challenge/ai/${challengeId}`;
+            const res = await fetch('/api/challenge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    game: aiGame,
+                    scoreToBeat: score,
+                    wager: Number(wager) || 0,
+                    challenger: challengerName
+                })
+            });
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Failed to create challenge link.');
+            }
+            const { challengeId } = await res.json();
+            url = `${window.location.origin}/challenge/ai/${challengeId}`;
         } else {
           const questionIndices = (questions as TriviaQuestion[]).map(q => q.originalIndex).filter(i => i !== undefined).join(',');
           if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
@@ -163,7 +162,7 @@ export function SummaryScreen({
       } finally {
         setIsGenerating(false);
       }
-    }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, aiGameTopic, toast, isGenerating, t]);
+    }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, aiGameTopic, toast, t]);
 
     const copyToClipboard = () => {
         if (!challengeUrl) return;
@@ -277,9 +276,9 @@ export function SummaryScreen({
                     transition={{ delay: 0.4 }}
                 >
                 <AlertDialog onOpenChange={(open) => {
-                    if (open) {
+                    if (open && !isGenerating && !challengeUrl) {
                         generateChallenge();
-                    } else {
+                    } else if (!open) {
                         setChallengeUrl('');
                         setHasUrlChanged(false);
                     }
