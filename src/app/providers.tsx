@@ -8,7 +8,7 @@ import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
 
 const authKitConfig = {
   api: '/api/auth',
-  rpcUrl: 'https://mainnet.optimism.io',
+  rpcUrl: 'https://mainnet.base.org',
   siweEnabled: true,
 };
 

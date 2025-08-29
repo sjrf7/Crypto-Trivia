@@ -5,12 +5,17 @@ import { SignJWT, jwtVerify } from 'jose';
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret-for-development');
 const ALGORITHM = 'HS256';
 
-const getJwt = (fid: number, username: string) => {
+const getJwt = (fid: number, username: string, connectedAddress?: string) => {
   const now = Math.floor(Date.now() / 1000);
   const iat = now;
   const exp = now + 60 * 60 * 24 * 30; // 30 days
 
-  return new SignJWT({ fid, username })
+  const payload: { fid: number; username: string; connectedAddress?: string } = { fid, username };
+  if (connectedAddress) {
+    payload.connectedAddress = connectedAddress;
+  }
+
+  return new SignJWT(payload)
     .setProtectedHeader({ alg: ALGORITHM })
     .setIssuedAt(iat)
     .setNotBefore(iat)
@@ -20,13 +25,13 @@ const getJwt = (fid: number, username: string) => {
 
 export async function POST(req: NextRequest) {
   try {
-    const { fid, username, bio, displayName, pfpUrl } = await req.json();
+    const { fid, username, bio, displayName, pfpUrl, connectedAddress } = await req.json();
     
     if (!fid) {
       return NextResponse.json({ error: 'fid is required' }, { status: 400 });
     }
 
-    const token = await getJwt(fid, username);
+    const token = await getJwt(fid, username, connectedAddress);
     const response = NextResponse.json({
         message: 'Signed in',
         fid,
@@ -34,6 +39,7 @@ export async function POST(req: NextRequest) {
         bio,
         displayName,
         pfpUrl,
+        connectedAddress,
     }, { status: 200 });
 
     response.cookies.set('token', token, {
@@ -74,7 +80,8 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ 
             isAuthenticated: true, 
             fid: payload.fid, 
-            username: payload.username 
+            username: payload.username,
+            connectedAddress: payload.connectedAddress,
         }, { status: 200 });
     } catch (e) {
         return NextResponse.json({ isAuthenticated: false, error: "Invalid token" }, { status: 401 });
