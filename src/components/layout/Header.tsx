@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useMusic } from './BackgroundMusic';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 
 function Notifications() {
@@ -47,10 +48,18 @@ function Notifications() {
             <PopoverContent className="w-80 mr-4" align="end">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-headline text-lg">{t('notifications.title')}</h3>
-                    <Button variant="ghost" size="sm" onClick={clearAll} disabled={notifications.length === 0}>
-                        <CheckCheck className="mr-2 h-4 w-4"/>
-                        {t('notifications.clear_all')}
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={clearAll} disabled={notifications.length === 0}>
+                                <CheckCheck className="h-4 w-4"/>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('notifications.clear_all')}</p>
+                          </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                 </div>
                 <ScrollArea className="h-80">
                     <div className="flex flex-col gap-4 pr-4">
