@@ -1,14 +1,17 @@
 {
-  "name": "Crypto Trivia Showdown",
-  "subtitle": "An AI-Powered Crypto Trivia Game for Farcaster.",
-  "description": "Test your crypto knowledge with AI-generated quizzes, challenge friends, unlock achievements, and climb the leaderboard. Prove you're a trivia master in the Farcaster ecosystem.",
-  "iconUrl": "https://crypto-trivia.vercel.app/icon.png",
-  "primaryCategory": "games",
-  "frames": [
-    {
-      "frameUrl": "https://crypto-trivia.vercel.app"
-    }
-  ],
+  "frame": {
+    "name": "Crypto Trivia Showdown",
+    "version": "1",
+    "iconUrl": "https://crypto-trivia.vercel.app/icon.png",
+    "homeUrl": "https://crypto-trivia.vercel.app",
+    "imageUrl": "https://crypto-trivia.vercel.app/image.png",
+    "splashImageUrl": "https://crypto-trivia.vercel.app/splash.png",
+    "splashBackgroundColor": "#6200EA",
+    "webhookUrl": "https://crypto-trivia.vercel.app/api/webhook",
+    "subtitle": "An AI-Powered Crypto Trivia Game for Farcaster.",
+    "description": "Test your crypto knowledge with AI-generated quizzes, challenge friends, unlock achievements, and climb the leaderboard. Prove you're a trivia master in the Farcaster ecosystem.",
+    "primaryCategory": "games"
+  },
   "accountAssociation": {
     "header": "eyJmaWQiOjExMjc5NzQsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhEMUI3NWRENzVERUJhN0ZFQmUzNEUwMURjNTJhZjNiQjEzOWI2YkUwIn0",
     "payload": "eyJkb21haW4iOiJjcnlwdG8tdHJpdmlhLnZlcmNlbC5hcHAifQ",
