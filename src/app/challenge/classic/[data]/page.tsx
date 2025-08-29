@@ -12,14 +12,25 @@ interface ClassicChallengePageProps {
   };
 }
 
+// Helper function to safely decode URL-safe Base64
+function atobUrlSafe(s: string): string {
+    // 1. Replace URL-safe characters with Base64 standard characters
+    let base64 = s.replace(/-/g, '+').replace(/_/g, '/');
+    // 2. Add padding back if necessary
+    while (base64.length % 4) {
+        base64 += '=';
+    }
+    // 3. Decode
+    return atob(base64);
+}
+
+
 export default function ClassicChallengePage({ params }: ClassicChallengePageProps) {
   const { t } = useI18n();
   const classicQuestions = t('classic_questions', {}, { returnObjects: true }) as TriviaQuestion[];
 
   try {
-    // URL-safe Base64 decoding
-    const base64 = params.data.replace(/-/g, '+').replace(/_/g, '/');
-    const decodedData = atob(base64);
+    const decodedData = atobUrlSafe(params.data);
     const parts = decodedData.split('|');
     const type = parts[0];
 
