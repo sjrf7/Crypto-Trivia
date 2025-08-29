@@ -252,6 +252,26 @@
     "tooltip": "Cambiar idioma",
     "title": "Idioma"
   },
+   "notifications": {
+    "title": "Notificaciones",
+    "clear_all": "Marcar todo como leído",
+    "empty": {
+        "title": "No hay notificaciones nuevas",
+        "description": "Los nuevos logros y resultados aparecerán aquí."
+    },
+    "level_up": {
+        "title": "¡Subiste de Nivel!",
+        "description": "¡Has alcanzado el nivel {level}! ¡Sigue así!"
+    },
+    "challenge_won": {
+        "title": "¡Desafío Ganado!",
+        "description": "Derrotaste a {challenger} en un duelo de trivia."
+    },
+    "challenge_lost": {
+        "title": "Desafío Perdido",
+        "description": "Fuiste derrotado por {challenger}. ¡Mejor suerte la próxima vez!"
+    }
+  },
   "achievement_unlocked": {
     "title": "¡Logro Desbloqueado!",
     "description": "Has ganado: {achievement}"

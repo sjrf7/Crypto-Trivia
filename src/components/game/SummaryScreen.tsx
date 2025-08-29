@@ -4,7 +4,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy } from 'lucide-react';
+import { Award, RotateCw, BarChart2, Share2, ClipboardCheck, User, Trophy, Swords } from 'lucide-react';
 import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/types';
 import {
@@ -26,6 +26,7 @@ import { useI18n } from '@/hooks/use-i18n';
 import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { Textarea } from '../ui/textarea';
+import { useNotifications } from '@/hooks/use-notifications';
 
 interface SummaryScreenProps {
   score: number;
@@ -68,6 +69,7 @@ export function SummaryScreen({
     const { profile: user, isAuthenticated } = useProfile();
     const { addGameResult } = useUserStats(user?.fid?.toString());
     const [isGenerating, setIsGenerating] = useState(false);
+    const { addNotification } = useNotifications();
 
     useEffect(() => {
       // Only add game results if the user is authenticated and the hook function is available.
@@ -82,8 +84,17 @@ export function SummaryScreen({
           wonChallenge,
         });
       }
+      
+       if (isChallenge && user) {
+            const title = t(wonChallenge ? 'notifications.challenge_won.title' : 'notifications.challenge_lost.title');
+            const description = t(wonChallenge ? 'notifications.challenge_won.description' : 'notifications.challenge_lost.description', {
+                challenger: challenger || 'a friend'
+            });
+            addNotification({ type: 'challenge', title, description });
+        }
+      
       // The dependency array correctly lists all external values that the effect depends on.
-    }, [isAuthenticated, addGameResult, score, questionsAnswered, correctAnswers, isAiGame, consecutiveCorrect, powerupsUsed, wonChallenge]);
+    }, []); // Run only once when the summary screen mounts.
     
     const generateChallenge = useCallback(async () => {
       if(isGenerating) return;
@@ -166,6 +177,13 @@ export function SummaryScreen({
             ? t('summary.ai_description', { topic: aiGameTopic })
             : t('summary.description');
     }
+    
+    const getSummaryIcon = () => {
+        if (isChallenge) {
+            return wonChallenge ? <Trophy className="h-10 w-10 text-primary drop-shadow-glow-primary" /> : <Swords className="h-10 w-10 text-muted-foreground" />
+        }
+        return <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />;
+    }
 
   return (
     <motion.div 
@@ -184,7 +202,7 @@ export function SummaryScreen({
             animate={{ scale: 1, rotate: 360 }}
             transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 10 }}
           >
-             <Award className="h-10 w-10 text-primary drop-shadow-glow-primary" />
+             {getSummaryIcon()}
           </motion.div>
           <CardTitle className="font-headline text-4xl">{getSummaryTitle()}</CardTitle>
           <CardDescription>{getSummaryDescription()}</CardDescription>

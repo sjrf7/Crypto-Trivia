@@ -252,6 +252,26 @@
     "tooltip": "Change language",
     "title": "Language"
   },
+  "notifications": {
+    "title": "Notifications",
+    "clear_all": "Mark all as read",
+    "empty": {
+        "title": "No new notifications",
+        "description": "New achievements and results will appear here."
+    },
+    "level_up": {
+        "title": "Level Up!",
+        "description": "You've reached level {level}! Keep going!"
+    },
+    "challenge_won": {
+        "title": "Challenge Won!",
+        "description": "You defeated {challenger} in a trivia duel."
+    },
+    "challenge_lost": {
+        "title": "Challenge Lost",
+        "description": "You were defeated by {challenger}. Better luck next time!"
+    }
+  },
   "achievement_unlocked": {
     "title": "Achievement Unlocked!",
     "description": "You've earned: {achievement}"

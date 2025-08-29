@@ -45,3 +45,14 @@ export interface LeaderboardEntry {
   rank: number;
   player: Player;
 }
+
+
+export interface Notification {
+    id: string;
+    type: 'achievement' | 'challenge';
+    title: string;
+    description: string;
+    timestamp: number;
+    read: boolean;
+    href?: string;
+}

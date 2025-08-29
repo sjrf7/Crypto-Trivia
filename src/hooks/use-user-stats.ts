@@ -6,6 +6,7 @@ import { PlayerStats } from '@/lib/types';
 import { ACHIEVEMENTS } from '@/lib/mock-data';
 import { useToast } from './use-toast';
 import { useI18n } from './use-i18n';
+import { useNotifications } from './use-notifications';
 
 const XP_PER_LEVEL = 1000;
 
@@ -31,6 +32,8 @@ export function useUserStats(fid: string | undefined) {
   const storageKey = `user_stats_${fid}`;
   const { toast } = useToast();
   const { t } = useI18n();
+  const { addNotification } = useNotifications();
+
 
   useEffect(() => {
     if (!fid) {
@@ -84,10 +87,19 @@ export function useUserStats(fid: string | undefined) {
       // XP and Level Calculation
       let newXp = prevStats.xp + gameResult.score;
       let newLevel = prevStats.level;
+      let leveledUp = false;
       while (newXp >= XP_PER_LEVEL) {
         newXp -= XP_PER_LEVEL;
         newLevel += 1;
+        leveledUp = true;
       }
+      if(leveledUp) {
+        const title = t('notifications.level_up.title');
+        const description = t('notifications.level_up.description', { level: newLevel });
+         toast({ title, description });
+         addNotification({ type: 'achievement', title, description });
+      }
+
 
       // Check for new achievements
       const newlyUnlocked = new Set(prevStats.unlockedAchievements);
@@ -121,10 +133,10 @@ export function useUserStats(fid: string | undefined) {
         newAchievementIds.forEach(id => {
             const achievement = ACHIEVEMENTS.find(a => a.id === id);
             if (achievement) {
-                 toast({
-                    title: t('achievement_unlocked.title'),
-                    description: t('achievement_unlocked.description', { achievement: t(`achievements.items.${id}.name`) }),
-                 });
+                 const title = t('achievement_unlocked.title');
+                 const description = t('achievement_unlocked.description', { achievement: t(`achievements.items.${id}.name`) });
+                 toast({ title, description });
+                 addNotification({ type: 'achievement', title, description });
             }
         });
       }
@@ -153,7 +165,7 @@ export function useUserStats(fid: string | undefined) {
 
       return newStats;
     });
-  }, [fid, storageKey, toast, t]);
+  }, [fid, storageKey, toast, t, addNotification]);
   
   const updateRank = useCallback((rank: number) => {
     if (!fid) return;
@@ -177,14 +189,14 @@ export function useUserStats(fid: string | undefined) {
     if (!fid) return;
     setStats(prevStats => {
         if(prevStats.topRank === 1 && !prevStats.unlockedAchievements.includes('top-player')) {
+            const title = t('achievement_unlocked.title');
+            const description = t('achievement_unlocked.description', { achievement: t(`achievements.items.top-player.name`) });
             const newStats = {
                 ...prevStats,
                 unlockedAchievements: [...prevStats.unlockedAchievements, 'top-player']
             }
-            toast({
-                title: t('achievement_unlocked.title'),
-                description: t('achievement_unlocked.description', { achievement: t(`achievements.items.top-player.name`) }),
-            });
+            toast({ title, description });
+            addNotification({ type: 'achievement', title, description });
             try {
                 window.localStorage.setItem(storageKey, JSON.stringify(newStats));
             } catch (error) {
@@ -194,7 +206,7 @@ export function useUserStats(fid: string | undefined) {
         }
         return prevStats;
     })
-  }, [fid, storageKey, t, toast]);
+  }, [fid, storageKey, t, toast, addNotification]);
 
 
   return { stats, addGameResult, updateRank, checkTopPlayerAchievement };
