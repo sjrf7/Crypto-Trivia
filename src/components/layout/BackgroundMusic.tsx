@@ -11,21 +11,44 @@ interface MusicContextType {
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 export const BackgroundMusicProvider = ({ children }: { children: ReactNode }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Set the volume as soon as the component mounts.
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.1;
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.1;
+      if (isPlaying) {
+        audio.play().catch(err => {
+          console.error("Audio autoplay failed:", err);
+          // If autoplay fails, we set isPlaying to false so the UI is correct.
+          setIsPlaying(false);
+        });
+      }
     }
-  }, []);
+    
+    const handleFirstUserInteraction = () => {
+        if (audio && audio.paused && isPlaying) {
+            audio.play().catch(console.error);
+        }
+        window.removeEventListener('click', handleFirstUserInteraction);
+        window.removeEventListener('keydown', handleFirstUserInteraction);
+    };
+
+    window.addEventListener('click', handleFirstUserInteraction);
+    window.addEventListener('keydown', handleFirstUserInteraction);
+
+    return () => {
+        window.removeEventListener('click', handleFirstUserInteraction);
+        window.removeEventListener('keydown', handleFirstUserInteraction);
+    };
+
+  }, [isPlaying]);
 
   const toggleMusic = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Ensure volume is set correctly before playing.
     audio.volume = 0.1;
 
     if (audio.paused) {
