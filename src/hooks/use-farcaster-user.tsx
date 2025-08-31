@@ -1,3 +1,4 @@
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -26,12 +27,10 @@ export function FarcasterUserProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const miniApp = new FarcasterMiniApp();
-    
     const fetchUser = async () => {
       setLoading(true);
       try {
-        const user = await miniApp.getFarcasterUser();
+        const user = await FarcasterMiniApp.getFarcasterUser();
         if (user) {
           setFarcasterUser(user);
         }
