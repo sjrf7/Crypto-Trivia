@@ -31,8 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   useEffect(() => {
-    // The sdk.ready() call is now handled in the useFarcasterIdentity hook
-    // to ensure it's called at the right time in the component lifecycle.
+    // The sdk.ready() call signals to the Farcaster client that the Mini App
+    // has finished loading and is ready for interaction.
+    sdk.ready();
   }, []);
 
   return (
