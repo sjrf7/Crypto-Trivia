@@ -1,5 +1,6 @@
 
-import type { Metadata } from 'next';
+'use client';
+
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -8,26 +9,8 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://crypto-trivia.vercel.app';
-
-export const metadata: Metadata = {
-  title: 'Crypto Trivia Showdown',
-  description: 'An AI-Powered Crypto Trivia Game for Farcaster.',
-  metadataBase: new URL(APP_URL),
-  openGraph: {
-    title: 'Crypto Trivia Showdown',
-    description: 'An AI-Powered Crypto Trivia Game for Farcaster.',
-    images: [`/splash.png`],
-  },
-  other: {
-    'fc:frame': 'vNext',
-    'fc:frame:image': `${APP_URL}/splash.png`,
-    'fc:frame:button:1': 'Start Game',
-    'fc:frame:button:1:action': 'link',
-    'fc:frame:button:1:target': `${APP_URL}/play`,
-  },
-};
+import { useEffect } from 'react';
+import FarcasterMiniApp from '@farcaster/miniapp-sdk';
 
 
 const inter = Inter({
@@ -47,6 +30,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    // This is a workaround to avoid a TypeError, as the library
+    // doesn't seem to export a class or a default object correctly.
+    // We directly call the method on the imported object.
+    try {
+        FarcasterMiniApp.ready();
+    } catch(e) {
+        console.log('Farcaster SDK not available.')
+    }
+  }, []);
+
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
       <head />

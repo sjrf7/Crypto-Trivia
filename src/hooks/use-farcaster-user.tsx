@@ -30,12 +30,14 @@ export function FarcasterUserProvider({ children }: { children: ReactNode }) {
     const fetchUser = async () => {
       setLoading(true);
       try {
+        // The SDK might not be available in all environments (e.g. regular browser)
+        // So we wrap this in a try-catch block.
         const user = await FarcasterMiniApp.getFarcasterUser();
         if (user) {
           setFarcasterUser(user);
         }
       } catch (error) {
-        console.error("Failed to fetch Farcaster user:", error);
+        console.error("Farcaster user data not available:", error);
         setFarcasterUser(null);
       } finally {
         setLoading(false);
