@@ -57,7 +57,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
         setLoading(true);
         try {
             // The ready call is essential for the parent client to know the app is loaded.
-            sdk.ready(); 
+            await sdk.actions.ready();
             // This will return the user if already connected, without prompting.
             const user = await sdk.getFarcasterUser();
             if (user.fid) { // A good sign we are in a Farcaster client
