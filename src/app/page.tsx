@@ -1,12 +1,9 @@
 
 'use client';
 
-import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { Gamepad2, Trophy, User, Swords, Award, Wand2 } from 'lucide-react';
 import Link from 'next/link';
-
-// Framer Motion and useI18n hook will be used in a client component
 import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
