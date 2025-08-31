@@ -3,8 +3,8 @@
 
 import type { ReactNode } from 'react';
 import { I18nProvider } from '@/hooks/use-i18n';
-import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
-import { FarcasterIdentityProvider } from '@/hooks/use-farcaster-identity.tsx';
+import { NotificationsProvider } from '@/hooks/use-notifications';
+import { FarcasterIdentityProvider } from '@/hooks/use-farcaster-identity';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (

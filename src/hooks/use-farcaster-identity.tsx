@@ -1,15 +1,9 @@
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
 import { useToast } from './use-toast';
-import type { Metadata } from 'next';
-
-declare global {
-    interface Window {
-        ethereum?: any;
-    }
-}
 
 export interface UserProfile {
   fid: number;
@@ -23,7 +17,6 @@ export interface UserProfile {
 
 interface FarcasterIdentity {
   profile: UserProfile | null;
-  walletAddress: string | null;
 }
 
 interface FarcasterIdentityContextType {
@@ -35,55 +28,23 @@ interface FarcasterIdentityContextType {
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
 
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
-  const [identity, setIdentity] = useState<FarcasterIdentity>({ profile: null, walletAddress: null });
+  const [identity, setIdentity] = useState<FarcasterIdentity>({ profile: null });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   const connect = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Connect Wallet
-      let address: string | null = null;
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          address = accounts[0] || null;
-        } catch (walletError: any) {
-          toast({
-            variant: "destructive",
-            title: "Wallet Connection Failed",
-            description: walletError.message || "User rejected the request.",
-          });
-          console.error("Wallet connection error:", walletError);
-        }
-      } else {
-         toast({
-            variant: "destructive",
-            title: "Wallet Not Found",
-            description: "Please install a wallet like MetaMask or use the Farcaster client.",
-          });
-      }
-
-      // 2. Get Farcaster Profile
-      let farcasterProfile: UserProfile | null = null;
-      try {
-        const user = await sdk.getFarcasterUser();
-        farcasterProfile = user;
-      } catch (error) {
-        console.warn("Farcaster user data not available via SDK:", error);
-        // This is not a critical error if running in a browser, so we don't toast.
-      }
-      
-      setIdentity({ profile: farcasterProfile, walletAddress: address });
-
+      const user = await sdk.getFarcasterUser();
+      setIdentity({ profile: user });
     } catch (error) {
-      console.error("Error during connection process:", error);
+      console.error("Farcaster user data not available via SDK:", error);
       toast({
         variant: "destructive",
-        title: "Connection Error",
-        description: "An unexpected error occurred.",
+        title: "Connection Failed",
+        description: "Could not connect to Farcaster. Please try again from a Farcaster client.",
       });
-      setIdentity({ profile: null, walletAddress: null });
+      setIdentity({ profile: null });
     } finally {
       setLoading(false);
     }
@@ -92,10 +53,11 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   // Attempt to auto-connect on load if inside a Farcaster client
   useEffect(() => {
     const autoConnect = async () => {
+        setLoading(true);
         try {
             const user = await sdk.getFarcasterUser();
             if (user.fid) { // A good sign we are in a Farcaster client
-                connect();
+                setIdentity({ profile: user });
             }
         } catch (e) {
             console.log("Not in a Farcaster client, manual connection required.");
@@ -104,7 +66,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
         }
     };
     autoConnect();
-  }, [connect]);
+  }, []);
   
 
   const value = { identity, loading, connect };
