@@ -9,7 +9,7 @@ import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
 
 const containerVariants = {
   hidden: { opacity: 0 },

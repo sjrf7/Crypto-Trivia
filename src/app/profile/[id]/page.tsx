@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);

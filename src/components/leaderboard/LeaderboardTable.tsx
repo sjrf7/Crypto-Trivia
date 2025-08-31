@@ -13,7 +13,7 @@ import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { PLAYERS } from '@/lib/mock-data';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
 
 type SortKey = 'rank' | 'totalScore';
 

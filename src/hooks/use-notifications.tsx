@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Notification } from '@/lib/types';
-import { useFarcasterIdentity } from './use-farcaster-identity';
+import { useFarcasterIdentity } from './use-farcaster-identity.tsx';
 
 interface NotificationsContextType {
   notifications: Notification[];

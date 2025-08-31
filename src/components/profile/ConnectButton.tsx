@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,

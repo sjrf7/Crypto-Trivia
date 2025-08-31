@@ -28,7 +28,7 @@ import { Textarea } from '../ui/textarea';
 import { useNotifications } from '@/hooks/use-notifications';
 import { AITriviaGame } from '@/lib/types/ai';
 import { cn } from '@/lib/utils';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
 
 interface SummaryScreenProps {
   score: number;

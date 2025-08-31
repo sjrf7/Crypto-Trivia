@@ -13,7 +13,7 @@ import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 import { AITriviaGame } from '@/lib/types/ai';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
