@@ -1,8 +1,8 @@
 
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { sdk } from '@farcaster/miniapp-sdk';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getFarcasterUser } from '@farcaster/miniapp-sdk';
 import { useToast } from './use-toast';
 
 export interface UserProfile {
@@ -31,22 +31,20 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Following Farcaster Mini-App SDK "Quick Auth" docs
-    // https://miniapps.farcaster.xyz/docs/sdk/quick-auth
-    setLoading(true);
-    sdk.getUserData()
-      .then((user) => {
-        if(user) {
+    const fetchFarcasterUser = async () => {
+      setLoading(true);
+      try {
+        const user = await getFarcasterUser();
+        if (user) {
           setIdentity({ profile: user });
         }
-      })
-      .catch((error) => {
-        // This can happen if the user is not in a Farcaster client
-        console.warn("Farcaster user data not available.", error);
-      })
-      .finally(() => {
+      } catch (error) {
+        console.warn("Farcaster user data could not be fetched.", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchFarcasterUser();
   }, []);
 
   const value = { identity, loading };
