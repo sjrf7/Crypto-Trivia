@@ -31,9 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   useEffect(() => {
-    // The sdk.ready() call signals to the Farcaster client that the Mini App
+    // The sdk.actions.ready() call signals to the Farcaster client that the Mini App
     // has finished loading and is ready for interaction.
-    sdk.ready();
+    const signalReady = async () => {
+      try {
+        await sdk.actions.ready();
+      } catch (error) {
+        console.error('Failed to signal ready to Farcaster client', error);
+      }
+    };
+    signalReady();
   }, []);
 
   return (
