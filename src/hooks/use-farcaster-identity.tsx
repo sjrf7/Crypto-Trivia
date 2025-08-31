@@ -34,7 +34,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     // Following Farcaster Mini-App SDK "Quick Auth" docs
     // https://miniapps.farcaster.xyz/docs/sdk/quick-auth
     setLoading(true);
-    sdk.getFarcasterUser()
+    sdk.getUserData()
       .then((user) => {
         if(user) {
           setIdentity({ profile: user });
