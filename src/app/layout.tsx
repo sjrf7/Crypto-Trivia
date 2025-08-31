@@ -31,14 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   useEffect(() => {
-    // This is a workaround to avoid a TypeError, as the library
-    // doesn't seem to export a class or a default object correctly.
-    // We directly call the method on the imported object.
-    try {
-        sdk.ready();
-    } catch(e) {
-        console.log('Farcaster SDK not available.')
-    }
+    // The sdk.ready() call is now handled in the useFarcasterIdentity hook
+    // to ensure it's called at the right time in the component lifecycle.
   }, []);
 
   return (
