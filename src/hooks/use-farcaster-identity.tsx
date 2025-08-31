@@ -13,6 +13,7 @@ export interface UserProfile {
   bio?: string;
   follower_count?: number;
   following_count?: number;
+  custody_address?: string;
 }
 
 interface FarcasterIdentity {

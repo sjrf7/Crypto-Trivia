@@ -14,12 +14,29 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
-import { LogIn, RefreshCw } from 'lucide-react';
+import { LogIn, RefreshCw, Wallet } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 
 export function ConnectButton() {
   const { identity, loading, connect } = useFarcasterIdentity();
   const { profile } = identity;
+  const { toast } = useToast();
+
+  const shortAddress = (address?: string) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  }
+
+  const copyAddress = () => {
+    if (profile?.custody_address) {
+      navigator.clipboard.writeText(profile.custody_address);
+      toast({
+        title: "Address Copied!",
+        description: "Your wallet address has been copied to the clipboard.",
+      });
+    }
+  }
 
   if (loading) {
     return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Connecting</Button>;
@@ -51,6 +68,12 @@ export function ConnectButton() {
               My Profile
             </Link>
           </DropdownMenuItem>
+          {profile.custody_address && (
+              <DropdownMenuItem onClick={copyAddress}>
+                  <Wallet className="mr-2 h-4 w-4" />
+                  <span>{shortAddress(profile.custody_address)}</span>
+              </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     );

@@ -73,6 +73,7 @@ export async function GET(req: NextRequest) {
       bio: userProfile.profile?.bio?.text,
       follower_count: userProfile.follower_count,
       following_count: userProfile.following_count,
+      custody_address: userProfile.custody_address,
     }, { status: 200 });
 
   } catch (error: any) {
