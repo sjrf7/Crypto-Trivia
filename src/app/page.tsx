@@ -1,32 +1,15 @@
 
 'use client';
+
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 import { Gamepad2, Trophy, User, Swords, Award, Wand2 } from 'lucide-react';
 import Link from 'next/link';
+
+// Framer Motion and useI18n hook will be used in a client component
+import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://crypto-trivia.vercel.app';
-
-export const metadata: Metadata = {
-  title: 'Crypto Trivia Showdown',
-  description: 'An AI-Powered Crypto Trivia Game for Farcaster.',
-  metadataBase: new URL(APP_URL),
-  openGraph: {
-    title: 'Crypto Trivia Showdown',
-    description: 'An AI-Powered Crypto Trivia Game for Farcaster.',
-    images: [`/splash.png`],
-  },
-  other: {
-    'fc:frame': 'vNext',
-    'fc:frame:image': `${APP_URL}/splash.png`,
-    'fc:frame:button:1': 'Start Game',
-    'fc:frame:button:1:action': 'link',
-    'fc:frame:button:1:target': `${APP_URL}/play`,
-  },
-};
 
 
 const containerVariants = {
