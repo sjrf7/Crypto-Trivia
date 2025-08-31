@@ -18,17 +18,10 @@ interface WagerCardProps {
 
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
-  const { identity, connect, loading } = useFarcasterIdentity();
+  const { identity, loading } = useFarcasterIdentity();
   const isAuthenticated = !!identity.profile;
 
   const defaultMessage = t('wager.default_message');
-  
-  useEffect(() => {
-    // If user is not authenticated when this component loads, prompt them to connect.
-    if (!isAuthenticated && !loading) {
-      connect();
-    }
-  }, [isAuthenticated, loading, connect]);
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -51,15 +44,9 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
                 {wager > 0 && <p className="text-xs text-muted-foreground">{t('wager.on_testnet')}</p>}
             </CardContent>
             <CardFooter className="flex-col gap-4">
-                {isAuthenticated ? (
-                  <Button onClick={onAccept} className="w-full" size="lg">
-                    {t('wager.accept_button')}
-                  </Button>
-                ) : (
-                  <Button onClick={connect} className="w-full" size="lg" disabled={loading}>
-                    {loading ? "Connecting..." : t('wager.accept_button')}
-                  </Button>
-                )}
+                <Button onClick={onAccept} className="w-full" size="lg" disabled={loading || !isAuthenticated}>
+                  {loading ? "Connecting..." : t('wager.accept_button')}
+                </Button>
                 <Button onClick={onDecline} variant="ghost" className="w-full">
                   {t('wager.decline_button')}
                 </Button>

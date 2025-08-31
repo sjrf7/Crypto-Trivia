@@ -18,7 +18,7 @@ import { LogIn } from 'lucide-react';
 
 
 export function ConnectButton() {
-  const { identity, loading, connect } = useFarcasterIdentity();
+  const { identity, loading } = useFarcasterIdentity();
   const { profile } = identity;
 
   if (loading) {
@@ -57,7 +57,7 @@ export function ConnectButton() {
   }
 
   return (
-    <Button onClick={connect}>
+    <Button disabled>
         <LogIn className="mr-2 h-4 w-4" />
         Connect
     </Button>

@@ -137,7 +137,6 @@ export function GameClient({
       setGameStatus('playing');
     } else {
       console.log('User must sign in to accept wager.');
-      // The SignInButton will handle the auth flow.
     }
   }
 

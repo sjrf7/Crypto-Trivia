@@ -22,7 +22,6 @@ interface FarcasterIdentity {
 interface FarcasterIdentityContextType {
   identity: FarcasterIdentity;
   loading: boolean;
-  connect: () => Promise<void>;
 }
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
@@ -30,51 +29,27 @@ const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | un
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [identity, setIdentity] = useState<FarcasterIdentity>({ profile: null });
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
-  const connect = useCallback(async () => {
-    setLoading(true);
-    try {
-      // The ready call is essential for the parent client to know the app is loaded.
-      await sdk.actions.ready();
-      // This will prompt the user to connect if they are not already.
-      const user = await sdk.getFarcasterUser();
-      setIdentity({ profile: user });
-    } catch (error) {
-      console.error("Farcaster user data not available via SDK:", error);
-      toast({
-        variant: "destructive",
-        title: "Connection Failed",
-        description: "Could not connect to Farcaster. Please try again from a Farcaster client.",
-      });
-      setIdentity({ profile: null });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
-
-  // Attempt to auto-connect on load if inside a Farcaster client
   useEffect(() => {
-    const autoConnect = async () => {
-        setLoading(true);
-        try {
-            await sdk.actions.ready();
-            // This will return the user if already connected, without prompting.
-            const user = await sdk.getFarcasterUser();
-            if (user.fid) { 
-                setIdentity({ profile: user });
-            }
-        } catch (e) {
-            console.log("Not in a Farcaster client, manual connection required.");
-        } finally {
-            setLoading(false);
+    // Following Farcaster Mini-App SDK "Quick Auth" docs
+    // https://miniapps.farcaster.xyz/docs/sdk/quick-auth
+    setLoading(true);
+    sdk.getFarcasterUser()
+      .then((user) => {
+        if(user) {
+          setIdentity({ profile: user });
         }
-    };
-    autoConnect();
+      })
+      .catch((error) => {
+        // This can happen if the user is not in a Farcaster client
+        console.warn("Farcaster user data not available.", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
-  
 
-  const value = { identity, loading, connect };
+  const value = { identity, loading };
 
   return (
     <FarcasterIdentityContext.Provider value={value}>
