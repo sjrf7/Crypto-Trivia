@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, Errors } from '@farcaster/quick-auth';
 
-const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY || '';
+const NEYNAR_API_KEY = 'E529EF9F-06BD-4E56-BEE4-6B8496352854';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('Authorization');
