@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useI18n } from '@/hooks/use-i18n';
 import { Shield, Swords } from 'lucide-react';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { useEffect } from 'react';
 
 interface WagerCardProps {
   challenger: string;
@@ -17,10 +18,17 @@ interface WagerCardProps {
 
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
-  const { identity } = useFarcasterIdentity();
+  const { identity, connect, loading } = useFarcasterIdentity();
   const isAuthenticated = !!identity.profile;
 
   const defaultMessage = t('wager.default_message');
+  
+  useEffect(() => {
+    // If user is not authenticated when this component loads, prompt them to connect.
+    if (!isAuthenticated && !loading) {
+      connect();
+    }
+  }, [isAuthenticated, loading, connect]);
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -48,8 +56,8 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
                     {t('wager.accept_button')}
                   </Button>
                 ) : (
-                  <Button className="w-full" size="lg" disabled>
-                    {t('wager.accept_button')}
+                  <Button onClick={connect} className="w-full" size="lg" disabled={loading}>
+                    {loading ? "Connecting..." : t('wager.accept_button')}
                   </Button>
                 )}
                 <Button onClick={onDecline} variant="ghost" className="w-full">

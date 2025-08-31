@@ -35,7 +35,9 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const connect = useCallback(async () => {
     setLoading(true);
     try {
-      // sdk.getFarcasterUser() will prompt the user to sign in if they are not already.
+      // The ready call is essential for the parent client to know the app is loaded.
+      await sdk.actions.ready();
+      // This will prompt the user to connect if they are not already.
       const user = await sdk.getFarcasterUser();
       setIdentity({ profile: user });
     } catch (error) {
@@ -56,11 +58,10 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     const autoConnect = async () => {
         setLoading(true);
         try {
-            // The ready call is essential for the parent client to know the app is loaded.
             await sdk.actions.ready();
             // This will return the user if already connected, without prompting.
             const user = await sdk.getFarcasterUser();
-            if (user.fid) { // A good sign we are in a Farcaster client
+            if (user.fid) { 
                 setIdentity({ profile: user });
             }
         } catch (e) {
