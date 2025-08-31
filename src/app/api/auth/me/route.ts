@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     if (!neynarResponse.ok) {
         const errorBody = await neynarResponse.json();
         console.error('Neynar API error:', errorBody);
-        return NextResponse.json({ error: 'Failed to fetch user data from Farcaster.' }, { status: 500 });
+        return NextResponse.json({ error: `Failed to fetch user data from Farcaster: ${errorBody.message || 'Unknown Neynar API error'}` }, { status: 502 });
     }
     
     const neynarData = await neynarResponse.json();
