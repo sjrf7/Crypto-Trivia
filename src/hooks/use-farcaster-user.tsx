@@ -2,7 +2,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import FarcasterMiniApp from '@farcaster/miniapp-sdk';
+import { sdk } from '@farcaster/miniapp-sdk';
 
 export interface UserProfile {
   fid: number;
@@ -32,7 +32,7 @@ export function FarcasterUserProvider({ children }: { children: ReactNode }) {
       try {
         // The SDK might not be available in all environments (e.g. regular browser)
         // So we wrap this in a try-catch block.
-        const user = await FarcasterMiniApp.getFarcasterUser();
+        const user = await sdk.getFarcasterUser();
         if (user) {
           setFarcasterUser(user);
         }

@@ -10,7 +10,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 import { useEffect } from 'react';
-import FarcasterMiniApp from '@farcaster/miniapp-sdk';
+import { sdk } from '@farcaster/miniapp-sdk';
 
 
 const inter = Inter({
@@ -35,7 +35,7 @@ export default function RootLayout({
     // doesn't seem to export a class or a default object correctly.
     // We directly call the method on the imported object.
     try {
-        FarcasterMiniApp.ready();
+        sdk.actions.ready();
     } catch(e) {
         console.log('Farcaster SDK not available.')
     }
