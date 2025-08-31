@@ -5,6 +5,12 @@ import { createClient, Errors } from '@farcaster/quick-auth';
 const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY || '';
 
 export async function GET(req: NextRequest) {
+  // Add a check for the API key at the beginning
+  if (!NEYNAR_API_KEY) {
+    console.error('NEYNAR_API_KEY is not set.');
+    return NextResponse.json({ error: 'Server configuration error: Missing Neynar API key.' }, { status: 500 });
+  }
+
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
     return NextResponse.json({ error: 'Authorization header is missing.' }, { status: 401 });
