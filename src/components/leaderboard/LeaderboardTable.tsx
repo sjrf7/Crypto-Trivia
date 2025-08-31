@@ -13,7 +13,7 @@ import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { PLAYERS } from '@/lib/mock-data';
-import { useFarcasterUser } from '@/hooks/use-farcaster-user';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 
 type SortKey = 'rank' | 'totalScore';
 
@@ -58,23 +58,24 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { t } = useI18n();
 
-  const { farcasterUser } = useFarcasterUser();
-  const isAuthenticated = !!farcasterUser;
-  const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(farcasterUser?.fid?.toString());
+  const { identity } = useFarcasterIdentity();
+  const { profile } = identity;
+  const isAuthenticated = !!profile;
+  const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(profile?.fid?.toString());
   
   const mergedData = useMemo(() => {
     const data = [...initialData];
-    if (isAuthenticated && farcasterUser) {
-        const userInLeaderboard = data.find(entry => entry.player.id === (farcasterUser.username || `fid-${farcasterUser.fid}`));
+    if (isAuthenticated && profile) {
+        const userInLeaderboard = data.find(entry => entry.player.id === (profile.username || `fid-${profile.fid}`));
         if (userInLeaderboard) {
             // Update existing user in leaderboard
             userInLeaderboard.player.stats = userStats;
         } else {
             // Add new user to leaderboard
             const newPlayer: Player = {
-                id: farcasterUser.username || `fid-${farcasterUser.fid}`,
-                name: farcasterUser.display_name || `User ${farcasterUser.fid}`,
-                avatar: farcasterUser.pfp_url || '',
+                id: profile.username || `fid-${profile.fid}`,
+                name: profile.display_name || `User ${profile.fid}`,
+                avatar: profile.pfp_url || '',
                 stats: userStats,
                 achievements: userStats.unlockedAchievements,
             };
@@ -86,7 +87,7 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
         .sort((a, b) => b.player.stats.totalScore - a.player.stats.totalScore)
         .map((entry, index) => ({ ...entry, rank: index + 1 }));
 
-  }, [initialData, isAuthenticated, farcasterUser, userStats]);
+  }, [initialData, isAuthenticated, profile, userStats]);
 
 
   const sortedData = useMemo(() => {
@@ -115,14 +116,14 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   }, [mergedData, sortKey, sortDirection]);
 
   useEffect(() => {
-      if(isAuthenticated && farcasterUser) {
-          const userEntry = sortedData.find(e => e.player.id === (farcasterUser.username || `fid-${farcasterUser.fid}`));
+      if(isAuthenticated && profile) {
+          const userEntry = sortedData.find(e => e.player.id === (profile.username || `fid-${profile.fid}`));
           if(userEntry) {
               updateRank(userEntry.rank);
               checkTopPlayerAchievement();
           }
       }
-  }, [sortedData, isAuthenticated, farcasterUser, updateRank, checkTopPlayerAchievement]);
+  }, [sortedData, isAuthenticated, profile, updateRank, checkTopPlayerAchievement]);
 
 
   const handleSort = (key: SortKey) => {
@@ -173,7 +174,7 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
               variants={rowVariants}
               className={cn(
                   "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-                  isAuthenticated && farcasterUser && (entry.player.id === farcasterUser.username || entry.player.id === `fid-${farcasterUser.fid}`) && "bg-primary/20 hover:bg-primary/30"
+                  isAuthenticated && profile && (entry.player.id === profile.username || entry.player.id === `fid-${profile.fid}`) && "bg-primary/20 hover:bg-primary/30"
               )}
             >
               <TableCell className="p-0 text-center">

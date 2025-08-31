@@ -13,7 +13,7 @@ import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 import { AITriviaGame } from '@/lib/types/ai';
-import { useFarcasterUser } from '@/hooks/use-farcaster-user';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -66,8 +66,8 @@ export function GameClient({
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
-  const { farcasterUser } = useFarcasterUser();
-  const isAuthenticated = !!farcasterUser;
+  const { identity } = useFarcasterIdentity();
+  const isAuthenticated = !!identity.profile;
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 

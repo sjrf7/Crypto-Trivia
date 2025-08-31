@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFarcasterUser } from '@/hooks/use-farcaster-user';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -14,32 +14,34 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
+import { LogIn } from 'lucide-react';
 
 
-export function SignInButton() {
-  const { farcasterUser, loading } = useFarcasterUser();
+export function ConnectButton() {
+  const { identity, loading, connect } = useFarcasterIdentity();
+  const { profile } = identity;
 
   if (loading) {
-    return <Skeleton className="h-10 w-10 rounded-full" />;
+    return <Skeleton className="h-10 w-24 rounded-md" />;
   }
   
-  if (farcasterUser) {
+  if (profile) {
     return (
        <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={farcasterUser.pfp_url} alt={farcasterUser.display_name || 'User PFP'} data-ai-hint="profile picture" />
-              <AvatarFallback>{farcasterUser.display_name?.substring(0, 2) || '??'}</AvatarFallback>
+              <AvatarImage src={profile.pfp_url} alt={profile.display_name || 'User PFP'} data-ai-hint="profile picture" />
+              <AvatarFallback>{profile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{farcasterUser.display_name}</p>
+              <p className="text-sm font-medium leading-none">{profile.display_name}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                @{farcasterUser.username}
+                @{profile.username}
               </p>
             </div>
           </DropdownMenuLabel>
@@ -54,15 +56,10 @@ export function SignInButton() {
     );
   }
 
-  // In the context of a MiniApp, the app is running inside a Farcaster client
-  // that handles authentication. There is no traditional "sign in" or "sign out" button.
-  // If `farcasterUser` is null, it means the user data couldn't be fetched or isn't available.
-  // We can show a disabled state or a message.
   return (
-    <Button variant="ghost" className="relative h-10 w-10 rounded-full" disabled>
-        <Avatar className="h-10 w-10">
-            <AvatarFallback>?</AvatarFallback>
-        </Avatar>
+    <Button onClick={connect}>
+        <LogIn className="mr-2 h-4 w-4" />
+        Connect
     </Button>
   );
 }

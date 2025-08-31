@@ -8,8 +8,8 @@ import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,9 +28,10 @@ const itemVariants = {
 
 function AchievementsContent() {
   const { t } = useI18n();
-  const { farcasterUser } = useFarcasterUser();
-  const { stats } = useUserStats(farcasterUser?.fid?.toString());
-  const isAuthenticated = !!farcasterUser;
+  const { identity } = useFarcasterIdentity();
+  const { profile } = identity;
+  const { stats } = useUserStats(profile?.fid?.toString());
+  const isAuthenticated = !!profile;
 
   return (
     <Card>

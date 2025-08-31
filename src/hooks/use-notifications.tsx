@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Notification } from '@/lib/types';
-import { useFarcasterUser } from './use-farcaster-user';
+import { useFarcasterIdentity } from './use-farcaster-identity';
 
 interface NotificationsContextType {
   notifications: Notification[];
@@ -16,8 +16,8 @@ interface NotificationsContextType {
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
-  const { farcasterUser } = useFarcasterUser();
-  const fid = farcasterUser?.fid;
+  const { identity } = useFarcasterIdentity();
+  const fid = identity.profile?.fid;
   const storageKey = `notifications_${fid}`;
 
   const [notifications, setNotifications] = useState<Notification[]>([]);

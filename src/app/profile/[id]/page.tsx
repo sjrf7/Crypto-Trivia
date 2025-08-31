@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { useFarcasterUser } from '@/hooks/use-farcaster-user';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -18,7 +18,8 @@ function ProfilePageContent() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
-  const { farcasterUser, loading: status } = useFarcasterUser();
+  const { identity, loading: status } = useFarcasterIdentity();
+  const { profile: farcasterUser } = identity;
   const isAuthenticated = !!farcasterUser;
   const { t } = useI18n();
   const { stats: userStats } = useUserStats(farcasterUser?.fid?.toString());

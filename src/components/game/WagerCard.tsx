@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { Shield, Swords } from 'lucide-react';
-import { useFarcasterUser } from '@/hooks/use-farcaster-user';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 
 interface WagerCardProps {
   challenger: string;
@@ -17,8 +17,8 @@ interface WagerCardProps {
 
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
-  const { farcasterUser } = useFarcasterUser();
-  const isAuthenticated = !!farcasterUser;
+  const { identity } = useFarcasterIdentity();
+  const isAuthenticated = !!identity.profile;
 
   const defaultMessage = t('wager.default_message');
 
