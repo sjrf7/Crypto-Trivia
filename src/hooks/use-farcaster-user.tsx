@@ -1,11 +1,9 @@
 
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
-// import FarcasterMiniApp from '@farcaster/miniapp-sdk';
-// import type { UserProfile } from '@farcaster/miniapp-sdk';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import FarcasterMiniApp from '@farcaster/miniapp-sdk';
 
-// Mock the UserProfile type as we can't import it
 export interface UserProfile {
   fid: number;
   username?: string;
@@ -25,10 +23,29 @@ interface FarcasterUserContextType {
 const FarcasterUserContext = createContext<FarcasterUserContextType | undefined>(undefined);
 
 export function FarcasterUserProvider({ children }: { children: ReactNode }) {
-  // Since the package cannot be resolved, we will default to a null user
-  // and a non-loading state. This will allow the app to build.
-  const [farcasterUser] = useState<UserProfile | null>(null);
-  const [loading] = useState(false);
+  const [farcasterUser, setFarcasterUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const miniApp = new FarcasterMiniApp();
+    
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const user = await miniApp.getFarcasterUser();
+        if (user) {
+          setFarcasterUser(user);
+        }
+      } catch (error) {
+        console.error("Failed to fetch Farcaster user:", error);
+        setFarcasterUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const value = { farcasterUser, loading };
 
