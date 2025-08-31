@@ -35,7 +35,7 @@ export default function RootLayout({
     // doesn't seem to export a class or a default object correctly.
     // We directly call the method on the imported object.
     try {
-        sdk.actions.ready();
+        sdk.ready();
     } catch(e) {
         console.log('Farcaster SDK not available.')
     }
