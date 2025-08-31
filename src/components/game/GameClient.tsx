@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
-import { useProfile } from '@farcaster/auth-kit';
 import { AITriviaGame } from '@/lib/types/ai';
+import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -66,7 +66,8 @@ export function GameClient({
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
-  const { isAuthenticated, loading: authLoading } = useProfile();
+  const { farcasterUser } = useFarcasterUser();
+  const isAuthenticated = !!farcasterUser;
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
@@ -94,10 +95,10 @@ export function GameClient({
 
   useEffect(() => {
     // When a user logs in while on the wager screen, automatically start the game.
-    if (gameStatus === 'wager' && isAuthenticated && !authLoading) {
+    if (gameStatus === 'wager' && isAuthenticated) {
       handleWagerAccept();
     }
-  }, [isAuthenticated, authLoading, gameStatus]);
+  }, [isAuthenticated, gameStatus]);
 
 
   const handleStartClassic = () => {

@@ -22,7 +22,7 @@
     },
     "feature5": {
       "title": "Perfil de Farcaster",
-      "description": "Inicia sesión con Farcaster para guardar tu progreso y personalizar tu perfil."
+      "description": "Tu progreso se guarda automáticamente en tu perfil de Farcaster."
     },
     "feature6": {
       "title": "Desafíos",
@@ -139,8 +139,8 @@
         "generating": "Generando..."
       },
       "not_logged_in": {
-          "title": "Por favor, inicia sesión",
-          "description": "Debes iniciar sesión con Farcaster para desafiar a un amigo."
+          "title": "Usuario no encontrado",
+          "description": "Se requieren datos de usuario de Farcaster para desafiar a un amigo."
       },
        "ai_disabled": {
         "title": "Desafío no disponible",
@@ -176,7 +176,7 @@
     "description": "Estos son todos los logros que puedes desbloquear en tu viaje.",
     "sign_in_prompt": {
       "title": "¡Desbloquea tu Potencial!",
-      "description": "Inicia sesión para guardar tu progreso y empezar a ganar logros."
+      "description": "Juega dentro de un cliente de Farcaster como Warpcast para guardar tu progreso y ganar logros."
     },
     "items": {
       "first-game": {
@@ -244,7 +244,7 @@
     "achievements_title": "Logros",
     "sign_in": {
       "title": "Ver Tu Perfil",
-      "description": "Inicia sesión con Farcaster para seguir tus estadísticas, ver logros y más.",
+      "description": "Abre esta Mini App en un cliente de Farcaster como Warpcast para ver tu perfil.",
       "welcome": "Bienvenido, {name}",
       "sign_out_button": "Cerrar Sesión",
       "sign_in_button": "Iniciar sesión con Farcaster"

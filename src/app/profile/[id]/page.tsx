@@ -7,11 +7,11 @@ import { notFound, useParams } from 'next/navigation';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useProfile } from '@farcaster/auth-kit';
 import { SignInButton } from '@/components/profile/SignInButton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
+import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -19,26 +19,27 @@ function ProfilePageContent() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
-  const { isAuthenticated, profile: user, loading: isUserLoading } = useProfile();
+  const { farcasterUser, loading: status } = useFarcasterUser();
+  const isAuthenticated = !!farcasterUser;
   const { t } = useI18n();
-  const { stats: userStats } = useUserStats(user?.fid?.toString());
+  const { stats: userStats } = useUserStats(farcasterUser?.fid?.toString());
 
   useEffect(() => {
     // This effect's job is to figure out which player to display.
     
     // Don't do anything until the Farcaster auth state is resolved.
-    if (isUserLoading) {
+    if (status) {
         return;
     }
 
     // Case 1: The user is viewing their own profile (/profile/me)
     if (id === 'me') {
-      if (isAuthenticated && user) {
+      if (isAuthenticated && farcasterUser) {
         // The user is logged in. Create a profile for them on the fly.
         setPlayer({
-          id: user.username || `fid-${user.fid}`,
-          name: user.displayName || user.username || `User ${user.fid}`,
-          avatar: user.pfpUrl || `https://placehold.co/128x128.png`,
+          id: farcasterUser.username || `fid-${farcasterUser.fid}`,
+          name: farcasterUser.display_name || farcasterUser.username || `User ${farcasterUser.fid}`,
+          avatar: farcasterUser.pfp_url || `https://placehold.co/128x128.png`,
           stats: userStats, // Use stats from our hook
           achievements: userStats.unlockedAchievements,
         });
@@ -54,10 +55,10 @@ function ProfilePageContent() {
       setPlayer(foundPlayer || null);
     }
 
-  }, [id, user, isAuthenticated, isUserLoading, userStats]);
+  }, [id, farcasterUser, isAuthenticated, status, userStats]);
 
 
-  if (isUserLoading) {
+  if (status) {
     return (
        <Card>
             <CardHeader>
@@ -87,7 +88,6 @@ function ProfilePageContent() {
         <UICardContent className="pt-6">
             <h2 className="text-2xl font-headline mb-4">{t('profile.sign_in.title')}</h2>
             <p className="text-muted-foreground mb-6">{t('profile.sign_in.description')}</p>
-            <SignInButton />
         </UICardContent>
       </UICard>
     )

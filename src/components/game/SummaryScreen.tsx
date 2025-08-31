@@ -23,12 +23,12 @@ import { Label } from '../ui/label';
 import { motion } from 'framer-motion';
 import { AnimatedScore } from './AnimatedScore';
 import { useI18n } from '@/hooks/use-i18n';
-import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { Textarea } from '../ui/textarea';
 import { useNotifications } from '@/hooks/use-notifications';
 import { AITriviaGame } from '@/lib/types/ai';
 import { cn } from '@/lib/utils';
+import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 
 interface SummaryScreenProps {
   score: number;
@@ -68,8 +68,9 @@ export function SummaryScreen({
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
     const [challengeMessage, setChallengeMessage] = useState('');
-    const { profile: user, isAuthenticated } = useProfile();
-    const { addGameResult } = useUserStats(user?.fid?.toString());
+    const { farcasterUser } = useFarcasterUser();
+    const isAuthenticated = !!farcasterUser;
+    const { addGameResult } = useUserStats(farcasterUser?.fid?.toString());
     const [isGenerating, setIsGenerating] = useState(false);
     const { addNotification } = useNotifications();
     const summarySoundRef = useRef<HTMLAudioElement>(null);
@@ -91,7 +92,7 @@ export function SummaryScreen({
         });
       }
       
-       if (isChallenge && user) {
+       if (isChallenge && farcasterUser) {
             const title = t(wonChallenge ? 'notifications.challenge_won.title' : 'notifications.challenge_lost.title');
             const description = t(wonChallenge ? 'notifications.challenge_won.description' : 'notifications.challenge_lost.description', {
                 challenger: challenger || 'a friend'
@@ -116,7 +117,7 @@ export function SummaryScreen({
             return;
         }
 
-        const challengerName = user?.displayName || user?.username || 'A friend';
+        const challengerName = farcasterUser?.display_name || farcasterUser?.username || 'A friend';
         let url = '';
 
         if (isAiGame) {
@@ -162,7 +163,7 @@ export function SummaryScreen({
       } finally {
         setIsGenerating(false);
       }
-    }, [questions, score, wager, challengeMessage, user, isAuthenticated, isAiGame, aiGameTopic, toast, t]);
+    }, [questions, score, wager, challengeMessage, farcasterUser, isAuthenticated, isAiGame, aiGameTopic, toast, t]);
 
     const copyToClipboard = () => {
         if (!challengeUrl) return;
@@ -225,7 +226,7 @@ export function SummaryScreen({
             {isChallenge && scoreToBeat !== undefined ? (
               <div className="grid grid-cols-2 gap-4 items-center bg-secondary p-4 rounded-lg">
                 <div className="text-center">
-                  <Label>{user?.displayName || t('summary.your_score')}</Label>
+                  <Label>{farcasterUser?.display_name || t('summary.your_score')}</Label>
                   <div className="text-4xl font-bold text-primary">
                     <AnimatedScore score={score} />
                   </div>

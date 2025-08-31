@@ -4,9 +4,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
-import { Shield, Swords, LogIn } from 'lucide-react';
-import { useProfile } from '@farcaster/auth-kit';
-import { SignInButton } from '../profile/SignInButton';
+import { Shield, Swords } from 'lucide-react';
+import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 
 interface WagerCardProps {
   challenger: string;
@@ -18,7 +17,8 @@ interface WagerCardProps {
 
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
-  const { isAuthenticated } = useProfile();
+  const { farcasterUser } = useFarcasterUser();
+  const isAuthenticated = !!farcasterUser;
 
   const defaultMessage = t('wager.default_message');
 
@@ -48,7 +48,9 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
                     {t('wager.accept_button')}
                   </Button>
                 ) : (
-                  <SignInButton />
+                  <Button className="w-full" size="lg" disabled>
+                    {t('wager.accept_button')}
+                  </Button>
                 )}
                 <Button onClick={onDecline} variant="ghost" className="w-full">
                   {t('wager.decline_button')}

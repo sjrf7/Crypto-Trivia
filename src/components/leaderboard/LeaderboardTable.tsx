@@ -11,9 +11,9 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
-import { useProfile } from '@farcaster/auth-kit';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { PLAYERS } from '@/lib/mock-data';
+import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 
 type SortKey = 'rank' | 'totalScore';
 
@@ -58,22 +58,23 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { t } = useI18n();
 
-  const { profile: user, isAuthenticated } = useProfile();
-  const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(user?.fid?.toString());
+  const { farcasterUser } = useFarcasterUser();
+  const isAuthenticated = !!farcasterUser;
+  const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(farcasterUser?.fid?.toString());
   
   const mergedData = useMemo(() => {
     const data = [...initialData];
-    if (isAuthenticated && user) {
-        const userInLeaderboard = data.find(entry => entry.player.id === (user.username || `fid-${user.fid}`));
+    if (isAuthenticated && farcasterUser) {
+        const userInLeaderboard = data.find(entry => entry.player.id === (farcasterUser.username || `fid-${farcasterUser.fid}`));
         if (userInLeaderboard) {
             // Update existing user in leaderboard
             userInLeaderboard.player.stats = userStats;
         } else {
             // Add new user to leaderboard
             const newPlayer: Player = {
-                id: user.username || `fid-${user.fid}`,
-                name: user.displayName || `User ${user.fid}`,
-                avatar: user.pfpUrl || '',
+                id: farcasterUser.username || `fid-${farcasterUser.fid}`,
+                name: farcasterUser.display_name || `User ${farcasterUser.fid}`,
+                avatar: farcasterUser.pfp_url || '',
                 stats: userStats,
                 achievements: userStats.unlockedAchievements,
             };
@@ -85,7 +86,7 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
         .sort((a, b) => b.player.stats.totalScore - a.player.stats.totalScore)
         .map((entry, index) => ({ ...entry, rank: index + 1 }));
 
-  }, [initialData, isAuthenticated, user, userStats]);
+  }, [initialData, isAuthenticated, farcasterUser, userStats]);
 
 
   const sortedData = useMemo(() => {
@@ -114,14 +115,14 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   }, [mergedData, sortKey, sortDirection]);
 
   useEffect(() => {
-      if(isAuthenticated && user) {
-          const userEntry = sortedData.find(e => e.player.id === (user.username || `fid-${user.fid}`));
+      if(isAuthenticated && farcasterUser) {
+          const userEntry = sortedData.find(e => e.player.id === (farcasterUser.username || `fid-${farcasterUser.fid}`));
           if(userEntry) {
               updateRank(userEntry.rank);
               checkTopPlayerAchievement();
           }
       }
-  }, [sortedData, isAuthenticated, user, updateRank, checkTopPlayerAchievement]);
+  }, [sortedData, isAuthenticated, farcasterUser, updateRank, checkTopPlayerAchievement]);
 
 
   const handleSort = (key: SortKey) => {
@@ -172,7 +173,7 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
               variants={rowVariants}
               className={cn(
                   "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-                  isAuthenticated && user && (entry.player.id === user.username || entry.player.id === `fid-${user.fid}`) && "bg-primary/20 hover:bg-primary/30"
+                  isAuthenticated && farcasterUser && (entry.player.id === farcasterUser.username || entry.player.id === `fid-${farcasterUser.fid}`) && "bg-primary/20 hover:bg-primary/30"
               )}
             >
               <TableCell className="p-0 text-center">

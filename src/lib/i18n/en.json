@@ -22,7 +22,7 @@
     },
     "feature5": {
       "title": "Farcaster Profile",
-      "description": "Log in with Farcaster to save your progress and customize your profile."
+      "description": "Your progress is automatically saved to your Farcaster profile."
     },
     "feature6": {
       "title": "Challenges",
@@ -139,8 +139,8 @@
         "generating": "Generating..."
       },
       "not_logged_in": {
-          "title": "Please Sign In",
-          "description": "You must be signed in with Farcaster to challenge a friend."
+          "title": "User Not Found",
+          "description": "Farcaster user data is required to challenge a friend."
       },
       "ai_disabled": {
         "title": "Challenge Not Available",
@@ -176,7 +176,7 @@
     "description": "Here are all the achievements you can unlock on your journey.",
     "sign_in_prompt": {
       "title": "Unlock Your Potential!",
-      "description": "Sign in to save your progress and start earning achievements."
+      "description": "Play inside a Farcaster client like Warpcast to save progress and earn achievements."
     },
     "items": {
       "first-game": {
@@ -244,7 +244,7 @@
     "achievements_title": "Achievements",
     "sign_in": {
       "title": "View Your Profile",
-      "description": "Sign in with Farcaster to track your stats, view achievements, and more.",
+      "description": "Open this Mini App in a Farcaster client like Warpcast to see your profile.",
       "welcome": "Welcome, {name}",
       "sign_out_button": "Sign Out",
       "sign_in_button": "Sign in with Farcaster"
@@ -1270,7 +1270,7 @@
       ]
     },
     {
-      "question": "What year was the Bitcoin whitepaper published?",
+      "question": "¿En qué año se publicó el whitepaper de Bitcoin?",
       "answer": "2008",
       "options": [
         "2008",
@@ -1280,17 +1280,17 @@
       ]
     },
     {
-      "question": "What is the main advantage of using a hardware wallet?",
-      "answer": "It keeps your private keys offline and secure",
+      "question": "¿Cuál es la principal ventaja de usar un monedero de hardware?",
+      "answer": "Mantiene tus claves privadas offline y seguras",
       "options": [
-        "It has a user-friendly interface",
-        "It supports all cryptocurrencies",
-        "It offers high staking rewards",
-        "It keeps your private keys offline and secure"
+        "Tiene una interfaz fácil de usar",
+        "Admite todas las criptomonedas",
+        "Ofrece altas recompensas de staking",
+        "Mantiene tus claves privadas offline y seguras"
       ]
     },
     {
-      "question": "Which exchange was famously hacked in 2016, leading to an Ethereum hard fork?",
+      "question": "¿Qué exchange fue famosamente hackeado en 2016, lo que llevó a una bifurcación dura de Ethereum?",
       "answer": "The DAO",
       "options": [
         "Mt. Gox",

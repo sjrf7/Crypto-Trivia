@@ -8,8 +8,7 @@ import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { useProfile } from '@farcaster/auth-kit';
-import { SignInButton } from '@/components/profile/SignInButton';
+import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const containerVariants = {
@@ -29,8 +28,9 @@ const itemVariants = {
 
 function AchievementsContent() {
   const { t } = useI18n();
-  const { profile: user, isAuthenticated } = useProfile();
-  const { stats } = useUserStats(user?.fid?.toString());
+  const { farcasterUser } = useFarcasterUser();
+  const { stats } = useUserStats(farcasterUser?.fid?.toString());
+  const isAuthenticated = !!farcasterUser;
 
   return (
     <Card>
@@ -48,9 +48,8 @@ function AchievementsContent() {
           <Alert className="mb-6 border-primary bg-primary/10">
             <Info className="h-4 w-4" />
             <AlertTitle className='font-bold text-primary'>{t('achievements.sign_in_prompt.title')}</AlertTitle>
-            <AlertDescription className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <AlertDescription>
               <span>{t('achievements.sign_in_prompt.description')}</span>
-              <SignInButton />
             </AlertDescription>
           </Alert>
         )}

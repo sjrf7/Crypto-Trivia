@@ -2,8 +2,8 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import { useProfile } from '@farcaster/auth-kit';
 import { Notification } from '@/lib/types';
+import { useFarcasterUser } from './use-farcaster-user';
 
 interface NotificationsContextType {
   notifications: Notification[];
@@ -16,8 +16,8 @@ interface NotificationsContextType {
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
-  const { profile } = useProfile();
-  const fid = profile?.fid;
+  const { farcasterUser } = useFarcasterUser();
+  const fid = farcasterUser?.fid;
   const storageKey = `notifications_${fid}`;
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
