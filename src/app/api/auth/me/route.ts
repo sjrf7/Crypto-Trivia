@@ -5,12 +5,6 @@ import { createClient, Errors } from '@farcaster/quick-auth';
 const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY || '';
 
 export async function GET(req: NextRequest) {
-  // Add a check for the API key at the beginning
-  if (!NEYNAR_API_KEY) {
-    console.error('NEYNAR_API_KEY is not set.');
-    return NextResponse.json({ error: 'Server configuration error: Missing Neynar API key.' }, { status: 500 });
-  }
-
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
     return NextResponse.json({ error: 'Authorization header is missing.' }, { status: 401 });
@@ -31,8 +25,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid token payload.' }, { status: 401 });
     }
 
+    // If Neynar API key is missing, we can still return a basic profile with the FID.
+    // The app can function in a degraded mode.
+    if (!NEYNAR_API_KEY) {
+      console.warn('NEYNAR_API_KEY is not set. Returning basic profile.');
+      return NextResponse.json({
+        fid: fid,
+        username: `fid-${fid}`,
+        display_name: `User ${fid}`,
+        pfp_url: '',
+      }, { status: 200 });
+    }
+
     // Now that we have the FID, let's get the user's profile from Neynar
-    // In a real app, you might want to cache this response.
     const neynarResponse = await fetch(`https://api.neynar.com/v2/farcaster/user/bulk?fids=${fid}`, {
         headers: {
             'api_key': NEYNAR_API_KEY,
@@ -43,7 +48,13 @@ export async function GET(req: NextRequest) {
     if (!neynarResponse.ok) {
         const errorBody = await neynarResponse.json();
         console.error('Neynar API error:', errorBody);
-        return NextResponse.json({ error: `Failed to fetch user data from Farcaster: ${errorBody.message || 'Unknown Neynar API error'}` }, { status: 502 });
+        // Even if Neynar fails, we can return the basic profile.
+        return NextResponse.json({
+            fid: fid,
+            username: `fid-${fid}`,
+            display_name: `User ${fid}`,
+            pfp_url: '',
+        }, { status: 200 });
     }
     
     const neynarData = await neynarResponse.json();
