@@ -7,7 +7,6 @@ import { notFound, useParams } from 'next/navigation';
 import { Player } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SignInButton } from '@/components/profile/SignInButton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';

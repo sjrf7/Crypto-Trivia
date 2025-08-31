@@ -3,8 +3,6 @@
 
 import { useFarcasterUser } from '@/hooks/use-farcaster-user';
 import { Button } from '../ui/button';
-import { LogOut } from 'lucide-react';
-import { useI18n } from '@/hooks/use-i18n';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +18,6 @@ import { Skeleton } from '../ui/skeleton';
 
 export function SignInButton() {
   const { farcasterUser, loading } = useFarcasterUser();
-  const { t } = useI18n();
 
   if (loading) {
     return <Skeleton className="h-10 w-10 rounded-full" />;
@@ -32,8 +29,8 @@ export function SignInButton() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={farcasterUser.pfp_url} alt={farcasterUser.display_name} data-ai-hint="profile picture" />
-              <AvatarFallback>{farcasterUser.display_name?.substring(0, 2)}</AvatarFallback>
+              <AvatarImage src={farcasterUser.pfp_url} alt={farcasterUser.display_name || 'User PFP'} data-ai-hint="profile picture" />
+              <AvatarFallback>{farcasterUser.display_name?.substring(0, 2) || '??'}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
