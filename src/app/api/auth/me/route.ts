@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyJwt } from '@farcaster/quick-auth';
+import { createClient, Errors } from '@farcaster/quick-auth';
 
 const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY || '';
 
@@ -16,10 +16,13 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const { fid, is_authenticated } = await verifyJwt(token);
+    const client = createClient();
+    const payload = await client.verifyJwt({ token });
+    const { sub: fid } = payload;
 
-    if (!is_authenticated || !fid) {
-      return NextResponse.json({ error: 'Invalid token.' }, { status: 401 });
+
+    if (!fid) {
+      return NextResponse.json({ error: 'Invalid token payload.' }, { status: 401 });
     }
 
     // Now that we have the FID, let's get the user's profile from Neynar
@@ -56,7 +59,11 @@ export async function GET(req: NextRequest) {
     }, { status: 200 });
 
   } catch (error: any) {
+    if (error instanceof Errors.InvalidTokenError) {
+        console.info('Invalid token:', error.message)
+        return NextResponse.json({ error: `Token verification failed: ${error.message}` }, { status: 401 });
+    }
     console.error('[API/AUTH/ME] Verification Error:', error);
-    return NextResponse.json({ error: `Token verification failed: ${error.message}` }, { status: 401 });
+    return NextResponse.json({ error: `An unexpected error occurred.` }, { status: 500 });
   }
 }
