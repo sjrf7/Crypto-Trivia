@@ -14,15 +14,15 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
-import { LogIn } from 'lucide-react';
+import { LogIn, RefreshCw } from 'lucide-react';
 
 
 export function ConnectButton() {
-  const { identity, loading } = useFarcasterIdentity();
+  const { identity, loading, connect } = useFarcasterIdentity();
   const { profile } = identity;
 
   if (loading) {
-    return <Skeleton className="h-10 w-24 rounded-md" />;
+    return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Connecting</Button>;
   }
   
   if (profile) {
@@ -57,7 +57,7 @@ export function ConnectButton() {
   }
 
   return (
-    <Button disabled>
+    <Button onClick={connect}>
         <LogIn className="mr-2 h-4 w-4" />
         Connect
     </Button>

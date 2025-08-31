@@ -1,8 +1,8 @@
 
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getFarcasterUser } from '@farcaster/miniapp-sdk';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { sdk } from '@farcaster/miniapp-sdk';
 import { useToast } from './use-toast';
 
 export interface UserProfile {
@@ -22,32 +22,58 @@ interface FarcasterIdentity {
 interface FarcasterIdentityContextType {
   identity: FarcasterIdentity;
   loading: boolean;
+  connect: () => void;
 }
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
 
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [identity, setIdentity] = useState<FarcasterIdentity>({ profile: null });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchFarcasterUser = async () => {
-      setLoading(true);
-      try {
-        const user = await getFarcasterUser();
-        if (user) {
-          setIdentity({ profile: user });
-        }
-      } catch (error) {
-        console.warn("Farcaster user data could not be fetched.", error);
-      } finally {
-        setLoading(false);
+  const connect = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { token } = await sdk.quickAuth.getToken();
+      if (!token) {
+        throw new Error('Could not get auth token.');
       }
-    };
-    fetchFarcasterUser();
-  }, []);
 
-  const value = { identity, loading };
+      const res = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to authenticate with backend.');
+      }
+
+      const profile = await res.json();
+      setIdentity({ profile });
+
+    } catch (error: any) {
+      console.error("Farcaster connection failed.", error);
+      toast({
+        variant: 'destructive',
+        title: 'Connection Failed',
+        description: error.message,
+      });
+      setIdentity({ profile: null });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+  
+  // Attempt to auto-connect on load
+  useEffect(() => {
+    connect();
+  }, [connect]);
+
+
+  const value = { identity, loading, connect };
 
   return (
     <FarcasterIdentityContext.Provider value={value}>

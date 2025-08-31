@@ -66,7 +66,7 @@ export function GameClient({
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
-  const { identity } = useFarcasterIdentity();
+  const { identity, connect, loading } = useFarcasterIdentity();
   const isAuthenticated = !!identity.profile;
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
@@ -137,6 +137,10 @@ export function GameClient({
       setGameStatus('playing');
     } else {
       console.log('User must sign in to accept wager.');
+      // Attempt to connect if not authenticated
+      if(!loading) {
+        connect();
+      }
     }
   }
 

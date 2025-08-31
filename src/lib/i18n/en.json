@@ -82,6 +82,7 @@
     "for_glory": "For Glory!",
     "on_testnet": "(On Base Sepolia Testnet)",
     "accept_button": "Accept & Play",
+    "accept_button_loading": "Connecting...",
     "decline_button": "Decline & Go Home",
     "escrow_notice": "Funds will be held in a secure escrow contract."
   },

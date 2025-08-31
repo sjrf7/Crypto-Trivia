@@ -82,6 +82,7 @@
     "for_glory": "¡Por la Gloria!",
     "on_testnet": "(En la Testnet de Base Sepolia)",
     "accept_button": "Aceptar y Jugar",
+    "accept_button_loading": "Conectando...",
     "decline_button": "Rechazar e Ir a Inicio",
     "escrow_notice": "Los fondos se mantendrán en un contrato de depósito seguro."
   },
