@@ -30,7 +30,7 @@ const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | un
 
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [identity, setIdentity] = useState<FarcasterIdentity>({ profile: null });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   const connect = useCallback(async () => {
@@ -38,7 +38,11 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     try {
       const { token } = await sdk.quickAuth.getToken();
       if (!token) {
-        throw new Error('Could not get auth token.');
+        // This case can happen if the user is not in a Farcaster client.
+        // We don't throw an error, just set loading to false and profile to null.
+        setIdentity({ profile: null });
+        setLoading(false);
+        return;
       }
 
       const res = await fetch('/api/auth/me', {

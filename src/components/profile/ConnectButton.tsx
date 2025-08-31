@@ -13,15 +13,32 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
-import { Skeleton } from '../ui/skeleton';
-import { LogIn, RefreshCw, Wallet } from 'lucide-react';
+import { LogIn, RefreshCw, Wallet, LogOut, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
+import { useAccount, useConnect, useDisconnect, useEnsName } from 'wagmi';
+import { injected } from 'wagmi/connectors'
+import { useEffect } from 'react';
 
 export function ConnectButton() {
-  const { identity, loading, connect } = useFarcasterIdentity();
-  const { profile } = identity;
+  const { identity: farcasterIdentity, loading: farcasterLoading } = useFarcasterIdentity();
+  const { profile: farcasterProfile } = farcasterIdentity;
   const { toast } = useToast();
+  
+  const { address, isConnected, chain } = useAccount();
+  const { connect, connectors, isPending: isConnecting } = useConnect();
+  const { disconnect } = useDisconnect();
+
+  useEffect(() => {
+    // Automatically connect the wallet if a Farcaster user is identified
+    // and the wallet isn't already connected.
+    if (farcasterProfile && !isConnected && !isConnecting) {
+      const injectedConnector = connectors.find(c => c.type === 'injected');
+      if (injectedConnector) {
+        connect({ connector: injectedConnector });
+      }
+    }
+  }, [farcasterProfile, isConnected, connect, connectors, isConnecting]);
+
 
   const shortAddress = (address?: string) => {
     if (!address) return '';
@@ -29,8 +46,8 @@ export function ConnectButton() {
   }
 
   const copyAddress = () => {
-    if (profile?.custody_address) {
-      navigator.clipboard.writeText(profile.custody_address);
+    if (address) {
+      navigator.clipboard.writeText(address);
       toast({
         title: "Address Copied!",
         description: "Your wallet address has been copied to the clipboard.",
@@ -38,27 +55,29 @@ export function ConnectButton() {
     }
   }
 
-  if (loading) {
-    return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Connecting</Button>;
+  if (farcasterLoading) {
+    return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Loading...</Button>;
   }
   
-  if (profile) {
+  if (isConnected && farcasterProfile) {
     return (
        <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={profile.pfp_url} alt={profile.display_name || 'User PFP'} data-ai-hint="profile picture" />
-              <AvatarFallback>{profile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
+          <Button variant="outline" className="h-10">
+             <Avatar className="h-8 w-8 mr-2">
+                <AvatarImage src={farcasterProfile.pfp_url} alt={farcasterProfile.display_name || 'User PFP'} data-ai-hint="profile picture" />
+                <AvatarFallback>{farcasterProfile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
             </Avatar>
+            {shortAddress(address)}
+            {chain?.id !== 8453 && <AlertCircle className="ml-2 h-4 w-4 text-destructive" />}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuContent className="w-64" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{profile.display_name}</p>
+              <p className="text-sm font-medium leading-none">{farcasterProfile.display_name}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                @{profile.username}
+                @{farcasterProfile.username}
               </p>
             </div>
           </DropdownMenuLabel>
@@ -68,21 +87,37 @@ export function ConnectButton() {
               My Profile
             </Link>
           </DropdownMenuItem>
-          {profile.custody_address && (
-              <DropdownMenuItem onClick={copyAddress}>
-                  <Wallet className="mr-2 h-4 w-4" />
-                  <span>{shortAddress(profile.custody_address)}</span>
-              </DropdownMenuItem>
-          )}
+          <DropdownMenuItem onClick={copyAddress}>
+              <Wallet className="mr-2 h-4 w-4" />
+              <span>Copy Address</span>
+          </DropdownMenuItem>
+           <DropdownMenuSeparator />
+           <DropdownMenuItem>
+                {chain ? (
+                    <div className='flex items-center gap-2'>
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <span>{chain.name}</span>
+                    </div>
+                ) : (
+                    <div className='flex items-center gap-2'>
+                        <AlertCircle className="h-4 w-4 text-destructive" />
+                        <span>Unknown Network</span>
+                    </div>
+                )}
+           </DropdownMenuItem>
+           <DropdownMenuItem onClick={() => disconnect()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Disconnect</span>
+            </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
   }
 
+  // Fallback button if user is not in a Farcaster client or something fails
   return (
-    <Button onClick={connect}>
-        <LogIn className="mr-2 h-4 w-4" />
-        Connect
+    <Button onClick={() => connect({ connector: injected() })} disabled={isConnecting}>
+        {isConnecting ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect Wallet</>}
     </Button>
   );
 }
