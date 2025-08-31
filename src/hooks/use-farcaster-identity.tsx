@@ -1,9 +1,9 @@
-
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
 import { useToast } from './use-toast';
+import type { Metadata } from 'next';
 
 declare global {
     interface Window {
