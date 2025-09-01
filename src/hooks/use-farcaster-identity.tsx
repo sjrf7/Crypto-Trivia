@@ -58,7 +58,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
       setIdentity({ profile });
 
       // After profile is fetched, get wallet address from Farcaster client
-      const { address } = await sdk.wallet.request({ method: 'eth_requestAccounts' });
+      const { address } = await sdk.wallet.getAddress();
       if (address) {
         setFarcasterWalletAddress(address as string);
       } else {
