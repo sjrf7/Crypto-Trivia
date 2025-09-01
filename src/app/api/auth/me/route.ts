@@ -1,8 +1,30 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, Errors } from '@farcaster/quick-auth';
+import { jwtVerify } from 'jose';
 
 const NEYNAR_API_KEY = 'E529EF9F-06BD-4E56-BEE4-6B8496352854';
+const QUICK_AUTH_PEM_URL = 'https://docs.farcaster.xyz/auth-kit/jwt.pem';
+
+// Cache for the public key to avoid refetching it on every request.
+let cachedKey: CryptoKey | null = null;
+async function getPublicKey() {
+  if (cachedKey) return cachedKey;
+  const response = await fetch(QUICK_AUTH_PEM_URL);
+  const pem = await response.text();
+  const base64 = pem.replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', '').replace(/\n/g, '');
+  const keyBuffer = Buffer.from(base64, 'base64');
+  cachedKey = await crypto.subtle.importKey(
+    'spki',
+    keyBuffer,
+    {
+      name: 'RSASSA-PKCS1-v1_5',
+      hash: 'SHA-256',
+    },
+    true,
+    ['verify']
+  );
+  return cachedKey;
+}
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('Authorization');
@@ -16,15 +38,16 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const client = createClient();
-    const payload = await client.verifyJwt({ token });
-    const { sub: fid } = payload;
+    const publicKey = await getPublicKey();
+    const { payload } = await jwtVerify(token, publicKey, {
+      algorithms: ['RS256'],
+    });
 
-
+    const fid = payload.sub;
     if (!fid) {
-      return NextResponse.json({ error: 'Invalid token payload.' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid token payload, FID is missing.' }, { status: 401 });
     }
-
+    
     // If Neynar API key is missing, we can still return a basic profile with the FID.
     // The app can function in a degraded mode.
     if (!NEYNAR_API_KEY) {
@@ -77,11 +100,7 @@ export async function GET(req: NextRequest) {
     }, { status: 200 });
 
   } catch (error: any) {
-    if (error instanceof Errors.InvalidTokenError) {
-        console.info('Invalid token:', error.message)
-        return NextResponse.json({ error: `Token verification failed: ${error.message}` }, { status: 401 });
-    }
     console.error('[API/AUTH/ME] Verification Error:', error);
-    return NextResponse.json({ error: `An unexpected error occurred.` }, { status: 500 });
+    return NextResponse.json({ error: `An unexpected error occurred: ${error.message}` }, { status: 500 });
   }
 }
