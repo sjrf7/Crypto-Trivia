@@ -24,6 +24,9 @@ export function Providers({ children }: { children: ReactNode }) {
           },
           defaultChain: base,
           supportedChains: [base, baseSepolia],
+          farcaster: {
+            scopes: ['wallet']
+          }
         }}
       >
       <I18nProvider>
