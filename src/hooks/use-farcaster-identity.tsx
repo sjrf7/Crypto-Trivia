@@ -4,6 +4,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
 import { useToast } from './use-toast';
+import { useAccount, useConnect } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 
 export interface UserProfile {
   fid: number;
@@ -33,15 +35,15 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const [identity, setIdentity] = useState<FarcasterIdentity>({ profile: null });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { isConnected } = useAccount();
+  const { connect: wagmiConnect } = useConnect();
 
   const connect = useCallback(async () => {
     setLoading(true);
     try {
       const { token } = await sdk.quickAuth.getToken();
       if (!token) {
-        setIdentity({ profile: null });
-        setLoading(false);
-        return;
+        throw new Error('Failed to get Farcaster auth token.');
       }
 
       const res = await fetch('/api/auth/me', {
@@ -57,6 +59,12 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
 
       const profile = await res.json();
       setIdentity({ profile });
+      
+      // After successfully getting the profile, ensure the wallet is connected.
+      // This explicitly asks the Farcaster client for the wallet connection.
+      if (!isConnected) {
+        wagmiConnect({ connector: injected() });
+      }
 
     } catch (error: any) {
       console.error("Farcaster connection failed.", error);
@@ -69,12 +77,39 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, isConnected, wagmiConnect]);
   
-  // Attempt to auto-connect on load
+  // Attempt to auto-connect on load by checking existing token/status
   useEffect(() => {
-    connect();
-  }, [connect]);
+    const autoConnect = async () => {
+        setLoading(true);
+        try {
+            const { token } = await sdk.quickAuth.getToken();
+            if (token) {
+                // If a token exists, try to fetch the profile silently.
+                const res = await fetch('/api/auth/me', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (res.ok) {
+                    const profile = await res.json();
+                    setIdentity({ profile });
+                    if (!isConnected) {
+                        wagmiConnect({ connector: injected() });
+                    }
+                } else {
+                    // Token is invalid or expired, reset.
+                    setIdentity({ profile: null });
+                }
+            }
+        } catch (error) {
+            console.info("Auto-connect failed, user needs to connect manually.", error);
+            setIdentity({ profile: null });
+        } finally {
+            setLoading(false);
+        }
+    };
+    autoConnect();
+  }, []); // Run only once on mount. `connect` is not a dependency to avoid re-triggering.
 
 
   const value = { identity, loading, connect };

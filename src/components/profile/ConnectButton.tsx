@@ -15,26 +15,16 @@ import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { LogIn, RefreshCw, Wallet, LogOut, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useAccount, useConnect, useDisconnect, useEnsName } from 'wagmi';
-import { injected } from 'wagmi/connectors'
-import { useEffect } from 'react';
-import { sdk } from '@farcaster/miniapp-sdk';
+import { useAccount, useDisconnect } from 'wagmi';
 
 
 export function ConnectButton() {
-  const { identity: farcasterIdentity, loading: farcasterLoading } = useFarcasterIdentity();
+  const { identity: farcasterIdentity, loading: farcasterLoading, connect: connectFarcaster } = useFarcasterIdentity();
   const { profile: farcasterProfile } = farcasterIdentity;
   const { toast } = useToast();
   
   const { address, isConnected, chain } = useAccount();
-  const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
-
-  const handleConnect = () => {
-    // We use the injected connector from wagmi, 
-    // Farcaster's Mini App SDK ensures this connector points to the Farcaster client's wallet.
-    connect({ connector: injected() });
-  }
 
   const shortAddress = (address?: string) => {
     if (!address) return '';
@@ -55,7 +45,7 @@ export function ConnectButton() {
     return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Loading...</Button>;
   }
   
-  if (isConnected && farcasterProfile) {
+  if (isConnected && farcasterProfile && address) {
     return (
        <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -113,10 +103,10 @@ export function ConnectButton() {
     );
   }
 
-  // Fallback button if user is not in a Farcaster client or something fails
+  // Fallback button if user is not fully connected.
   return (
-    <Button onClick={handleConnect} disabled={isConnecting}>
-        {isConnecting ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect Wallet</>}
+    <Button onClick={connectFarcaster} disabled={farcasterLoading}>
+        {farcasterLoading ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect</>}
     </Button>
   );
 }
