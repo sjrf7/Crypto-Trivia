@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Notification } from '@/lib/types';
-import { useFarcasterIdentity } from './use-farcaster-identity.tsx';
+import { useFarcasterIdentity } from './use-farcaster-identity';
 
 interface NotificationsContextType {
   notifications: Notification[];
@@ -16,15 +16,15 @@ interface NotificationsContextType {
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
-  const { identity } = useFarcasterIdentity();
-  const fid = identity.profile?.fid;
-  const storageKey = `notifications_${fid}`;
+  const { farcasterProfile } = useFarcasterIdentity();
+  const fid = farcasterProfile?.fid;
+  const storageKey = fid ? `notifications_${fid}` : null;
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    if (!fid) {
+    if (!storageKey) {
       setNotifications([]);
       return;
     }
@@ -41,16 +41,16 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       console.error("Failed to read notifications from localStorage", error);
       setNotifications([]);
     }
-  }, [fid, storageKey]);
+  }, [storageKey]);
 
   const saveToLocalStorage = (items: Notification[]) => {
-    if(fid) {
+    if(storageKey) {
         window.localStorage.setItem(storageKey, JSON.stringify(items));
     }
   }
 
   const addNotification = useCallback((notificationData: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    if (!fid) return;
+    if (!storageKey) return;
 
     const newNotification: Notification = {
       id: new Date().toISOString() + Math.random(),
@@ -66,10 +66,10 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       return updatedNotifications;
     });
 
-  }, [fid, storageKey]);
+  }, [storageKey]);
 
   const markAsRead = useCallback(() => {
-    if (!fid) return;
+    if (!storageKey) return;
 
     setNotifications(prev => {
         const updated = prev.map(n => ({...n, read: true}));
@@ -77,14 +77,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         setUnreadCount(0);
         return updated;
     });
-  }, [fid, storageKey]);
+  }, [storageKey]);
 
   const clearAll = useCallback(() => {
-    if (!fid) return;
+    if (!storageKey) return;
     setNotifications([]);
     setUnreadCount(0);
     saveToLocalStorage([]);
-  }, [fid, storageKey]);
+  }, [storageKey]);
 
   const value = {
     notifications,

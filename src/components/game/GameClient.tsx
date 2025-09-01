@@ -13,7 +13,7 @@ import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 import { AITriviaGame } from '@/lib/types/ai';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { usePrivy } from '@privy-io/react-auth';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -66,15 +66,11 @@ export function GameClient({
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
-  const { identity, connect, loading } = useFarcasterIdentity();
-  const isAuthenticated = !!identity.profile;
+  const { authenticated, ready, login } = usePrivy();
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
   useEffect(() => {
-    // This effect determines which questions to load and what the initial game state is.
-    
-    // Case 1: It's an AI game or a challenge
     if (challengeQuestions && challengeQuestions.length > 0) {
       setIsChallenge(!!scoreToBeat);
       setQuestions(challengeQuestions.map((q, i) => ({...q, originalIndex: q.originalIndex ?? i})));
@@ -84,21 +80,17 @@ export function GameClient({
           setGameStatus('playing');
       }
     } 
-    // Case 2: It's a classic game started from the /play page (no props passed)
     else if (!isAiGame) {
       handleStartClassic();
     }
-    // AiGame without challenge questions will be handled by its own page logic, not here.
-
   }, [challengeQuestions, scoreToBeat, wager, challenger, isAiGame]);
 
 
   useEffect(() => {
-    // When a user logs in while on the wager screen, automatically start the game.
-    if (gameStatus === 'wager' && isAuthenticated) {
+    if (gameStatus === 'wager' && authenticated) {
       handleWagerAccept();
     }
-  }, [isAuthenticated, gameStatus]);
+  }, [authenticated, gameStatus]);
 
 
   const handleStartClassic = () => {
@@ -122,8 +114,6 @@ export function GameClient({
     if (onRestart) {
         onRestart();
     } else {
-        // This logic is for non-classic games that are restarted from the summary.
-        // It resets the state to show the welcome screen again.
         setGameStatus('setup');
         setGameResult(null);
         setIsChallenge(false);
@@ -132,14 +122,13 @@ export function GameClient({
   };
   
   const handleWagerAccept = () => {
-    if (isAuthenticated) {
+    if (authenticated) {
       console.log('Wager accepted. Starting game.');
       setGameStatus('playing');
     } else {
       console.log('User must sign in to accept wager.');
-      // Attempt to connect if not authenticated
-      if(!loading) {
-        connect();
+      if(ready) {
+        login();
       }
     }
   }
@@ -192,9 +181,6 @@ export function GameClient({
   const renderGameContent = () => {
     switch (gameStatus) {
       case 'setup':
-        // This welcome screen is now primarily for challenge links that are invalid,
-        // or for direct navigation to GameClient without params.
-        // The main game mode selection happens on /play page.
         return renderWelcomeScreen();
       case 'wager':
         return <WagerCard 

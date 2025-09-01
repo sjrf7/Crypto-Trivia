@@ -28,7 +28,8 @@ import { Textarea } from '../ui/textarea';
 import { useNotifications } from '@/hooks/use-notifications';
 import { AITriviaGame } from '@/lib/types/ai';
 import { cn } from '@/lib/utils';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { usePrivy } from '@privy-io/react-auth';
 
 interface SummaryScreenProps {
   score: number;
@@ -68,10 +69,9 @@ export function SummaryScreen({
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
     const [challengeMessage, setChallengeMessage] = useState('');
-    const { identity } = useFarcasterIdentity();
-    const { profile } = identity;
-    const isAuthenticated = !!profile;
-    const { addGameResult } = useUserStats(profile?.fid?.toString());
+    const { authenticated } = usePrivy();
+    const { farcasterProfile } = useFarcasterIdentity();
+    const { addGameResult } = useUserStats(farcasterProfile?.fid?.toString());
     const [isGenerating, setIsGenerating] = useState(false);
     const { addNotification } = useNotifications();
     const summarySoundRef = useRef<HTMLAudioElement>(null);
@@ -80,8 +80,7 @@ export function SummaryScreen({
     useEffect(() => {
       summarySoundRef.current?.play().catch(console.error);
 
-      // Only add game results if the user is authenticated and the hook function is available.
-      if (isAuthenticated && addGameResult) {
+      if (authenticated && addGameResult) {
         addGameResult({
           score,
           questionsAnswered,
@@ -93,7 +92,7 @@ export function SummaryScreen({
         });
       }
       
-       if (isChallenge && profile) {
+       if (isChallenge && farcasterProfile) {
             const title = t(wonChallenge ? 'notifications.challenge_won.title' : 'notifications.challenge_lost.title');
             const description = t(wonChallenge ? 'notifications.challenge_won.description' : 'notifications.challenge_lost.description', {
                 challenger: challenger || 'a friend'
@@ -101,15 +100,14 @@ export function SummaryScreen({
             addNotification({ type: 'challenge', title, description });
         }
       
-      // The dependency array correctly lists all external values that the effect depends on.
-    }, []); // Run only once when the summary screen mounts.
+    }, []);
     
     const generateChallenge = useCallback(async () => {
       setIsGenerating(true);
-      setChallengeUrl(''); // Reset previous URL
+      setChallengeUrl('');
 
       try {
-        if (!isAuthenticated || !profile) {
+        if (!authenticated || !farcasterProfile) {
             toast({
                 variant: "destructive",
                 title: t('summary.challenge.not_logged_in.title'),
@@ -118,7 +116,7 @@ export function SummaryScreen({
             return;
         }
 
-        const challengerName = profile?.display_name || profile?.username || 'A friend';
+        const challengerName = farcasterProfile?.display_name || farcasterProfile?.username || 'A friend';
         let url = '';
 
         if (isAiGame) {
@@ -147,7 +145,6 @@ export function SummaryScreen({
           if (!questionIndices) throw new Error('Could not generate challenge: No original indices found.');
           
           const dataSegment = `classic|${questionIndices}|${score}|${wager || 0}|${challengerName}|${encodeURIComponent(challengeMessage)}`;
-          // URL-safe Base64 encoding
           const encodedData = btoa(dataSegment).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
           url = `${window.location.origin}/challenge/classic/${encodedData}`;
         }
@@ -164,7 +161,7 @@ export function SummaryScreen({
       } finally {
         setIsGenerating(false);
       }
-    }, [questions, score, wager, challengeMessage, profile, isAuthenticated, isAiGame, aiGameTopic, toast, t]);
+    }, [questions, score, wager, challengeMessage, farcasterProfile, authenticated, isAiGame, aiGameTopic, toast, t]);
 
     const copyToClipboard = () => {
         if (!challengeUrl) return;
@@ -227,7 +224,7 @@ export function SummaryScreen({
             {isChallenge && scoreToBeat !== undefined ? (
               <div className="grid grid-cols-2 gap-4 items-center bg-secondary p-4 rounded-lg">
                 <div className="text-center">
-                  <Label>{profile?.display_name || t('summary.your_score')}</Label>
+                  <Label>{farcasterProfile?.display_name || t('summary.your_score')}</Label>
                   <div className="text-4xl font-bold text-primary">
                     <AnimatedScore score={score} />
                   </div>
@@ -279,15 +276,13 @@ export function SummaryScreen({
                 >
                 <AlertDialog onOpenChange={(open) => {
                     if (open) {
-                        // Reset state when opening
                         setIsGenerating(false);
                         setChallengeUrl('');
-                        // Generate link immediately
                         generateChallenge();
                     }
                 }}>
                     <AlertDialogTrigger asChild>
-                    <Button variant="secondary" className="w-full" disabled={!isAuthenticated}>
+                    <Button variant="secondary" className="w-full" disabled={!authenticated}>
                         <Share2 className="mr-2 h-4 w-4" />
                         {t('summary.challenge.button')}
                     </Button>

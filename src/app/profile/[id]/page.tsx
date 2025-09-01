@@ -10,7 +10,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card as UICard, CardContent as UICardContent } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { usePrivy } from '@privy-io/react-auth';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -18,44 +19,33 @@ function ProfilePageContent() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
-  const { identity, loading: status } = useFarcasterIdentity();
-  const { profile: farcasterUser } = identity;
-  const isAuthenticated = !!farcasterUser;
+  const { authenticated } = usePrivy();
+  const { farcasterProfile, loading: status } = useFarcasterIdentity();
   const { t } = useI18n();
-  const { stats: userStats } = useUserStats(farcasterUser?.fid?.toString());
+  const { stats: userStats } = useUserStats(farcasterProfile?.fid?.toString());
 
   useEffect(() => {
-    // This effect's job is to figure out which player to display.
-    
-    // Don't do anything until the Farcaster auth state is resolved.
     if (status) {
         return;
     }
 
-    // Case 1: The user is viewing their own profile (/profile/me)
     if (id === 'me') {
-      if (isAuthenticated && farcasterUser) {
-        // The user is logged in. Create a profile for them on the fly.
+      if (authenticated && farcasterProfile) {
         setPlayer({
-          id: farcasterUser.username || `fid-${farcasterUser.fid}`,
-          name: farcasterUser.display_name || farcasterUser.username || `User ${farcasterUser.fid}`,
-          avatar: farcasterUser.pfp_url || `https://placehold.co/128x128.png`,
-          stats: userStats, // Use stats from our hook
+          id: farcasterProfile.username || `fid-${farcasterProfile.fid}`,
+          name: farcasterProfile.display_name || farcasterProfile.username || `User ${farcasterProfile.fid}`,
+          avatar: farcasterProfile.pfp_url || `https://placehold.co/128x128.png`,
+          stats: userStats,
           achievements: userStats.unlockedAchievements,
         });
       } else {
-        // The user is not logged in and trying to see their own profile.
-        // Set player to null to trigger the Sign In prompt.
         setPlayer(null);
       }
-    
-    // Case 2: The user is viewing a specific profile (e.g., /profile/vitalik)
     } else {
       const foundPlayer = PLAYERS.find((p) => p.id.toLowerCase() === id.toLowerCase());
       setPlayer(foundPlayer || null);
     }
-
-  }, [id, farcasterUser, isAuthenticated, status, userStats]);
+  }, [id, farcasterProfile, authenticated, status, userStats]);
 
 
   if (status) {
@@ -81,8 +71,7 @@ function ProfilePageContent() {
     )
   }
 
-  // After loading, if the user is on /profile/me and not authenticated, show the sign-in card.
-  if (id === 'me' && !isAuthenticated) {
+  if (id === 'me' && !authenticated) {
     return (
       <UICard className="w-full max-w-md mx-auto text-center">
         <UICardContent className="pt-6">
@@ -93,13 +82,11 @@ function ProfilePageContent() {
     )
   }
 
-  // After loading, if no player could be found (e.g., /profile/non-existent-user), show 404.
   if (!player && id !== 'me') {
     notFound();
   }
   
   if (player) {
-    // If we have a player, show their profile.
     return (
       <div className="container mx-auto space-y-8">
         <ProfileCard player={player} />
@@ -107,19 +94,13 @@ function ProfilePageContent() {
     );
   }
   
-  // Default case if something goes wrong, or if it's /me and the player hasn't been created yet.
   return null;
 }
 
 export default function ProfilePage() {
-  // We can wrap the content component with the provider
-  // if we need i18n but the page itself is a server component.
-  // In this case, the whole page is a client component, so it's okay.
   return <ProfilePageContent />;
 }
 
-
-// Helper components for skeleton loading, assuming they are defined elsewhere or defined here
 const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;
 const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className}>{children}</div>;

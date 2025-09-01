@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { Shield, Swords, RefreshCw } from 'lucide-react';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { usePrivy } from '@privy-io/react-auth';
 
 interface WagerCardProps {
   challenger: string;
@@ -17,7 +17,7 @@ interface WagerCardProps {
 
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
-  const { loading } = useFarcasterIdentity();
+  const { ready } = usePrivy();
 
   const defaultMessage = t('wager.default_message');
 
@@ -42,8 +42,8 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
                 {wager > 0 && <p className="text-xs text-muted-foreground">{t('wager.on_testnet')}</p>}
             </CardContent>
             <CardFooter className="flex-col gap-4">
-                <Button onClick={onAccept} className="w-full" size="lg" disabled={loading}>
-                  {loading ? <><RefreshCw className="animate-spin mr-2"/> {t('wager.accept_button_loading')}</> : t('wager.accept_button')}
+                <Button onClick={onAccept} className="w-full" size="lg" disabled={!ready}>
+                  {!ready ? <><RefreshCw className="animate-spin mr-2"/> {t('wager.accept_button_loading')}</> : t('wager.accept_button')}
                 </Button>
                 <Button onClick={onDecline} variant="ghost" className="w-full">
                   {t('wager.decline_button')}

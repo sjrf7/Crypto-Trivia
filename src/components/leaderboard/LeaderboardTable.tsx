@@ -12,8 +12,8 @@ import { motion } from 'framer-motion';
 import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
-import { PLAYERS } from '@/lib/mock-data';
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { usePrivy } from '@privy-io/react-auth';
 
 type SortKey = 'rank' | 'totalScore';
 
@@ -57,37 +57,32 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { t } = useI18n();
-
-  const { identity } = useFarcasterIdentity();
-  const { profile } = identity;
-  const isAuthenticated = !!profile;
-  const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(profile?.fid?.toString());
+  const { authenticated } = usePrivy();
+  const { farcasterProfile } = useFarcasterIdentity();
+  const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(farcasterProfile?.fid?.toString());
   
   const mergedData = useMemo(() => {
     const data = [...initialData];
-    if (isAuthenticated && profile) {
-        const userInLeaderboard = data.find(entry => entry.player.id === (profile.username || `fid-${profile.fid}`));
+    if (authenticated && farcasterProfile) {
+        const userInLeaderboard = data.find(entry => entry.player.id === (farcasterProfile.username || `fid-${farcasterProfile.fid}`));
         if (userInLeaderboard) {
-            // Update existing user in leaderboard
             userInLeaderboard.player.stats = userStats;
         } else {
-            // Add new user to leaderboard
             const newPlayer: Player = {
-                id: profile.username || `fid-${profile.fid}`,
-                name: profile.display_name || `User ${profile.fid}`,
-                avatar: profile.pfp_url || '',
+                id: farcasterProfile.username || `fid-${farcasterProfile.fid}`,
+                name: farcasterProfile.display_name || `User ${farcasterProfile.fid}`,
+                avatar: farcasterProfile.pfp_url || '',
                 stats: userStats,
                 achievements: userStats.unlockedAchievements,
             };
             data.push({ rank: 0, player: newPlayer });
         }
     }
-     // Sort by score to determine ranks
     return data
         .sort((a, b) => b.player.stats.totalScore - a.player.stats.totalScore)
         .map((entry, index) => ({ ...entry, rank: index + 1 }));
 
-  }, [initialData, isAuthenticated, profile, userStats]);
+  }, [initialData, authenticated, farcasterProfile, userStats]);
 
 
   const sortedData = useMemo(() => {
@@ -116,14 +111,14 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   }, [mergedData, sortKey, sortDirection]);
 
   useEffect(() => {
-      if(isAuthenticated && profile) {
-          const userEntry = sortedData.find(e => e.player.id === (profile.username || `fid-${profile.fid}`));
+      if(authenticated && farcasterProfile) {
+          const userEntry = sortedData.find(e => e.player.id === (farcasterProfile.username || `fid-${farcasterProfile.fid}`));
           if(userEntry) {
               updateRank(userEntry.rank);
               checkTopPlayerAchievement();
           }
       }
-  }, [sortedData, isAuthenticated, profile, updateRank, checkTopPlayerAchievement]);
+  }, [sortedData, authenticated, farcasterProfile, updateRank, checkTopPlayerAchievement]);
 
 
   const handleSort = (key: SortKey) => {
@@ -174,7 +169,7 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
               variants={rowVariants}
               className={cn(
                   "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-                  isAuthenticated && profile && (entry.player.id === profile.username || entry.player.id === `fid-${profile.fid}`) && "bg-primary/20 hover:bg-primary/30"
+                  authenticated && farcasterProfile && (entry.player.id === farcasterProfile.username || entry.player.id === `fid-${farcasterProfile.fid}`) && "bg-primary/20 hover:bg-primary/30"
               )}
             >
               <TableCell className="p-0 text-center">

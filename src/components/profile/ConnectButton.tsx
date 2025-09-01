@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
+import { usePrivy } from '@privy-io/react-auth';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -15,11 +15,12 @@ import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { LogIn, RefreshCw, Wallet, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 
 
 export function ConnectButton() {
-  const { identity, loading, farcasterWalletAddress, connect: connectFarcaster, disconnect: disconnectFarcaster } = useFarcasterIdentity();
-  const { profile: farcasterProfile } = identity;
+  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { farcasterProfile } = useFarcasterIdentity();
   const { toast } = useToast();
   
   const shortAddress = (address?: string) => {
@@ -28,8 +29,8 @@ export function ConnectButton() {
   }
 
   const copyAddress = () => {
-    if (farcasterWalletAddress) {
-      navigator.clipboard.writeText(farcasterWalletAddress);
+    if (user?.wallet?.address) {
+      navigator.clipboard.writeText(user.wallet.address);
       toast({
         title: "Address Copied!",
         description: "Your wallet address has been copied to the clipboard.",
@@ -37,11 +38,11 @@ export function ConnectButton() {
     }
   }
 
-  if (loading) {
+  if (!ready) {
     return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Loading...</Button>;
   }
   
-  if (farcasterProfile && farcasterWalletAddress) {
+  if (authenticated && farcasterProfile) {
     return (
        <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -50,7 +51,7 @@ export function ConnectButton() {
                 <AvatarImage src={farcasterProfile.pfp_url} alt={farcasterProfile.display_name || 'User PFP'} data-ai-hint="profile picture" />
                 <AvatarFallback>{farcasterProfile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
             </Avatar>
-            {shortAddress(farcasterWalletAddress)}
+            {shortAddress(user.wallet?.address)}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-64" align="end" forceMount>
@@ -73,7 +74,7 @@ export function ConnectButton() {
               <span>Copy Address</span>
           </DropdownMenuItem>
            <DropdownMenuSeparator />
-           <DropdownMenuItem onClick={disconnectFarcaster}>
+           <DropdownMenuItem onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Disconnect</span>
             </DropdownMenuItem>
@@ -84,8 +85,8 @@ export function ConnectButton() {
 
   // Fallback button if user is not fully connected.
   return (
-    <Button onClick={connectFarcaster} disabled={loading}>
-        {loading ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect</>}
+    <Button onClick={login} disabled={!ready}>
+        <LogIn className="mr-2 h-4 w-4" />Connect
     </Button>
   );
 }

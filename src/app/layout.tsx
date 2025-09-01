@@ -9,8 +9,6 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
-import { useEffect } from 'react';
-import { sdk } from '@farcaster/miniapp-sdk';
 
 
 const inter = Inter({
@@ -30,18 +28,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  useEffect(() => {
-    // The sdk.actions.ready() call signals to the Farcaster client that the Mini App
-    // has finished loading and is ready for interaction.
-    const signalReady = async () => {
-      try {
-        await sdk.actions.ready();
-      } catch (error) {
-        console.error('Failed to signal ready to Farcaster client', error);
-      }
-    };
-    signalReady();
-  }, []);
 
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>

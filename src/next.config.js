@@ -22,6 +22,9 @@ const nextConfig = {
     ],
   },
    webpack: (config, { isServer }) => {
+    if (!isServer) {
+        config.externals.push('pino-pretty', 'lokijs', 'encoding');
+    }
     if (isServer) {
       // These modules are not used in the server-side code and can be externalized
       // to prevent webpack from trying to bundle them, which can cause errors.
