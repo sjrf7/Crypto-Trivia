@@ -14,6 +14,7 @@ export interface UserProfile {
   follower_count?: number;
   following_count?: number;
   custody_address?: string;
+  primaryAddress?: string;
 }
 
 interface FarcasterIdentity {
@@ -38,8 +39,6 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     try {
       const { token } = await sdk.quickAuth.getToken();
       if (!token) {
-        // This case can happen if the user is not in a Farcaster client.
-        // We don't throw an error, just set loading to false and profile to null.
         setIdentity({ profile: null });
         setLoading(false);
         return;

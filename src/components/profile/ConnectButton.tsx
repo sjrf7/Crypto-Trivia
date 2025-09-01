@@ -18,6 +18,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAccount, useConnect, useDisconnect, useEnsName } from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import { useEffect } from 'react';
+import { sdk } from '@farcaster/miniapp-sdk';
+
 
 export function ConnectButton() {
   const { identity: farcasterIdentity, loading: farcasterLoading } = useFarcasterIdentity();
@@ -28,17 +30,11 @@ export function ConnectButton() {
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
 
-  useEffect(() => {
-    // Automatically connect the wallet if a Farcaster user is identified
-    // and the wallet isn't already connected.
-    if (farcasterProfile && !isConnected && !isConnecting) {
-      const injectedConnector = connectors.find(c => c.type === 'injected');
-      if (injectedConnector) {
-        connect({ connector: injectedConnector });
-      }
-    }
-  }, [farcasterProfile, isConnected, connect, connectors, isConnecting]);
-
+  const handleConnect = () => {
+    // We use the injected connector from wagmi, 
+    // Farcaster's Mini App SDK ensures this connector points to the Farcaster client's wallet.
+    connect({ connector: injected() });
+  }
 
   const shortAddress = (address?: string) => {
     if (!address) return '';
@@ -69,7 +65,7 @@ export function ConnectButton() {
                 <AvatarFallback>{farcasterProfile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
             </Avatar>
             {shortAddress(address)}
-            {chain?.id !== 8453 && <AlertCircle className="ml-2 h-4 w-4 text-destructive" />}
+            {chain?.unsupported && <AlertCircle className="ml-2 h-4 w-4 text-destructive" />}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-64" align="end" forceMount>
@@ -95,7 +91,10 @@ export function ConnectButton() {
            <DropdownMenuItem>
                 {chain ? (
                     <div className='flex items-center gap-2'>
-                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        {chain.unsupported ? 
+                            <AlertCircle className="h-4 w-4 text-destructive" /> : 
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                        }
                         <span>{chain.name}</span>
                     </div>
                 ) : (
@@ -116,7 +115,7 @@ export function ConnectButton() {
 
   // Fallback button if user is not in a Farcaster client or something fails
   return (
-    <Button onClick={() => connect({ connector: injected() })} disabled={isConnecting}>
+    <Button onClick={handleConnect} disabled={isConnecting}>
         {isConnecting ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect Wallet</>}
     </Button>
   );
