@@ -11,8 +11,6 @@ import { Card as UICard, CardContent as UICardContent } from '@/components/ui/ca
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity.tsx';
-import { WalletInfo } from '@/components/profile/WalletInfo';
-import { useAccount } from 'wagmi';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -25,7 +23,6 @@ function ProfilePageContent() {
   const isAuthenticated = !!farcasterUser;
   const { t } = useI18n();
   const { stats: userStats } = useUserStats(farcasterUser?.fid?.toString());
-  const { isConnected } = useAccount();
 
   useEffect(() => {
     // This effect's job is to figure out which player to display.
@@ -106,7 +103,6 @@ function ProfilePageContent() {
     return (
       <div className="container mx-auto space-y-8">
         <ProfileCard player={player} />
-        {id === 'me' && isConnected && <WalletInfo />}
       </div>
     );
   }

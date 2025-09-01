@@ -13,27 +13,23 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
-import { LogIn, RefreshCw, Wallet, LogOut, CheckCircle, AlertCircle } from 'lucide-react';
+import { LogIn, RefreshCw, Wallet, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useAccount, useDisconnect } from 'wagmi';
 
 
 export function ConnectButton() {
-  const { identity: farcasterIdentity, loading: farcasterLoading, connect: connectFarcaster } = useFarcasterIdentity();
-  const { profile: farcasterProfile } = farcasterIdentity;
+  const { identity, loading, farcasterWalletAddress, connect: connectFarcaster, disconnect: disconnectFarcaster } = useFarcasterIdentity();
+  const { profile: farcasterProfile } = identity;
   const { toast } = useToast();
   
-  const { address, isConnected, chain } = useAccount();
-  const { disconnect } = useDisconnect();
-
   const shortAddress = (address?: string) => {
     if (!address) return '';
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   }
 
   const copyAddress = () => {
-    if (address) {
-      navigator.clipboard.writeText(address);
+    if (farcasterWalletAddress) {
+      navigator.clipboard.writeText(farcasterWalletAddress);
       toast({
         title: "Address Copied!",
         description: "Your wallet address has been copied to the clipboard.",
@@ -41,11 +37,11 @@ export function ConnectButton() {
     }
   }
 
-  if (farcasterLoading) {
+  if (loading) {
     return <Button disabled variant="outline" size="sm"><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Loading...</Button>;
   }
   
-  if (isConnected && farcasterProfile && address) {
+  if (farcasterProfile && farcasterWalletAddress) {
     return (
        <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -54,8 +50,7 @@ export function ConnectButton() {
                 <AvatarImage src={farcasterProfile.pfp_url} alt={farcasterProfile.display_name || 'User PFP'} data-ai-hint="profile picture" />
                 <AvatarFallback>{farcasterProfile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
             </Avatar>
-            {shortAddress(address)}
-            {chain?.unsupported && <AlertCircle className="ml-2 h-4 w-4 text-destructive" />}
+            {shortAddress(farcasterWalletAddress)}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-64" align="end" forceMount>
@@ -78,23 +73,7 @@ export function ConnectButton() {
               <span>Copy Address</span>
           </DropdownMenuItem>
            <DropdownMenuSeparator />
-           <DropdownMenuItem>
-                {chain ? (
-                    <div className='flex items-center gap-2'>
-                        {chain.unsupported ? 
-                            <AlertCircle className="h-4 w-4 text-destructive" /> : 
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                        }
-                        <span>{chain.name}</span>
-                    </div>
-                ) : (
-                    <div className='flex items-center gap-2'>
-                        <AlertCircle className="h-4 w-4 text-destructive" />
-                        <span>Unknown Network</span>
-                    </div>
-                )}
-           </DropdownMenuItem>
-           <DropdownMenuItem onClick={() => disconnect()}>
+           <DropdownMenuItem onClick={disconnectFarcaster}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Disconnect</span>
             </DropdownMenuItem>
@@ -105,8 +84,8 @@ export function ConnectButton() {
 
   // Fallback button if user is not fully connected.
   return (
-    <Button onClick={connectFarcaster} disabled={farcasterLoading}>
-        {farcasterLoading ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect</>}
+    <Button onClick={connectFarcaster} disabled={loading}>
+        {loading ? <><RefreshCw className="animate-spin mr-2"/>Connecting...</> : <><LogIn className="mr-2 h-4 w-4" />Connect</>}
     </Button>
   );
 }
