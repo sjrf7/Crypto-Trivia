@@ -11,7 +11,7 @@ import { base, baseSepolia } from 'viem/chains';
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'clwscx2b307k7134g4e7211i4'} // Replace with your Privy App ID
+        appId={'cmf0egwwm00kjl50b9nbz2q91'}
         config={{
           loginMethods: ['farcaster'],
           appearance: {
