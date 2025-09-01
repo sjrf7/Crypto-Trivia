@@ -10,7 +10,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 import { useEffect } from 'react';
-// import { sdk } from '@farcaster/miniapp-sdk';
+import Script from 'next/script';
 
 
 const inter = Inter({
@@ -32,7 +32,11 @@ export default function RootLayout({
 }>) {
 
   useEffect(() => {
-    // sdk.actions.ready();
+    // The Farcaster SDK is loaded via a script tag, so we access it via the window object.
+    // Once the app is ready, we call `ready()` to signal to the Farcaster client.
+    if (window.FarcasterSDK) {
+      window.FarcasterSDK.actions.ready();
+    }
   }, []);
 
   return (
@@ -54,6 +58,10 @@ export default function RootLayout({
             <Toaster />
           </BackgroundMusicProvider>
         </Providers>
+        <Script
+          src="https://unpkg.com/@farcaster/miniapp-sdk@0.2.0/build/index.iife.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

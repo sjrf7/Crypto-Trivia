@@ -1,5 +1,11 @@
 
 
+declare global {
+  interface Window {
+    FarcasterSDK: any;
+  }
+}
+
 export interface TriviaQuestion {
   question: string;
   answer: string;
