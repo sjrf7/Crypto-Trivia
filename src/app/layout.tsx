@@ -10,7 +10,6 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 import { useEffect } from 'react';
-// import { sdk } from '@farcaster/miniapp-sdk';
 
 
 const inter = Inter({

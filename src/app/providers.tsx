@@ -25,7 +25,8 @@ export function Providers({ children }: { children: ReactNode }) {
           defaultChain: base,
           supportedChains: [base, baseSepolia],
           farcaster: {
-            scopes: ['wallet']
+            // Request permission to read and sign with the user's wallet
+            scopes: ['wallet'],
           }
         }}
       >
