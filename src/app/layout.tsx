@@ -9,6 +9,8 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
+import { useEffect } from 'react';
+// import { sdk } from '@farcaster/miniapp-sdk';
 
 
 const inter = Inter({
@@ -28,6 +30,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  useEffect(() => {
+    // sdk.actions.ready();
+  }, []);
 
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
