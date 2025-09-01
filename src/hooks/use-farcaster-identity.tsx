@@ -94,7 +94,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
                     const profile = await res.json();
                     setIdentity({ profile });
                     if (!isConnected) {
-                        wagmiConnect({ connector: injected() });
+                        // Do not automatically connect wallet here to prevent popups
                     }
                 } else {
                     // Token is invalid or expired, reset.
