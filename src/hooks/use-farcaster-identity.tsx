@@ -2,7 +2,6 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAccount } from 'wagmi';
 import sdk from '@farcaster/miniapp-sdk';
 
 export interface FarcasterUserProfile {
@@ -28,40 +27,44 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const { isConnected } = useAccount();
 
   useEffect(() => {
     const initialize = async () => {
+      setLoading(true);
       try {
-        // This is a one-time check to signal to Farcaster that the app is ready.
-        await sdk.actions.ready();
+        const { message, signature, fid } = await sdk.siwf.signIn();
         
-        const user = await sdk.getUser();
-        if (user) {
-          setFarcasterProfile({
-            fid: user.fid,
-            username: user.username,
-            display_name: user.displayName,
-            pfp_url: user.pfpUrl,
-            bio: user.profile?.bio?.text,
-          });
+        const res = await fetch('/api/me', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message, signature, fid }),
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          setFarcasterProfile(user);
           setAuthenticated(true);
         } else {
           setFarcasterProfile(null);
           setAuthenticated(false);
+          console.error("SIWF authentication failed on the backend.");
         }
       } catch (e) {
-        console.error("Farcaster SDK initialization failed", e);
+        console.error("Farcaster SIWF failed", e);
         setFarcasterProfile(null);
         setAuthenticated(false);
       } finally {
+        // Once authentication is checked (successful or not), signal app is ready.
+        await sdk.actions.ready();
         setLoading(false);
       }
     };
 
     initialize();
 
-  }, [isConnected]);
+  }, []);
 
   const value = { farcasterProfile, loading, authenticated };
 

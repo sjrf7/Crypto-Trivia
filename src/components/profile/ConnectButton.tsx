@@ -26,10 +26,14 @@ export function ConnectButton() {
   const { toast } = useToast();
   
   const handleLogout = () => {
+    // For now, we only disconnect the wallet.
+    // Farcaster Quick Auth session is managed by the client.
     disconnect();
   }
 
   const handleLogin = () => {
+    // The FarcasterIdentityProvider handles Quick Auth.
+    // We just need to connect the wallet.
     connect({ connector: injected() });
   }
 
@@ -37,10 +41,18 @@ export function ConnectButton() {
     return <Button variant="outline" className="h-10 w-28 animate-pulse" disabled />
   }
 
-  if (!authenticated || !isConnected || !farcasterProfile) {
-    return <Button variant="outline" onClick={handleLogin}>Connect Wallet</Button>;
+  if (!authenticated || !farcasterProfile) {
+    // The app is inside Farcaster, but the user hasn't authed with our app yet.
+    // The provider will re-trigger auth. For the UI, we can show a generic connect.
+    // Or we can rely on the loading state. Here, we'll show nothing until authenticated.
+    return null;
   }
   
+  // Farcaster auth is successful, now check for wallet connection
+  if (!isConnected) {
+     return <Button variant="outline" onClick={() => connect({ connector: injected() })}>Connect Wallet</Button>;
+  }
+
   const shortAddress = (address?: string) => {
     if (!address) return '';
     return `${address.slice(0, 6)}...${address.slice(-4)}`;

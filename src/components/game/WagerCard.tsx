@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { Shield, Swords, RefreshCw, Wallet } from 'lucide-react';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { injected } from 'wagmi/connectors';
 
 interface WagerCardProps {
   challenger: string;
@@ -19,6 +20,7 @@ interface WagerCardProps {
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
   const { isConnected } = useAccount();
+  const { connect } = useConnect();
   const { authenticated, loading: farcasterLoading } = useFarcasterIdentity();
 
   const defaultMessage = t('wager.default_message');
@@ -33,13 +35,21 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
       );
     }
     
-    if (!authenticated || !isConnected) {
+    if (!authenticated) {
         return (
-            <Button className="w-full" size="lg" disabled>
-                <Wallet className="mr-2" />
+             <Button className="w-full" size="lg" disabled>
                 {t('wager.accept_button_loading')}
             </Button>
-        );
+        )
+    }
+
+    if (!isConnected) {
+        return (
+            <Button onClick={() => connect({connector: injected()})} className="w-full" size="lg">
+                <Wallet className="mr-2" />
+                Connect Wallet to Accept
+            </Button>
+        )
     }
 
     return (
