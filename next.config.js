@@ -32,6 +32,7 @@ const nextConfig = {
       config.externals.push(
         'handlebars',
         'lokijs',
+        'pino-pretty',
         '@opentelemetry/exporter-jaeger',
         '@opentelemetry/sdk-node',
         '@genkit-ai/firebase', // Explicitly externalize the problematic module
