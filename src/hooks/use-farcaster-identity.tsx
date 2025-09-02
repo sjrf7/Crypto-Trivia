@@ -22,77 +22,35 @@ interface FarcasterIdentityContextType {
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
 
-// Call ready() once to signal to the Farcaster client that the app is ready.
-let readyCalled = false;
-const signalReady = () => {
-    if (readyCalled) return;
-    try {
-        if (window.FarcasterSDK) {
-            window.FarcasterSDK.actions.ready();
-            readyCalled = true;
-        }
-    } catch (error) {
-        console.error("Farcaster SDK ready() call failed", error);
-    }
-}
-
-
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    const fetchFarcasterUser = async () => {
-      // The Farcaster SDK is loaded via a script tag, so it's on the window object.
-      if (window.FarcasterSDK) {
-         signalReady(); // Signal ready as soon as we know the SDK is available
-        try {
-          const user = await window.FarcasterSDK.getUser();
-          if (user) {
-            const profileData: FarcasterUserProfile = {
-              fid: user.fid,
-              username: user.username,
-              display_name: user.displayName,
-              pfp_url: user.pfpUrl,
-              bio: user.profile?.bio?.text,
-              follower_count: user.followerCount,
-              following_count: user.followingCount,
-            };
-            setFarcasterProfile(profileData);
-            setAuthenticated(true);
-          } else {
-            // No user is authenticated in the Farcaster client.
-            setFarcasterProfile(null);
-            setAuthenticated(false);
-          }
-        } catch (error) {
-          console.error("Error fetching Farcaster user:", error);
-          setFarcasterProfile(null);
-          setAuthenticated(false);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-         // This might run before the SDK has loaded. A better implementation
-         // would listen for an event or use an interval to check.
-         // For now, we'll just set loading to false.
-         setLoading(false);
-         // Still try to signal ready, in case the app loads but the SDK is slow
-         signalReady();
-      }
+    // Simulate fetching a Farcaster user profile.
+    // In a real mini app, this would use the Farcaster SDK.
+    const fetchFarcasterUser = () => {
+      setLoading(true);
+      // Simulate a successful authentication for demonstration purposes
+      // You would replace this with actual SDK logic.
+      setTimeout(() => {
+        const mockUser: FarcasterUserProfile = {
+          fid: 1,
+          username: "tester",
+          display_name: "Test User",
+          pfp_url: "https://i.imgur.com/Jk4Laa5.png",
+          bio: "A test user for the mini app.",
+          follower_count: 100,
+          following_count: 50
+        };
+        setFarcasterProfile(mockUser);
+        setAuthenticated(true);
+        setLoading(false);
+      }, 500);
     };
     
-    // It's possible the SDK hasn't loaded yet. We can wait for it.
-    // A simple timeout works for this demo.
-    const sdkCheckInterval = setInterval(() => {
-      if (window.FarcasterSDK) {
-        clearInterval(sdkCheckInterval);
-        fetchFarcasterUser();
-      }
-    }, 100);
-
-    return () => clearInterval(sdkCheckInterval);
+    fetchFarcasterUser();
   }, []);
 
   const value = { farcasterProfile, loading, authenticated };

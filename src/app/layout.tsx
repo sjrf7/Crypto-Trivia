@@ -9,7 +9,6 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
-import Script from 'next/script';
 
 
 const inter = Inter({
@@ -49,10 +48,6 @@ export default function RootLayout({
             <Toaster />
           </BackgroundMusicProvider>
         </Providers>
-        <Script
-          src="https://unpkg.com/@farcaster/miniapp-sdk@0.2.0/build/index.iife.js"
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );
