@@ -22,6 +22,21 @@ interface FarcasterIdentityContextType {
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
 
+// Call ready() once to signal to the Farcaster client that the app is ready.
+let readyCalled = false;
+const signalReady = () => {
+    if (readyCalled) return;
+    try {
+        if (window.FarcasterSDK) {
+            window.FarcasterSDK.actions.ready();
+            readyCalled = true;
+        }
+    } catch (error) {
+        console.error("Farcaster SDK ready() call failed", error);
+    }
+}
+
+
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +46,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     const fetchFarcasterUser = async () => {
       // The Farcaster SDK is loaded via a script tag, so it's on the window object.
       if (window.FarcasterSDK) {
+         signalReady(); // Signal ready as soon as we know the SDK is available
         try {
           const user = await window.FarcasterSDK.getUser();
           if (user) {
@@ -62,6 +78,8 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
          // would listen for an event or use an interval to check.
          // For now, we'll just set loading to false.
          setLoading(false);
+         // Still try to signal ready, in case the app loads but the SDK is slow
+         signalReady();
       }
     };
     

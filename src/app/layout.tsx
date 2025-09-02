@@ -9,7 +9,6 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
-import { useEffect } from 'react';
 import Script from 'next/script';
 
 
@@ -30,21 +29,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  useEffect(() => {
-    const sdkCheckInterval = setInterval(() => {
-      // The Farcaster SDK is loaded via a script tag, so we access it via the window object.
-      // Once we detect the SDK and the app is ready, we call `ready()` to signal to the Farcaster client.
-      if (window.FarcasterSDK) {
-        window.FarcasterSDK.actions.ready();
-        clearInterval(sdkCheckInterval);
-      }
-    }, 100); // Check every 100ms
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(sdkCheckInterval);
-  }, []);
-
 
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
