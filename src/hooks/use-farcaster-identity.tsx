@@ -32,14 +32,14 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
     const initialize = async () => {
       setLoading(true);
       try {
-        const { message, signature, fid } = await sdk.siwf.signIn();
+        const { message, signature } = await sdk.siwf.signIn();
         
         const res = await fetch('/api/me', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message, signature, fid }),
+            body: JSON.stringify({ message, signature }),
         });
 
         if (res.ok) {
