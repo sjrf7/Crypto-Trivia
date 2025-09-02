@@ -15,7 +15,6 @@ import { WagerCard } from './WagerCard';
 import { AITriviaGame } from '@/lib/types/ai';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 import { useAccount } from 'wagmi';
-import { ConnectKitButton } from 'connectkit';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 

@@ -4,10 +4,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
-import { Shield, Swords, RefreshCw } from 'lucide-react';
+import { Shield, Swords, RefreshCw, Wallet } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { ConnectKitButton } from 'connectkit';
 
 interface WagerCardProps {
   challenger: string;
@@ -36,13 +35,10 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
     
     if (!authenticated || !isConnected) {
         return (
-            <ConnectKitButton.Custom>
-                {({ show }) => (
-                    <Button onClick={show} className="w-full" size="lg">
-                        {t('wager.accept_button_loading')}
-                    </Button>
-                )}
-            </ConnectKitButton.Custom>
+            <Button className="w-full" size="lg" disabled>
+                <Wallet className="mr-2" />
+                {t('wager.accept_button_loading')}
+            </Button>
         );
     }
 
