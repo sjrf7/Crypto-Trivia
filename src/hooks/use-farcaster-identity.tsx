@@ -34,13 +34,14 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
       // Initialize the SDK first
       sdk.init();
       
-      const { message, signature, nonce } = await sdk.siwf.signIn();
+      const { token } = await sdk.quickAuth.getToken();
+
       const res = await fetch('/api/me', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ message, signature, nonce }),
       });
 
       if (res.ok) {
@@ -49,17 +50,15 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
         setAuthenticated(true);
       } else {
         const errorData = await res.json();
-        console.error("SIWF authentication failed on the backend:", errorData.message);
+        console.error("Quick Auth authentication failed on the backend:", errorData.message);
         setFarcasterProfile(null);
         setAuthenticated(false);
       }
     } catch (e: any) {
-      console.error("Farcaster SIWF failed", e);
+      console.error("Farcaster Quick Auth failed", e);
       setFarcasterProfile(null);
       setAuthenticated(false);
     } finally {
-      // Always call ready, even on failure, to unblock the UI.
-      // The UI will then show the appropriate signed-out state.
       await sdk.actions.ready();
       setLoading(false);
     }
