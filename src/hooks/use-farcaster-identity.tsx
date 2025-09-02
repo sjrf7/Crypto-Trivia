@@ -3,12 +3,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAccount } from 'wagmi';
-
-declare global {
-  interface Window {
-    FarcasterSDK: any;
-  }
-}
+import sdk from '@farcaster/miniapp-sdk';
 
 export interface FarcasterUserProfile {
   fid: number;
@@ -36,51 +31,36 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const { isConnected } = useAccount();
 
   useEffect(() => {
-    let isReadyCalled = false;
-    let intervalId: NodeJS.Timeout;
+    // This is a one-time check to signal to Farcaster that the app is ready.
+    sdk.ready();
 
-    const initFarcasterSDK = async () => {
-        if (typeof window !== 'undefined' && window.FarcasterSDK) {
-            clearInterval(intervalId);
-            
-            if (!isReadyCalled) {
-                try {
-                    await window.FarcasterSDK.actions.ready();
-                    isReadyCalled = true;
-                } catch (e) {
-                    console.error("Farcaster SDK ready() failed", e);
-                }
-            }
-
-            try {
-                const user = await window.FarcasterSDK.getUser();
-                if (user) {
-                  setFarcasterProfile({
-                    fid: user.fid,
-                    username: user.username,
-                    display_name: user.displayName,
-                    pfp_url: user.pfpUrl,
-                    bio: user.profile?.bio?.text,
-                  });
-                  setAuthenticated(true);
-                } else {
-                  setFarcasterProfile(null);
-                  setAuthenticated(false);
-                }
-            } catch (e) {
-                console.error("Farcaster SDK getUser() failed", e);
-                setFarcasterProfile(null);
-                setAuthenticated(false);
-            } finally {
-                setLoading(false);
-            }
+    const initFarcasterData = async () => {
+      try {
+        const user = await sdk.getUser();
+        if (user) {
+          setFarcasterProfile({
+            fid: user.fid,
+            username: user.username,
+            display_name: user.displayName,
+            pfp_url: user.pfpUrl,
+            bio: user.profile?.bio?.text,
+          });
+          setAuthenticated(true);
+        } else {
+          setFarcasterProfile(null);
+          setAuthenticated(false);
         }
+      } catch (e) {
+        console.error("Farcaster SDK getUser() failed", e);
+        setFarcasterProfile(null);
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    // Poll for the SDK to be available
-    intervalId = setInterval(initFarcasterSDK, 100);
 
-    return () => clearInterval(intervalId);
+    initFarcasterData();
+
   }, [isConnected]);
 
   const value = { farcasterProfile, loading, authenticated };
