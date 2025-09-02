@@ -15,16 +15,22 @@ import Link from 'next/link';
 import { LogOut, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useConnect } from 'wagmi';
+import { injected } from 'wagmi/connectors'
 
 export function ConnectButton() {
   const { farcasterProfile, authenticated, loading } = useFarcasterIdentity();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const { connect } = useConnect();
   const { toast } = useToast();
   
   const handleLogout = () => {
     disconnect();
+  }
+
+  const handleLogin = () => {
+    connect({ connector: injected() });
   }
 
   if (loading) {
@@ -32,7 +38,7 @@ export function ConnectButton() {
   }
 
   if (!authenticated || !isConnected || !farcasterProfile) {
-    return <Button variant="outline" disabled>Connect in Farcaster</Button>;
+    return <Button variant="outline" onClick={handleLogin}>Connect Wallet</Button>;
   }
   
   const shortAddress = (address?: string) => {

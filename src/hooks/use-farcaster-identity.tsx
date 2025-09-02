@@ -2,8 +2,14 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useAccount } from 'wagmi';
 
-// This interface comes from the Farcaster MiniApp SDK documentation
+declare global {
+  interface Window {
+    FarcasterSDK: any;
+  }
+}
+
 export interface FarcasterUserProfile {
   fid: number;
   username?: string;
@@ -22,36 +28,60 @@ interface FarcasterIdentityContextType {
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
 
+
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const { isConnected } = useAccount();
 
   useEffect(() => {
-    // Simulate fetching a Farcaster user profile.
-    // In a real mini app, this would use the Farcaster SDK.
-    const fetchFarcasterUser = () => {
-      setLoading(true);
-      // Simulate a successful authentication for demonstration purposes
-      // You would replace this with actual SDK logic.
-      setTimeout(() => {
-        const mockUser: FarcasterUserProfile = {
-          fid: 1,
-          username: "tester",
-          display_name: "Test User",
-          pfp_url: "https://i.imgur.com/Jk4Laa5.png",
-          bio: "A test user for the mini app.",
-          follower_count: 100,
-          following_count: 50
-        };
-        setFarcasterProfile(mockUser);
-        setAuthenticated(true);
-        setLoading(false);
-      }, 500);
+    let isReadyCalled = false;
+    let intervalId: NodeJS.Timeout;
+
+    const initFarcasterSDK = async () => {
+        if (typeof window !== 'undefined' && window.FarcasterSDK) {
+            clearInterval(intervalId);
+            
+            if (!isReadyCalled) {
+                try {
+                    await window.FarcasterSDK.actions.ready();
+                    isReadyCalled = true;
+                } catch (e) {
+                    console.error("Farcaster SDK ready() failed", e);
+                }
+            }
+
+            try {
+                const user = await window.FarcasterSDK.getUser();
+                if (user) {
+                  setFarcasterProfile({
+                    fid: user.fid,
+                    username: user.username,
+                    display_name: user.displayName,
+                    pfp_url: user.pfpUrl,
+                    bio: user.profile?.bio?.text,
+                  });
+                  setAuthenticated(true);
+                } else {
+                  setFarcasterProfile(null);
+                  setAuthenticated(false);
+                }
+            } catch (e) {
+                console.error("Farcaster SDK getUser() failed", e);
+                setFarcasterProfile(null);
+                setAuthenticated(false);
+            } finally {
+                setLoading(false);
+            }
+        }
     };
     
-    fetchFarcasterUser();
-  }, []);
+    // Poll for the SDK to be available
+    intervalId = setInterval(initFarcasterSDK, 100);
+
+    return () => clearInterval(intervalId);
+  }, [isConnected]);
 
   const value = { farcasterProfile, loading, authenticated };
 

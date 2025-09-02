@@ -9,6 +9,7 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
+import Script from 'next/script';
 
 
 const inter = Inter({
@@ -31,7 +32,9 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
-      <head />
+      <head>
+         <Script src="https://unpkg.com/@farcaster/miniapp-sdk@0.2.0/dist/index.js" strategy="beforeInteractive" />
+      </head>
       <body
         className={cn(
           'min-h-screen bg-background font-body antialiased',
