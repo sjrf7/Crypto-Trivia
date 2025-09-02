@@ -10,7 +10,6 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 import { useEffect } from 'react';
-import { sdk } from '@/lib/farcaster-sdk.js';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,7 +32,11 @@ export default function RootLayout({
   useEffect(() => {
     // This tells the Farcaster client that the app is ready to be displayed.
     try {
-      sdk.ready();
+      // The Farcaster miniapp SDK is injected into the window object by Farcaster clients.
+      // We can access it directly without needing to install the npm package.
+      if (window.FarcasterSDK) {
+        window.FarcasterSDK.ready();
+      }
     } catch (error) {
       console.error('Farcaster SDK not available or failed to initialize', error);
     }
