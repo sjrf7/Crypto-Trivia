@@ -1,11 +1,9 @@
 
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { useProfile, useSignIn } from '@farcaster/auth-kit';
-import toast from 'react-hot-toast';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-
+// Define the user profile structure based on what your API returns
 export interface FarcasterUserProfile {
   fid: number;
   username?: string;
@@ -25,54 +23,51 @@ const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | un
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const {
-    profile,
-    loading: profileLoading,
-    error: profileError,
-  } = useProfile();
-
-  const {
-    isAuthenticated,
-    error: authError,
-  } = useSignIn({
-    onSuccess: (data) => {
-      console.log('Farcaster sign-in success:', data);
-    },
-  });
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated && profile) {
-      setFarcasterProfile({
-        fid: profile.fid,
-        username: profile.username,
-        display_name: profile.displayName,
-        pfp_url: profile.pfpUrl,
-        bio: profile.bio,
-      });
-    } else {
-      setFarcasterProfile(null);
-    }
-  }, [isAuthenticated, profile]);
-  
-  useEffect(() => {
-    setLoading(profileLoading);
-  }, [profileLoading]);
+    // This function will be called when the component mounts
+    const checkFarcasterIdentity = async () => {
+      try {
+        // In a Farcaster client, the user's context is available.
+        // For local development, we might not have this context.
+        // A robust solution is to check for some indication of being in a client,
+        // or attempt to fetch user data assuming we can.
+        // For this app, we'll assume a simple check for a URL param or a global object
+        // but for now, we'll just check if we can get a signer_uuid.
+        // In a real Mini App, the client provides this. We'll simulate by checking a query param.
+        const urlParams = new URLSearchParams(window.location.search);
+        const signerUuid = urlParams.get('signer_uuid');
 
-  useEffect(() => {
-    if (authError) {
-      toast.error(authError.message);
-    }
-    if (profileError) {
-      toast.error(profileError.message);
-    }
-  }, [authError, profileError]);
+        if (signerUuid) {
+          const response = await fetch(`/api/me?signer_uuid=${signerUuid}`);
+          if (response.ok) {
+            const userData = await response.json();
+            setFarcasterProfile(userData);
+            setAuthenticated(true);
+          } else {
+            console.warn('Could not authenticate Farcaster user.');
+            setAuthenticated(false);
+          }
+        } else {
+            // Not in a client or no signer_uuid available
+            setAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Error checking Farcaster identity:', error);
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    checkFarcasterIdentity();
+  }, []);
 
   const value = { 
     farcasterProfile, 
     loading, 
-    authenticated: isAuthenticated 
+    authenticated
   };
 
   return (

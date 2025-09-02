@@ -12,17 +12,18 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
-import { LogOut, Wallet } from 'lucide-react';
+import { LogOut, Wallet, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 import { useAccount } from 'wagmi';
-import { AuthButton, SignInButton } from '@farcaster/auth-kit';
+import { useI18n } from '@/hooks/use-i18n';
 
 
 export function ConnectButton() {
   const { farcasterProfile, authenticated, loading } = useFarcasterIdentity();
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { toast } = useToast();
+  const { t } = useI18n();
   
   const shortAddress = (address?: string) => {
     if (!address) return '';
@@ -43,12 +44,13 @@ export function ConnectButton() {
     return <Button variant="outline" className="h-10 w-28 animate-pulse" disabled />
   }
 
-  if (!authenticated) {
-    return <SignInButton />;
-  }
-  
-  if (!farcasterProfile) {
-    return null;
+  if (!authenticated || !farcasterProfile) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-secondary">
+          <User className="h-5 w-5 text-primary"/>
+          <span className="hidden sm:inline">{t('profile.sign_in.description')}</span>
+      </div>
+    );
   }
   
   return (
@@ -85,11 +87,6 @@ export function ConnectButton() {
               <span>Copy Address</span>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-           <LogOut className="mr-2 h-4 w-4" />
-           <AuthButton />
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
