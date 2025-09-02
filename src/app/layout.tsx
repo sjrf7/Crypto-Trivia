@@ -10,6 +10,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 import { useEffect } from 'react';
+import Head from 'next/head';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -51,9 +52,9 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
-      <head>
-        <link rel="preconnect" href="https://auth.farcaster.xyz" />
-      </head>
+      <Head>
+        <script src="https://farcaster.dev/miniapp-sdk.js" async></script>
+      </Head>
       <body
         className={cn(
           'min-h-screen bg-background font-body antialiased',
