@@ -15,44 +15,15 @@ import Link from 'next/link';
 import { LogOut, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { useAccount, useDisconnect, useConnect } from 'wagmi';
-import { injected } from 'wagmi/connectors'
+import { useAccount } from 'wagmi';
+import { AuthButton, SignInButton } from '@farcaster/auth-kit';
+
 
 export function ConnectButton() {
   const { farcasterProfile, authenticated, loading } = useFarcasterIdentity();
   const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-  const { connect } = useConnect();
   const { toast } = useToast();
   
-  const handleLogout = () => {
-    // For now, we only disconnect the wallet.
-    // Farcaster Quick Auth session is managed by the client.
-    disconnect();
-  }
-
-  const handleLogin = () => {
-    // The FarcasterIdentityProvider handles Quick Auth.
-    // We just need to connect the wallet.
-    connect({ connector: injected() });
-  }
-
-  if (loading) {
-    return <Button variant="outline" className="h-10 w-28 animate-pulse" disabled />
-  }
-
-  if (!authenticated || !farcasterProfile) {
-    // The app is inside Farcaster, but the user hasn't authed with our app yet.
-    // The provider will re-trigger auth. For the UI, we can show a generic connect.
-    // Or we can rely on the loading state. Here, we'll show nothing until authenticated.
-    return null;
-  }
-  
-  // Farcaster auth is successful, now check for wallet connection
-  if (!isConnected) {
-     return <Button variant="outline" onClick={() => connect({ connector: injected() })}>Connect Wallet</Button>;
-  }
-
   const shortAddress = (address?: string) => {
     if (!address) return '';
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -67,16 +38,30 @@ export function ConnectButton() {
       });
     }
   }
+
+  if (loading) {
+    return <Button variant="outline" className="h-10 w-28 animate-pulse" disabled />
+  }
+
+  if (!authenticated) {
+    return <SignInButton />;
+  }
+  
+  if (!farcasterProfile) {
+    return null;
+  }
   
   return (
-      <DropdownMenu>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="h-10">
             <Avatar className="h-8 w-8 mr-2">
               <AvatarImage src={farcasterProfile.pfp_url} alt={farcasterProfile.display_name || 'User PFP'} data-ai-hint="profile picture" />
               <AvatarFallback>{farcasterProfile.display_name?.substring(0, 2) || '??'}</AvatarFallback>
           </Avatar>
-          {shortAddress(address)}
+          <div className="hidden sm:block">
+            {farcasterProfile.display_name || shortAddress(address)}
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64" align="end" forceMount>
@@ -89,20 +74,22 @@ export function ConnectButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild>
           <Link href="/profile/me">
             My Profile
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={copyAddress}>
-            <Wallet className="mr-2 h-4 w-4" />
-            <span>Copy Address</span>
-        </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Disconnect</span>
+        {address && (
+          <DropdownMenuItem onClick={copyAddress}>
+              <Wallet className="mr-2 h-4 w-4" />
+              <span>Copy Address</span>
           </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+           <LogOut className="mr-2 h-4 w-4" />
+           <AuthButton />
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
