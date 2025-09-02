@@ -13,7 +13,8 @@ import { Gamepad2 } from 'lucide-react';
 import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 import { AITriviaGame } from '@/lib/types/ai';
-import { usePrivy } from '@privy-io/react-auth';
+import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { useNeynarContext } from '@neynar/react';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -66,7 +67,8 @@ export function GameClient({
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
-  const { authenticated, ready, login } = usePrivy();
+  const { authenticated } = useFarcasterIdentity();
+  const { onsignin } = useNeynarContext();
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
@@ -127,9 +129,7 @@ export function GameClient({
       setGameStatus('playing');
     } else {
       console.log('User must sign in to accept wager.');
-      if(ready) {
-        login();
-      }
+      onsignin();
     }
   }
 

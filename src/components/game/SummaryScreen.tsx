@@ -29,7 +29,6 @@ import { useNotifications } from '@/hooks/use-notifications';
 import { AITriviaGame } from '@/lib/types/ai';
 import { cn } from '@/lib/utils';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { usePrivy } from '@privy-io/react-auth';
 
 interface SummaryScreenProps {
   score: number;
@@ -69,8 +68,7 @@ export function SummaryScreen({
     const [challengeUrl, setChallengeUrl] = useState('');
     const [wager, setWager] = useState('');
     const [challengeMessage, setChallengeMessage] = useState('');
-    const { authenticated } = usePrivy();
-    const { farcasterProfile } = useFarcasterIdentity();
+    const { farcasterProfile, authenticated } = useFarcasterIdentity();
     const { addGameResult } = useUserStats(farcasterProfile?.fid?.toString());
     const [isGenerating, setIsGenerating] = useState(false);
     const { addNotification } = useNotifications();

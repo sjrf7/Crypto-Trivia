@@ -13,7 +13,6 @@ import { useI18n } from '@/hooks/use-i18n';
 import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { usePrivy } from '@privy-io/react-auth';
 
 type SortKey = 'rank' | 'totalScore';
 
@@ -57,8 +56,7 @@ export function LeaderboardTable({ data: initialData }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { t } = useI18n();
-  const { authenticated } = usePrivy();
-  const { farcasterProfile } = useFarcasterIdentity();
+  const { farcasterProfile, authenticated } = useFarcasterIdentity();
   const { stats: userStats, updateRank, checkTopPlayerAchievement } = useUserStats(farcasterProfile?.fid?.toString());
   
   const mergedData = useMemo(() => {

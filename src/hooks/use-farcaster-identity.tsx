@@ -2,8 +2,9 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
-import type { User } from '@privy-io/react-auth';
+import { useNeynarContext } from '@neynar/react';
+import type { NeynarUser } from '@neynar/react';
+
 
 export interface FarcasterUserProfile {
   fid: number;
@@ -18,34 +19,35 @@ export interface FarcasterUserProfile {
 interface FarcasterIdentityContextType {
   farcasterProfile: FarcasterUserProfile | null;
   loading: boolean;
+  authenticated: boolean;
 }
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
 
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
-  const { ready, authenticated, user } = usePrivy();
+  const { user, isAuthenticated } = useNeynarContext();
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
 
-  const loading = !ready;
-
+  const loading = !isAuthenticated && user === undefined;
+  
   useEffect(() => {
-    if (ready && authenticated && user?.farcaster) {
+    if (isAuthenticated && user) {
       const profileData: FarcasterUserProfile = {
-        fid: user.farcaster.fid,
-        username: user.farcaster.username,
-        display_name: user.farcaster.displayName,
-        pfp_url: user.farcaster.pfp,
-        bio: user.farcaster.bio,
-        follower_count: user.farcaster.followerCount,
-        following_count: user.farcaster.followingCount,
+        fid: user.fid,
+        username: user.username,
+        display_name: user.displayName,
+        pfp_url: user.pfpUrl,
+        bio: user.profile?.bio?.text,
+        follower_count: user.followerCount,
+        following_count: user.followingCount,
       };
       setFarcasterProfile(profileData);
     } else {
       setFarcasterProfile(null);
     }
-  }, [ready, authenticated, user]);
+  }, [isAuthenticated, user]);
 
-  const value = { farcasterProfile, loading };
+  const value = { farcasterProfile, loading, authenticated: isAuthenticated };
 
   return (
     <FarcasterIdentityContext.Provider value={value}>

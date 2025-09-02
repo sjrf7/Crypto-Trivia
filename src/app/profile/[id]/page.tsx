@@ -11,7 +11,6 @@ import { Card as UICard, CardContent as UICardContent } from '@/components/ui/ca
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { usePrivy } from '@privy-io/react-auth';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -19,13 +18,12 @@ function ProfilePageContent() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
 
-  const { authenticated } = usePrivy();
-  const { farcasterProfile, loading: status } = useFarcasterIdentity();
+  const { authenticated, farcasterProfile, loading } = useFarcasterIdentity();
   const { t } = useI18n();
   const { stats: userStats } = useUserStats(farcasterProfile?.fid?.toString());
 
   useEffect(() => {
-    if (status) {
+    if (loading) {
         return;
     }
 
@@ -45,10 +43,10 @@ function ProfilePageContent() {
       const foundPlayer = PLAYERS.find((p) => p.id.toLowerCase() === id.toLowerCase());
       setPlayer(foundPlayer || null);
     }
-  }, [id, farcasterProfile, authenticated, status, userStats]);
+  }, [id, farcasterProfile, authenticated, loading, userStats]);
 
 
-  if (status) {
+  if (loading) {
     return (
        <Card>
             <CardHeader>

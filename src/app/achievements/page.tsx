@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { usePrivy } from '@privy-io/react-auth';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,8 +28,7 @@ const itemVariants = {
 
 function AchievementsContent() {
   const { t } = useI18n();
-  const { authenticated } = usePrivy();
-  const { farcasterProfile } = useFarcasterIdentity();
+  const { authenticated, farcasterProfile } = useFarcasterIdentity();
   const { stats } = useUserStats(farcasterProfile?.fid?.toString());
 
   return (

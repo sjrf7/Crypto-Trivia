@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/hooks/use-i18n';
 import { Shield, Swords, RefreshCw } from 'lucide-react';
-import { usePrivy } from '@privy-io/react-auth';
+import { useNeynarContext } from '@neynar/react';
 
 interface WagerCardProps {
   challenger: string;
@@ -17,9 +17,10 @@ interface WagerCardProps {
 
 export function WagerCard({ challenger, wager, message, onAccept, onDecline }: WagerCardProps) {
   const { t } = useI18n();
-  const { ready } = usePrivy();
+  const { user } = useNeynarContext();
 
   const defaultMessage = t('wager.default_message');
+  const isLoading = !user; // A simple check for loading state
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -42,8 +43,8 @@ export function WagerCard({ challenger, wager, message, onAccept, onDecline }: W
                 {wager > 0 && <p className="text-xs text-muted-foreground">{t('wager.on_testnet')}</p>}
             </CardContent>
             <CardFooter className="flex-col gap-4">
-                <Button onClick={onAccept} className="w-full" size="lg" disabled={!ready}>
-                  {!ready ? <><RefreshCw className="animate-spin mr-2"/> {t('wager.accept_button_loading')}</> : t('wager.accept_button')}
+                <Button onClick={onAccept} className="w-full" size="lg" disabled={isLoading}>
+                  {isLoading ? <><RefreshCw className="animate-spin mr-2"/> {t('wager.accept_button_loading')}</> : t('wager.accept_button')}
                 </Button>
                 <Button onClick={onDecline} variant="ghost" className="w-full">
                   {t('wager.decline_button')}
