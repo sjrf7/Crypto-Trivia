@@ -32,12 +32,19 @@ export default function RootLayout({
 }>) {
 
   useEffect(() => {
-    // The Farcaster SDK is loaded via a script tag, so we access it via the window object.
-    // Once the app is ready, we call `ready()` to signal to the Farcaster client.
-    if (window.FarcasterSDK) {
-      window.FarcasterSDK.actions.ready();
-    }
+    const sdkCheckInterval = setInterval(() => {
+      // The Farcaster SDK is loaded via a script tag, so we access it via the window object.
+      // Once we detect the SDK and the app is ready, we call `ready()` to signal to the Farcaster client.
+      if (window.FarcasterSDK) {
+        window.FarcasterSDK.actions.ready();
+        clearInterval(sdkCheckInterval);
+      }
+    }, 100); // Check every 100ms
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(sdkCheckInterval);
   }, []);
+
 
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
@@ -60,7 +67,7 @@ export default function RootLayout({
         </Providers>
         <Script
           src="https://unpkg.com/@farcaster/miniapp-sdk@0.2.0/build/index.iife.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>
