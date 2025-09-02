@@ -1,7 +1,7 @@
 
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import sdk from '@farcaster/miniapp-sdk';
 
 export interface FarcasterUserProfile {
@@ -18,55 +18,55 @@ interface FarcasterIdentityContextType {
   farcasterProfile: FarcasterUserProfile | null;
   loading: boolean;
   authenticated: boolean;
+  reauthenticate: () => void;
 }
 
 const FarcasterIdentityContext = createContext<FarcasterIdentityContextType | undefined>(undefined);
-
 
 export function FarcasterIdentityProvider({ children }: { children: ReactNode }) {
   const [farcasterProfile, setFarcasterProfile] = useState<FarcasterUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
-      try {
-        const { message, signature } = await sdk.siwf.signIn();
-        
-        const res = await fetch('/api/me', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ message, signature }),
-        });
+  const initialize = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { message, signature, nonce, fid } = await sdk.siwf.signIn();
+      const res = await fetch('/api/me', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message, signature, nonce }),
+      });
 
-        if (res.ok) {
-          const user = await res.json();
-          setFarcasterProfile(user);
-          setAuthenticated(true);
-        } else {
-          setFarcasterProfile(null);
-          setAuthenticated(false);
-          console.error("SIWF authentication failed on the backend.");
-        }
-      } catch (e) {
-        console.error("Farcaster SIWF failed", e);
+      if (res.ok) {
+        const user = await res.json();
+        setFarcasterProfile(user);
+        setAuthenticated(true);
+      } else {
+        const errorData = await res.json();
+        console.error("SIWF authentication failed on the backend:", errorData.message);
         setFarcasterProfile(null);
         setAuthenticated(false);
-      } finally {
-        // Once authentication is checked (successful or not), signal app is ready.
-        await sdk.actions.ready();
-        setLoading(false);
       }
-    };
-
-    initialize();
-
+    } catch (e: any) {
+      console.error("Farcaster SIWF failed", e);
+      setFarcasterProfile(null);
+      setAuthenticated(false);
+    } finally {
+      // Always call ready, even on failure, to unblock the UI.
+      // The UI will then show the appropriate signed-out state.
+      await sdk.actions.ready();
+      setLoading(false);
+    }
   }, []);
 
-  const value = { farcasterProfile, loading, authenticated };
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  const value = { farcasterProfile, loading, authenticated, reauthenticate: initialize };
 
   return (
     <FarcasterIdentityContext.Provider value={value}>
