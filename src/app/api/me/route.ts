@@ -5,14 +5,10 @@ import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 const NEYNAR_API_KEY = process.env.NEXT_PUBLIC_NEYNAR_API_KEY || '';
 
 if (!NEYNAR_API_KEY) {
-  // This will be caught by the build process if the variable is not set.
-  // We can log a warning and continue, as the key might be available at runtime.
   console.warn('NEYNAR_API_KEY is not set. API calls will likely fail.');
 }
 
 const getClient = () => {
-    // Initialize the client only when the function is called, not at the module level.
-    // This avoids throwing an error during build time if the key is not present.
     if (!NEYNAR_API_KEY) {
         throw new Error('NEYNAR_API_KEY is not set. Cannot initialize Neynar client.');
     }

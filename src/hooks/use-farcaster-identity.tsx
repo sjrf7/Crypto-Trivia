@@ -26,19 +26,12 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    // This function will be called when the component mounts
     const checkFarcasterIdentity = async () => {
       setLoading(true);
       try {
-        // In a Farcaster client, the user's context is available.
-        // For local development, we can simulate this.
-        // A robust solution is to check for some indication of being in a client,
-        // or attempt to fetch user data assuming we can.
-        // For this app, we'll check for a signer_uuid, which Neynar's SDK can provide,
-        // or which might be passed in a query param for testing.
+        // For local testing, you can add a signer_uuid to the URL
+        // e.g., http://localhost:3000/?signer_uuid=your_dev_signer_uuid
         const urlParams = new URLSearchParams(window.location.search);
-        // For this demo, we'll use a test signer_uuid if one isn't provided.
-        // In a real mini-app, the Farcaster client would provide this context.
         const signerUuid = urlParams.get('signer_uuid') || process.env.NEXT_PUBLIC_NEYNAR_SIGNER_UUID;
 
         if (signerUuid) {

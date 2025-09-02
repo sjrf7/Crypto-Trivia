@@ -11,6 +11,8 @@ import { Card as UICard, CardContent as UICardContent } from '@/components/ui/ca
 import { useI18n } from '@/hooks/use-i18n';
 import { useUserStats } from '@/hooks/use-user-stats';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
+import { Button } from '@/components/ui/button';
+import { User } from 'lucide-react';
 
 function ProfilePageContent() {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -73,6 +75,7 @@ function ProfilePageContent() {
     return (
       <UICard className="w-full max-w-md mx-auto text-center">
         <UICardContent className="pt-6">
+            <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h2 className="text-2xl font-headline mb-4">{t('profile.sign_in.title')}</h2>
             <p className="text-muted-foreground mb-6">{t('profile.sign_in.description')}</p>
         </UICardContent>
