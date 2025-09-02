@@ -10,7 +10,6 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
 import { useEffect } from 'react';
-import { sdk } from '@/lib/farcaster-miniapp-sdk';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,6 +23,18 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 });
 
+// Define the type for the Farcaster SDK object if it exists on window
+declare global {
+  interface Window {
+    FarcasterSDK?: {
+      actions: {
+        ready: () => void;
+      };
+    };
+  }
+}
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +43,10 @@ export default function RootLayout({
 
   useEffect(() => {
     // This tells the Farcaster client that the app is ready to be displayed.
-    sdk.actions.ready();
+    // We check if the SDK is available on the window object before calling it.
+    if (window.FarcasterSDK) {
+      window.FarcasterSDK.actions.ready();
+    }
   }, []);
 
   return (
