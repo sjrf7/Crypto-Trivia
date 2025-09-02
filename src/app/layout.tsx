@@ -9,6 +9,8 @@ import { Dock } from '@/components/layout/Dock';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { BackgroundMusicProvider } from '@/components/layout/BackgroundMusic';
+import { useEffect } from 'react';
+import Script from 'next/script';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -28,10 +30,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+  useEffect(() => {
+    // This tells the Farcaster client that the app is ready to be displayed.
+    if (window.FarcasterSDK) {
+      window.FarcasterSDK.ready();
+    }
+  }, []);
+
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
       <head>
         <link rel="preconnect" href="https://auth.farcaster.xyz" />
+        <Script src="https://farcaster.dev/miniapp-sdk.js" strategy="afterInteractive" />
       </head>
       <body
         className={cn(

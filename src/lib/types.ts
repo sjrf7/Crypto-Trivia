@@ -1,10 +1,5 @@
 
 
-declare global {
-  interface Window {
-    FarcasterSDK: any;
-  }
-}
 
 export interface TriviaQuestion {
   question: string;
@@ -61,4 +56,13 @@ export interface Notification {
     timestamp: number;
     read: boolean;
     href?: string;
+}
+
+declare global {
+  interface Window {
+    FarcasterSDK: {
+      ready: () => void;
+      // Add other SDK methods you might use here
+    };
+  }
 }
