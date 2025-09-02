@@ -17,17 +17,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
 import { ConnectKitButton } from 'connectkit';
 import { useDisconnect } from 'wagmi';
-import { useNeynarContext } from '@neynar/react';
 
 
 export function ConnectButton() {
   const { farcasterProfile, authenticated } = useFarcasterIdentity();
-  const { onSignout } = useNeynarContext();
   const { disconnect } = useDisconnect();
   const { toast } = useToast();
   
   const handleLogout = () => {
-    onSignout();
     disconnect();
   }
 

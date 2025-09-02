@@ -14,7 +14,8 @@ import { useI18n } from '@/hooks/use-i18n';
 import { WagerCard } from './WagerCard';
 import { AITriviaGame } from '@/lib/types/ai';
 import { useFarcasterIdentity } from '@/hooks/use-farcaster-identity';
-import { useNeynarContext } from '@neynar/react';
+import { useAccount } from 'wagmi';
+import { ConnectKitButton } from 'connectkit';
 
 type GameStatus = 'setup' | 'wager' | 'playing' | 'summary';
 
@@ -68,7 +69,7 @@ export function GameClient({
   const [isChallenge, setIsChallenge] = useState(false);
   const { t } = useI18n();
   const { authenticated } = useFarcasterIdentity();
-  const { onsignin } = useNeynarContext();
+  const { isConnected } = useAccount();
 
   const classicQuestions = useMemo(() => t('classic_questions', undefined, { returnObjects: true }) as TriviaQuestion[], [t]);
 
@@ -89,10 +90,10 @@ export function GameClient({
 
 
   useEffect(() => {
-    if (gameStatus === 'wager' && authenticated) {
+    if (gameStatus === 'wager' && authenticated && isConnected) {
       handleWagerAccept();
     }
-  }, [authenticated, gameStatus]);
+  }, [authenticated, isConnected, gameStatus]);
 
 
   const handleStartClassic = () => {
@@ -124,12 +125,11 @@ export function GameClient({
   };
   
   const handleWagerAccept = () => {
-    if (authenticated) {
+    if (authenticated && isConnected) {
       console.log('Wager accepted. Starting game.');
       setGameStatus('playing');
     } else {
-      console.log('User must sign in to accept wager.');
-      onsignin();
+      console.log('User must sign in and connect wallet to accept wager.');
     }
   }
 

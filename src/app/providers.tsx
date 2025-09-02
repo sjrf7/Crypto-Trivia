@@ -9,7 +9,6 @@ import { WagmiProvider, createConfig, http } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
-import { NeynarProvider } from '@neynar/react';
 
 const queryClient = new QueryClient();
 
@@ -46,18 +45,13 @@ export function Providers({ children }: { children: ReactNode }) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider theme='midnight'>
-           <NeynarProvider
-              clientId={process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID!}
-              authEnabled
-           >
-              <I18nProvider>
-                <FarcasterIdentityProvider>
-                  <NotificationsProvider>
-                      {children}
-                  </NotificationsProvider>
-                </FarcasterIdentityProvider>
-              </I18nProvider>
-          </NeynarProvider>
+          <I18nProvider>
+            <FarcasterIdentityProvider>
+              <NotificationsProvider>
+                  {children}
+              </NotificationsProvider>
+            </FarcasterIdentityProvider>
+          </I18nProvider>
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
