@@ -31,11 +31,11 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   const { isConnected } = useAccount();
 
   useEffect(() => {
-    // This is a one-time check to signal to Farcaster that the app is ready.
-    sdk.ready();
-
-    const initFarcasterData = async () => {
+    const initialize = async () => {
       try {
+        // This is a one-time check to signal to Farcaster that the app is ready.
+        await sdk.actions.ready();
+        
         const user = await sdk.getUser();
         if (user) {
           setFarcasterProfile({
@@ -51,7 +51,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
           setAuthenticated(false);
         }
       } catch (e) {
-        console.error("Farcaster SDK getUser() failed", e);
+        console.error("Farcaster SDK initialization failed", e);
         setFarcasterProfile(null);
         setAuthenticated(false);
       } finally {
@@ -59,7 +59,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
       }
     };
 
-    initFarcasterData();
+    initialize();
 
   }, [isConnected]);
 
