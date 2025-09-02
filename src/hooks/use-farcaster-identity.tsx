@@ -28,16 +28,18 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
   useEffect(() => {
     // This function will be called when the component mounts
     const checkFarcasterIdentity = async () => {
+      setLoading(true);
       try {
         // In a Farcaster client, the user's context is available.
-        // For local development, we might not have this context.
+        // For local development, we can simulate this.
         // A robust solution is to check for some indication of being in a client,
         // or attempt to fetch user data assuming we can.
-        // For this app, we'll assume a simple check for a URL param or a global object
-        // but for now, we'll just check if we can get a signer_uuid.
-        // In a real Mini App, the client provides this. We'll simulate by checking a query param.
+        // For this app, we'll check for a signer_uuid, which Neynar's SDK can provide,
+        // or which might be passed in a query param for testing.
         const urlParams = new URLSearchParams(window.location.search);
-        const signerUuid = urlParams.get('signer_uuid');
+        // For this demo, we'll use a test signer_uuid if one isn't provided.
+        // In a real mini-app, the Farcaster client would provide this context.
+        const signerUuid = urlParams.get('signer_uuid') || process.env.NEXT_PUBLIC_NEYNAR_SIGNER_UUID;
 
         if (signerUuid) {
           const response = await fetch(`/api/me?signer_uuid=${signerUuid}`);
@@ -46,7 +48,7 @@ export function FarcasterIdentityProvider({ children }: { children: ReactNode })
             setFarcasterProfile(userData);
             setAuthenticated(true);
           } else {
-            console.warn('Could not authenticate Farcaster user.');
+            console.warn('Could not authenticate Farcaster user via API.');
             setAuthenticated(false);
           }
         } else {
